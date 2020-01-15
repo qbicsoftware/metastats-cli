@@ -1,14 +1,14 @@
-package life.qbic.cli;
+package life.qbic.metastats.cli;
 
+import life.qbic.cli.AbstractCommand;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 
 /**
  * Abstraction of command-line arguments that will be passed to {@link MetaStatsTool} at construction time.
  */
 @Command(
-   name="MetaStats",
-   description="Command-line tool to create a metadata table for an openBIS project")
+        name="MetaStats",
+        description="Command-line tool to create a metadata table for an openBIS project")
 public class MetaStatsCommand extends AbstractCommand {
     // TODO: add your command-line options as members of this class using picocli's annotations, for instance:
     //

@@ -1,11 +1,12 @@
-package life.qbic.cli;
+package life.qbic.metastats.cli;
 
+import life.qbic.cli.ToolExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
  * Entry point for the MetaStats-CLI application.
- * 
+ *
  * The purpose of this class is to act as a bridge between the command line and the <i>real</i> implementation of a tool by using a {@link ToolExecutor}.
  */
 public class MetaStatsEntryPoint {
@@ -14,7 +15,7 @@ public class MetaStatsEntryPoint {
 
     /**
      * Main method.
-     * 
+     *
      * @param args the command-line arguments.
      */
     public static void main(final String[] args) {
