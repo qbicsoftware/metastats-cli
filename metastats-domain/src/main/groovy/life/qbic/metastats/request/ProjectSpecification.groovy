@@ -2,6 +2,6 @@ package life.qbic.metastats.request
 
 interface ProjectSpecification {
 
-    void requestProjectMetadata(String ProjectCode)
+    def requestProjectMetadata(String projectCode)
 
 }

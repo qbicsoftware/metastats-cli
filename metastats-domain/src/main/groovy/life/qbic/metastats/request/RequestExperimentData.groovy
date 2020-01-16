@@ -12,13 +12,7 @@ class RequestExperimentData implements ProjectSpecification{
 
     @Override
     def requestProjectMetadata(String projectCode) {
-        search.setProject(projectCode)
 
-        def sampleMetadata = search.getSampleMetadata()
-        def experimentMetadata = search.getExperimentMetadata()
-
-        output.experimentDataForExperiment()
-        output.experimentDataForSamples()
     }
 
 }

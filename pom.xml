@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>life.qbic</groupId>
 		<artifactId>cli-parent-pom</artifactId>
-		<version>1.4.0</version> <!-- update to 2.1 when working -->
+		<version>2.1.0</version>
 	</parent>
 	<groupId>life.qbic</groupId>
 	<artifactId>metastats-cli</artifactId>
@@ -19,7 +19,7 @@
 	<name>MetaStats-CLI</name>
 	<url>http://github.com/qbicsoftware/metastats-cli</url>
 	<description>Command-line tool to create a metadata table for an openBIS project</description>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 	<!-- we only need to tell maven where to find our parent pom and other QBiC dependencies -->
 	<repositories>
 		<repository>
