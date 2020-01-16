@@ -9,10 +9,15 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     }
 
     //todo check if MS package data is complete --> warnings
-
     @Override
     def filterMetadataData(HashMap<String, String> projectMetadata) {
         //data defined with json
         //output.setMetaStatsMetadataPackage(kddkdkk)
     }
+
+    def createMetaStatsMetadataPackage(HashMap<String,String> rawMetadata){
+        //reduce raw metadata to fields required for metadata package
+
+    }
+
 }
