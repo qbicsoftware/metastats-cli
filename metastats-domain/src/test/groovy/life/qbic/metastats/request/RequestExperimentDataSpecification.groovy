@@ -8,7 +8,7 @@ class RequestExperimentDataSpecification extends Specification{
     def mockedExperimentDataOutput = Mock(ExperimentDataOutput)
     def requestDataClass = new RequestExperimentData(mockedDatabaseGateway,mockedExperimentDataOutput)
 
-    def "gives warning if there is no project (data) with given code"(){
+   /** def "gives warning if there is no project (data) with given code"(){
         given:
         def projectCode = "XXXXX"
 
@@ -52,5 +52,5 @@ class RequestExperimentDataSpecification extends Specification{
         then:
         thrown(InvalidProjectCodeException)
     }
-
+*/
 }
