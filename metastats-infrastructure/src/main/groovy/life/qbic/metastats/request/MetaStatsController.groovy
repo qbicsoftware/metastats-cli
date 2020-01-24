@@ -1,4 +1,4 @@
-package life.qbic.metastats
+package life.qbic.metastats.request
 
 import groovy.json.JsonSlurper
 

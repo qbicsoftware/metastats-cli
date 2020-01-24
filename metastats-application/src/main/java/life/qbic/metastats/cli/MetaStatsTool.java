@@ -1,8 +1,7 @@
 package life.qbic.metastats.cli;
 
 import life.qbic.cli.QBiCTool;
-import life.qbic.metastats.MetaStatsController;
-import life.qbic.metastats.request.RequestExperimentData;
+import life.qbic.metastats.request.MetaStatsController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

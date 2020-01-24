@@ -1,23 +1,34 @@
 package life.qbic.metastats.filter
 
+import groovy.json.JsonSlurper
+
+//TODO use model schema from https://github.com/qbicsoftware/metastats-object-model/blob/master/model.schema.json needs CI but for now use a local copy of the model in the project
 class FilterExperimentDataImpl implements FilterExperimentData{
 
     MSMetadataPackageOutput output
+    def schema = getClass().getResource("/model.schema.json")
 
     FilterExperimentDataImpl(MSMetadataPackageOutput output){
         this.output = output
     }
 
-    //todo check if MS package data is complete --> warnings
-    @Override
-    def filterMetadataData(HashMap<String, String> projectMetadata) {
-        //data defined with json
-        //output.setMetaStatsMetadataPackage(kddkdkk)
+    def parse(){
+        new JsonSlurper().parseText(schema.text)
+        //use it like .get("properties")
     }
 
-    def createMetaStatsMetadataPackage(HashMap<String,String> rawMetadata){
+    @Override
+    def filterSampleMetaData(HashMap<String, String> projectMetadata) {
+        return null
+    }
+
+    @Override
+    def filterExperimentMetaData(HashMap<String, String> projectMetadata) {
+        return null
+    }
+
+    def createMetaStatsMetadataPackage(HashMap<String,String> sampleMeta, HashMap<String,String> experimentMeta){
         //reduce raw metadata to fields required for metadata package
 
     }
-
 }

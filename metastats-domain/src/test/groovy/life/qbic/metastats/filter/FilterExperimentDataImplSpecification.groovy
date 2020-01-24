@@ -31,10 +31,13 @@ class FilterExperimentDataImplSpecification extends Specification{
         !thrown(IllegalArgumentException)
     }*/
 
-    /** how to test that/meaningful test?
-     def "metadata only contains fields described in the schema"(){
+     def "loaded schema successfully"(){
+         when:
+         Map res = filterExperimentData.parse()
+
+         then:
+         res != null
 
     }
-    */
 
 }

@@ -12,8 +12,6 @@ class RequestExperimentData implements ProjectSpecification{
 
     @Override
     def requestProjectMetadata(String projectCode) {
-        //set the project
-        search.setProject(projectCode)
 
         if(!verifyQbicCode(projectCode)){
             //add log4j??
@@ -21,10 +19,10 @@ class RequestExperimentData implements ProjectSpecification{
             return null
         }
 
-        HashMap sampleMetaData = search.getSampleMetadata()
-        HashMap expMetadata = search.getExperimentMetadata()
+        search.setProject(projectCode)
 
-        [sampleMetaData,expMetadata]
+        output.metaDataForSamples(search.getSampleMetadata())
+        output.metaDataForExperiment(search.getExperimentMetadata())
     }
 
     boolean verifyQbicCode(String code){
