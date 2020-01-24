@@ -3,6 +3,7 @@ package life.qbic.metastats.filter
 import spock.lang.Specification
 
 class FilterExperimentDataImplSpecification extends Specification{
+
     def mockedMSMetadataPackageOutput = Mock(MSMetadataPackageOutput)
     def filterExperimentData = new FilterExperimentDataImpl(mockedMSMetadataPackageOutput)
 
