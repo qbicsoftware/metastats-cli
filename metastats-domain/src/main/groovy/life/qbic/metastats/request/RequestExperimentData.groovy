@@ -12,11 +12,23 @@ class RequestExperimentData implements ProjectSpecification{
 
     @Override
     def requestProjectMetadata(String projectCode) {
+        //set the project
+        search.setProject(projectCode)
 
+        if(!verifyQbicCode(projectCode)){
+            //add log4j??
+            println "The project code was not valid"
+            return null
+        }
+
+        HashMap sampleMetaData = search.getSampleMetadata()
+        HashMap expMetadata = search.getExperimentMetadata()
+
+        [sampleMetaData,expMetadata]
     }
 
-    def verifyQbicCode(String code){
-
+    boolean verifyQbicCode(String code){
+        code ==~"Q[A-X0-9]{4}"
     }
 
 }

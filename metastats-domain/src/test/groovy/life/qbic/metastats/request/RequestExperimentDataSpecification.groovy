@@ -28,14 +28,14 @@ class RequestExperimentDataSpecification extends Specification{
 
         then:
         noExceptionThrown()
-    }
+    }*/
 
     def "detect right QBiC project codes"(){
         given:
         def projectCode = "QXXXX"
 
         when:
-        boolean valid = requestDataClass.verifyQbicCode()
+        boolean valid = requestDataClass.verifyQbicCode(projectCode)
 
         then:
         valid
@@ -47,10 +47,12 @@ class RequestExperimentDataSpecification extends Specification{
         def projectCode2 = "QXXXXX" //too long
 
         when:
-        requestDataClass.verifyQbicCode()
+        def res1 = requestDataClass.verifyQbicCode(projectCode)
+        def res2 = requestDataClass.verifyQbicCode(projectCode2)
 
         then:
-        thrown(InvalidProjectCodeException)
+        !res1
+        !res2
     }
-*/
+
 }

@@ -1,6 +1,8 @@
 package life.qbic.metastats.cli;
 
 import life.qbic.cli.QBiCTool;
+import life.qbic.metastats.MetaStatsController;
+import life.qbic.metastats.request.RequestExperimentData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,9 +27,13 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         // get the parsed command-line arguments
         final MetaStatsCommand command = super.getCommand();
 
-        // TODO: do something useful with the obtained command.
-        //
+        MetaStatsController msc = new MetaStatsController(command.conf,command.projectCode);
 
+        //transfer openBis credentials to openBis Interface
+        //implement database add to RequestXXX constructor
+        //RequestExperimentData requestExperimentData = new RequestExperimentData()
+        //hand the project code to the request class
+        //msc.getProject();
     }
 
     // TODO: override the shutdown() method if you are implementing a daemon and want to take advantage of a shutdown hook for clean-up tasks
