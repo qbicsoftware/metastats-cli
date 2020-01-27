@@ -1,9 +1,12 @@
 package life.qbic.metastats.request
 
+import life.qbic.metastats.datamodel.MetaStatsExperiment
+import life.qbic.metastats.datamodel.MetaStatsSample
+
 interface DatabaseGateway {
 
-    void setProject(String projectCode)
-    HashMap<String,String> getExperimentMetadata()
-    HashMap<String,String> getSampleMetadata()
+    void getProject(String projectCode)
+    List<MetaStatsExperiment> getExperimentMetadata()
+    List<MetaStatsSample> getSampleMetadata() //HashMap<String,String>
 
 }

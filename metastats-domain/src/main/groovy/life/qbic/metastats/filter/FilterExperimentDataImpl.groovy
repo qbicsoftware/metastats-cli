@@ -12,7 +12,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         this.output = output
     }
 
-    def parse(){
+    def parseSchema(){
         new JsonSlurper().parseText(schema.text)
         //use it like .get("properties")
     }
@@ -28,7 +28,20 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     }
 
     def createMetaStatsMetadataPackage(HashMap<String,String> sampleMeta, HashMap<String,String> experimentMeta){
+        def jsonSchema = parseSchema()
+        def propMap = jsonSchema.get("properties")
+
+        String[] keys = propMap.keySet() as String[]
+        //todo how to map from openbis fields to schema fields? add values to schema
         //reduce raw metadata to fields required for metadata package
+
+    }
+
+    def handelFileNames(){
+
+    }
+
+    def validateSchema(){
 
     }
 }

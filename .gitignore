@@ -22,6 +22,8 @@ logs/
 
 # Other
 **/.factorypath
+*.properties
+*sampleOutput.txt
 
 # compiled Vaadin widgetsets
 src/main/webapp/VAADIN/widgetsets
