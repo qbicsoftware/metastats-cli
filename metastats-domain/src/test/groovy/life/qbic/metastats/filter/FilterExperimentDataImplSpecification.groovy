@@ -1,17 +1,6 @@
 package life.qbic.metastats.filter
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.search.SearchResult
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetchOptions
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
-import ch.systemsx.cisd.common.spring.HttpInvokerUtils
-import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.SampleFetchOption
-import ch.systemsx.cisd.openbis.generic.shared.basic.dto.ExperimentFetchOption
+
 import spock.lang.Specification
 
 class FilterExperimentDataImplSpecification extends Specification{
@@ -44,8 +33,11 @@ class FilterExperimentDataImplSpecification extends Specification{
     }*/
 
      def "loading schema successfully"(){
+         given:
+         MetaStatsMetadata m = new MetaStatsMetadata()
+
          when:
-         def res = filterExperimentData.parseSchema()
+         def res = m.getPropertiesFromSchema()
 
          //def list = res.get("properties")
          //list.each{key, val -> println "$key"}

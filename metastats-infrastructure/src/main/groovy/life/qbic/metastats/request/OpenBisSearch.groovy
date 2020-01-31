@@ -17,7 +17,6 @@ class OpenBisSearch implements DatabaseGateway{
 
 
     Project project
-    String projectCode
     IApplicationServerApi v3
     String sessionToken
 
@@ -88,19 +87,26 @@ class OpenBisSearch implements DatabaseGateway{
         return samples
     }
 
+
+//TODO  transform the seach in such a way that a metastats sample contains represents a preparation sample with properties of his and his parents
+// TODO and his childrens sample
     def assignPreparationSample(List<MetaStatsSample> samples){
         setPreparationCodeForParent(samples)
         samples.each { entity ->
-            entity.children.each { prepSample ->
-                setPreparationCodeForChildren(prepSample.code, prepSample.children)
+            entity.children.each { bioSample ->
+                bioSample.children.each { prepSample ->
+                    setPreparationCodeForChildren(prepSample.code, prepSample.children)
+                }
             }
         }
     }
 
     def setPreparationCodeForParent(List<MetaStatsSample> samples){
         samples.each { entity ->
-            entity.children.each { prepSample ->
-                entity.preparationSample << prepSample.code
+            entity.children.each { bioSample ->
+                bioSample.children.each { prepSample ->
+                    entity.preparationSample << prepSample.code
+                }
             }
         }
     }
