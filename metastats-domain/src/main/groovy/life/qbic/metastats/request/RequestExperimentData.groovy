@@ -19,10 +19,11 @@ class RequestExperimentData implements ProjectSpecification{
             return null
         }
 
-        search.setProject(projectCode)
+        search.getProject(projectCode)
 
-        output.metaDataForSamples(search.getSampleMetadata())
-        output.metaDataForExperiment(search.getExperimentMetadata())
+        output.metaDataForSamples(search.getSamplesWithMetadata())
+
+        output.metaDataForExperiment(search.getExperimentsWithMetadata())
     }
 
     boolean verifyQbicCode(String code){

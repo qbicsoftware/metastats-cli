@@ -1,6 +1,8 @@
 package life.qbic.metastats.filter
 
 import groovy.json.JsonSlurper
+import life.qbic.metastats.datamodel.MetaStatsExperiment
+import life.qbic.metastats.datamodel.MetaStatsSample
 
 //TODO use model schema from https://github.com/qbicsoftware/metastats-object-model/blob/master/model.schema.json needs CI but for now use a local copy of the model in the project
 class FilterExperimentDataImpl implements FilterExperimentData{
@@ -18,12 +20,12 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     }
 
     @Override
-    def filterSampleMetaData(HashMap<String, String> projectMetadata) {
+    def filterSampleMetaData(List<MetaStatsSample> projectMetadata) {
         return null
     }
 
     @Override
-    def filterExperimentMetaData(HashMap<String, String> projectMetadata) {
+    def filterExperimentMetaData(List<MetaStatsExperiment> projectMetadata) {
         return null
     }
 
@@ -44,4 +46,5 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     def validateSchema(){
 
     }
+
 }

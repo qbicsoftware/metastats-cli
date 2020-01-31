@@ -1,5 +1,7 @@
 package life.qbic.metastats
 
+import life.qbic.metastats.datamodel.MetaStatsExperiment
+import life.qbic.metastats.datamodel.MetaStatsSample
 import life.qbic.metastats.filter.FilterExperimentData
 import life.qbic.metastats.request.ExperimentDataOutput
 
@@ -11,13 +13,15 @@ class PrepareMetaData implements ExperimentDataOutput{
         filterExperimentDataInput = filterDataInput
     }
 
+
     @Override
-    def metaDataForSamples(HashMap<String, String> sampleMetadata) {
+    def metaDataForSamples(List<MetaStatsSample> sampleMetadata) {
         filterExperimentDataInput.filterSampleMetaData(sampleMetadata)
     }
 
     @Override
-    def metaDataForExperiment(HashMap<String, String> experimentMetadata) {
+    def metaDataForExperiment(List<MetaStatsExperiment> experimentMetadata) {
         filterExperimentDataInput.filterExperimentMetaData(experimentMetadata)
+
     }
 }

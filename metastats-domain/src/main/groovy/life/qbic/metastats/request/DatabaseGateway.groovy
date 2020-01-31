@@ -6,7 +6,7 @@ import life.qbic.metastats.datamodel.MetaStatsSample
 interface DatabaseGateway {
 
     void getProject(String projectCode)
-    List<MetaStatsExperiment> getExperimentMetadata()
-    List<MetaStatsSample> getSampleMetadata() //HashMap<String,String>
+    List<MetaStatsExperiment> getExperimentsWithMetadata()
+    List<MetaStatsSample> getSamplesWithMetadata() //HashMap<String,String>
 
 }

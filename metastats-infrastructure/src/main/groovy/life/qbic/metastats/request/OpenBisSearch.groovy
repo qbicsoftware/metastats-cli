@@ -9,51 +9,30 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetc
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
-import ch.systemsx.cisd.common.spring.HttpInvokerUtils
-
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 
 
 class OpenBisSearch implements DatabaseGateway{
 
-    String user
-    String password
-    String as_url
-    String sessionToken
-    IApplicationServerApi v3
+
     Project project
     String projectCode
+    IApplicationServerApi v3
+    String sessionToken
 
-
-    OpenBisSearch(String user, String password, as_url){
-        this.user = user
-        this.password = password
-        this.as_url = as_url
+    OpenBisSearch(IApplicationServerApi v3, String session){
+        this.v3 = v3
+        sessionToken = session
     }
-
-    //todo add these two methods into interface??
-    def setupConnection(){
-        // get a reference to AS API
-        v3 = HttpInvokerUtils.createServiceStub(
-                IApplicationServerApi.class, as_url + IApplicationServerApi.SERVICE_URL, 10000)
-        sessionToken = v3.login(user, password)
-    }
-
-    def logout(){
-        // logout to release the resources related with the session
-        v3.logout(sessionToken);
-    }
-
 
     @Override
     void getProject(String projectCode) {
 
-        // invoke other API methods using the session token, for instance search for spaces
+        def fetchOptions = new ProjectFetchOptions()
+
         def criteria = new ProjectSearchCriteria()
         criteria.withCode().thatEquals(projectCode)
-
-        def fetchoptions = new ProjectFetchOptions()
 
         def experiment = new ExperimentFetchOptions()
         experiment.withProperties()
@@ -66,14 +45,14 @@ class OpenBisSearch implements DatabaseGateway{
 
         experiment.withSamplesUsing(sample)
 
-        fetchoptions.withExperimentsUsing(experiment)
+        fetchOptions.withExperimentsUsing(experiment)
 
-        SearchResult<Project> resProject = v3.searchProjects(sessionToken, criteria, fetchoptions)
+        SearchResult<Project> resProject = v3.searchProjects(sessionToken, criteria, fetchOptions)
         project = resProject.getObjects().get(0)
     }
 
     @Override
-    List<MetaStatsExperiment> getExperimentMetadata() {
+    List<MetaStatsExperiment> getExperimentsWithMetadata() {
         List<MetaStatsExperiment> experiments = []
 
         project.getExperiments().each { exp ->
@@ -86,55 +65,88 @@ class OpenBisSearch implements DatabaseGateway{
             experiments.add(experiment)
         }
 
-        return null
+        return experiments
     }
 
     List<String> getSamplesForExperiment(Experiment exp){
         List<String> sampleCodes = []
 
         exp.getSamples().each {
-            sampleCodes.add(it.code)
+           sampleCodes.add(it.code)
         }
-
         return sampleCodes
     }
 
     @Override
-    List getSampleMetadata() {
+    List<MetaStatsSample> getSamplesWithMetadata() {
+        //find all biological samples with their children and return them as metastatssample objects
+        //returning the biological sample as highest level sample is sufficient since all other samples
+        //can be reached through its children
+        List<MetaStatsSample> samples = findBiologicalEntity()
+        assignPreparationSample(samples)
 
-        project.getExperiments().each { exp ->
-            if(exp.getCode() =~ "Q[A-X0-9]{4}E1"){
-                def openBisSamples = exp.getSamples()
-                return findAllSamples(openBisSamples, exp.getType().getCode())
+        return samples
+    }
+
+    def assignPreparationSample(List<MetaStatsSample> samples){
+        setPreparationCodeForParent(samples)
+        samples.each { entity ->
+            entity.children.each { prepSample ->
+                setPreparationCodeForChildren(prepSample.code, prepSample.children)
             }
-
         }
-        println "No samples were found for the project $projectCode"
-        return null
+    }
+
+    def setPreparationCodeForParent(List<MetaStatsSample> samples){
+        samples.each { entity ->
+            entity.children.each { prepSample ->
+                entity.preparationSample << prepSample.code
+            }
+        }
+    }
+
+    def setPreparationCodeForChildren(String prepCode, List<MetaStatsSample> samples){
+
+        samples.each { child ->
+            child.preparationSample << prepCode
+            if(child.children != null){
+                setPreparationCodeForChildren(prepCode,child.children)
+            }
+        }
     }
 
 
-    List<MetaStatsSample> findAllSamples(List<Sample> sample, String experimentType){
+    List<MetaStatsSample> findBiologicalEntity(){
+        List samples = []
+
+        project.getExperiments().each { exp ->
+            //only do it for the Experiment with Biological Samples since from here all other samples can be found
+            if(exp.getCode() =~ "Q[A-X0-9]{4}E2"){
+                def openBisSamples = exp.getSamples()
+                def exp_samples =  findBiologicalSamplesWithChildren(openBisSamples)
+                samples = exp_samples
+            }
+        }
+
+        return samples
+    }
+
+
+    List<MetaStatsSample> findBiologicalSamplesWithChildren(List<Sample> samples){
 
         List<MetaStatsSample> allSamples = []
 
-        sample.each{
+        samples.each{sample ->
             //create sample object
-            String code = it.code
-            String type = it.type.code
-            List<MetaStatsSample> children = null
-            Map<String,String> properties = it.getProperties()
+            String code = sample.code
+            String type = sample.type.code
+            Map<String,String> properties = sample.getProperties()
 
-            if (it.getChildren() != null){
-                children = findAllSamples(it.getChildren(),experimentType)
-            }
+            List<MetaStatsSample> children = findBiologicalSamplesWithChildren(sample.getChildren())
 
-            MetaStatsSample mss = new MetaStatsSample(code,type,children,properties)
-            allSamples.add(mss)
+            allSamples << new MetaStatsSample(code,type,children,properties)
         }
-
-        allSamples
+        return allSamples
     }
-
 
 }

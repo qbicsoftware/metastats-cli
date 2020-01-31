@@ -5,14 +5,20 @@ import groovy.json.JsonSlurper
 class MetaStatsController {
 
     String conf
-    String project
+    String projectCode
+    ProjectSpecification spec
 
-    MetaStatsController(String configFile, String projectCode){
+    MetaStatsController(String configFile, String projectCode, ProjectSpecification spec){
         conf = configFile
-        project = projectCode
+        this.projectCode = projectCode
+        this.spec = spec
     }
 
     def parse(){
         new JsonSlurper().parseText(new File(conf).text)
+    }
+
+    def findProject(){
+        spec.requestProjectMetadata(projectCode)
     }
 }
