@@ -7,8 +7,17 @@ import spock.lang.Specification
 
 class OpenBisSearchSpecification extends Specification{
 
-    OpenBisSession session = new OpenBisSession("user","pw","url")
 
+   /** def "Retrieve all Samples"(){
+        OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
+        search.getProject("QFSVI")
+
+        when:
+        def res = search.getSamplesWithMetadata()
+
+        then:
+        res.size() == 8
+    }*/
 
    /** def "find all biological entities"(){
         given:

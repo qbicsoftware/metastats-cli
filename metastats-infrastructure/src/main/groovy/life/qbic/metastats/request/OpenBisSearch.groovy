@@ -41,6 +41,7 @@ class OpenBisSearch implements DatabaseGateway{
         sample.withProperties()
         sample.withType()
         sample.withChildrenUsing(sample)
+        sample.withParentsUsing(sample)
 
         experiment.withSamplesUsing(sample)
 
@@ -78,80 +79,161 @@ class OpenBisSearch implements DatabaseGateway{
 
     @Override
     List<MetaStatsSample> getSamplesWithMetadata() {
-        //find all biological samples with their children and return them as metastatssample objects
-        //returning the biological sample as highest level sample is sufficient since all other samples
-        //can be reached through its children
         List<MetaStatsSample> samples = findBiologicalEntity()
-        assignPreparationSample(samples)
+        //assignPreparationSample(entitySamples)
 
         return samples
-    }
-
-
-    def assignPreparationSample(List<MetaStatsSample> samples){
-        setPreparationCodeForParent(samples)
-        samples.each { entity ->
-            entity.children.each { bioSample ->
-                bioSample.children.each { prepSample ->
-                    setPreparationCodeForChildren(prepSample.code, prepSample.children)
-                }
-            }
-        }
-    }
-
-    def setPreparationCodeForParent(List<MetaStatsSample> samples){
-        samples.each { entity ->
-            entity.children.each { bioSample ->
-                bioSample.children.each { prepSample ->
-                    entity.preparationSample << prepSample.code
-                }
-            }
-        }
-    }
-
-    def setPreparationCodeForChildren(String prepCode, List<MetaStatsSample> samples){
-
-        samples.each { child ->
-            child.preparationSample << prepCode
-            if(child.children != null){
-                setPreparationCodeForChildren(prepCode,child.children)
-            }
-        }
     }
 
 
     List<MetaStatsSample> findBiologicalEntity(){
         List samples = []
 
-        project.getExperiments().each { exp ->
+        project.experiments.each { exp ->
+            println exp.code
             //only do it for the Experiment with Biological Samples since from here all other samples can be found
-            if(exp.getCode() =~ "Q[A-X0-9]{4}E2"){
-                def openBisSamples = exp.getSamples()
-                def exp_samples =  findAllSampleChildren(openBisSamples)
-                samples = exp_samples
+            if(exp.code == project.code+"E2"){
+                println "heeeeeeere"
+                List<Sample> openBisSamples = exp.getSamples()
+                List<MetaStatsSample> exp_samples = getPreparationSamples(openBisSamples)
+               // samples = exp_samples
             }
         }
-
         return samples
     }
 
 
-    List<MetaStatsSample> findAllSampleChildren(List<Sample> biologicalEntitySamples){
-
+    def getPreparationSamples(List<Sample> samples){
         List<MetaStatsSample> allSamples = []
+        List<String> visited = []
 
-        biologicalEntitySamples.each{sample ->
+        samples.each{sample ->
             //create sample object
             String code = sample.code
             String type = sample.type.code
             println type+" is the sample type"
-            Map<String,String> properties = sample.getProperties()
 
-            List<MetaStatsSample> children = findAllSampleChildren(sample.getChildren())
+            if(type == "Q_TEST_SAMPLE"){
+                println "found test sample"
+                println code
+                visited.add(sample.code)
 
-            allSamples << new MetaStatsSample(code,type,children,properties)
+                //get parent samples
+                List parents = getAllParents(sample)
+                //get children samples
+                List children = getAllChildren(sample)
+
+                //concatenate list and put is as children list
+                allSamples << new MetaStatsSample(code, type, parents+children, properties)
+            }
+            else{
+                //nullpointer??
+                getPreparationSamples(sample.children)
+            }
         }
+
         return allSamples
     }
+
+    List<MetaStatsSample> getAllParents(Sample preparationSample){
+        List parents = []
+        println " error in parent"
+
+        preparationSample.parents.each {parent->
+            println "i am parent"+parent.type.code
+            MetaStatsSample parentSample = new MetaStatsSample(parent.code, parent.type.code,parent.properties)
+            parents.add(parentSample)
+
+            if(parent.parents != null && parent.parents.get(0) instanceof Sample){
+                parents += getAllParents(parent)
+            }
+        }
+
+        return parents
+    }
+
+    List<MetaStatsSample> getAllChildren(Sample preparationSample){
+        print "error in child"
+
+        List children = []
+
+        preparationSample.children.each {child->
+            println "i am child"+child.type.code
+            MetaStatsSample childSample = new MetaStatsSample(child.code, child.type.code,child.properties)
+            children.add(childSample)
+
+            if(child.children != null && child.children.get(0) instanceof Sample){
+                children += getAllChildren(child)
+            }
+        }
+
+        return children
+    }
+
+
+    /**
+     *    List<MetaStatsSample> findBiologicalEntity(){*         List samples = []
+     *
+     *         project.getExperiments().each { exp ->
+     *             //only do it for the Experiment with Biological Samples since from here all other samples can be found
+     *             if(exp.getCode() =~ "Q[A-X0-9]{4}E2"){*                 def openBisSamples = exp.getSamples()
+     *                 def exp_samples =  findAllSampleChildren(openBisSamples)
+     *                 samples = exp_samples
+     *}
+     *         }
+     *
+     *         resamples
+     *     }
+     * def assignPreparationSample(List<MetaStatsSample> samples){
+     setPreparationCodeForParent(samples)
+     samples.each { entity ->
+     entity.children.each { bioSample ->
+     bioSample.children.each { prepSample ->
+     setPreparationCodeForChildren(prepSample.code, prepSample.children)
+     }
+     }
+     }
+     }
+
+     def setPreparationCodeForParent(List<MetaStatsSample> samples){
+     samples.each { entity ->
+     entity.children.each { bioSample ->
+     bioSample.children.each { prepSample ->
+     entity.preparationSample << prepSample.code
+     }
+     }
+     }
+     }
+
+     def setPreparationCodeForChildren(String prepCode, List<MetaStatsSample> samples){
+
+     samples.each { child ->
+     child.preparationSample << prepCode
+     if(child.children != null){
+     setPreparationCodeForChildren(prepCode,child.children)
+     }
+     }
+
+     List<MetaStatsSample> findAllSampleChildren(List<Sample> biologicalEntitySamples){
+
+     List<MetaStatsSample> allSamples = []
+
+     biologicalEntitySamples.each{sample ->
+     //create sample object
+     String code = sample.code
+     String type = sample.type.code
+     println type+" is the sample type"
+
+
+     Map<String,String> properties = sample.getProperties()
+
+     List<MetaStatsSample> children = findAllSampleChildren(sample.getChildren())
+
+     allSamples << new MetaStatsSample(code,type,children,properties)
+     }
+     return allSamples
+     }
+     }*/
+
 
 }
