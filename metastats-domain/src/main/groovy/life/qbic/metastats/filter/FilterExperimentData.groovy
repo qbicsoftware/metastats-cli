@@ -5,7 +5,5 @@ import life.qbic.metastats.datamodel.MetaStatsSample
 
 interface FilterExperimentData {
 
-    def filterSampleMetaData(List<MetaStatsSample> projectMetadata)
-    def filterExperimentMetaData(List<MetaStatsExperiment> projectMetadata)
-
+    def filterProjectMetaData(List<MetaStatsSample> samples, List<MetaStatsExperiment> experiments)
 }

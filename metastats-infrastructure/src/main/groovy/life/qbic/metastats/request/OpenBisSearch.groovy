@@ -88,8 +88,6 @@ class OpenBisSearch implements DatabaseGateway{
     }
 
 
-//TODO  transform the seach in such a way that a metastats sample contains represents a preparation sample with properties of his and his parents
-// TODO and his childrens sample
     def assignPreparationSample(List<MetaStatsSample> samples){
         setPreparationCodeForParent(samples)
         samples.each { entity ->
@@ -129,7 +127,7 @@ class OpenBisSearch implements DatabaseGateway{
             //only do it for the Experiment with Biological Samples since from here all other samples can be found
             if(exp.getCode() =~ "Q[A-X0-9]{4}E2"){
                 def openBisSamples = exp.getSamples()
-                def exp_samples =  findBiologicalSamplesWithChildren(openBisSamples)
+                def exp_samples =  findAllSampleChildren(openBisSamples)
                 samples = exp_samples
             }
         }
@@ -138,17 +136,18 @@ class OpenBisSearch implements DatabaseGateway{
     }
 
 
-    List<MetaStatsSample> findBiologicalSamplesWithChildren(List<Sample> samples){
+    List<MetaStatsSample> findAllSampleChildren(List<Sample> biologicalEntitySamples){
 
         List<MetaStatsSample> allSamples = []
 
-        samples.each{sample ->
+        biologicalEntitySamples.each{sample ->
             //create sample object
             String code = sample.code
             String type = sample.type.code
+            println type+" is the sample type"
             Map<String,String> properties = sample.getProperties()
 
-            List<MetaStatsSample> children = findBiologicalSamplesWithChildren(sample.getChildren())
+            List<MetaStatsSample> children = findAllSampleChildren(sample.getChildren())
 
             allSamples << new MetaStatsSample(code,type,children,properties)
         }

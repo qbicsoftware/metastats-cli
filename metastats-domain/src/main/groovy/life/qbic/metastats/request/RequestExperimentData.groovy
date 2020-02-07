@@ -15,6 +15,7 @@ class RequestExperimentData implements ProjectSpecification{
 
         if(!verifyQbicCode(projectCode)){
             //add log4j??
+            //todo show in commandline
             println "The project code was not valid"
             return null
         }
@@ -26,7 +27,7 @@ class RequestExperimentData implements ProjectSpecification{
         output.metaDataForExperiment(search.getExperimentsWithMetadata())
     }
 
-    boolean verifyQbicCode(String code){
+    static boolean verifyQbicCode(String code){
         code ==~"Q[A-X0-9]{4}"
     }
 

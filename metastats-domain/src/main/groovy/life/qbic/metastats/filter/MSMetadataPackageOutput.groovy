@@ -2,6 +2,6 @@ package life.qbic.metastats.filter
 
 interface MSMetadataPackageOutput {
 
-    def setMetaStatsMetadataPackage()
+    def createMetaStatsMetadataPackage(HashMap<String,String> properties)
 
 }

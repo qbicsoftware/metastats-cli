@@ -29,14 +29,14 @@
     "sequencingFacilityId": {
       "description": "Name of sample given by the Sequencing Facility",
       "type": "string",
-      "openBisTerm": "EXTERNAL_DB_ID",
+      "openBisTerm": "Q_SECONDARY_NAME",
       "sampleLevel": "Q_TEST_SAMPLE"
     },
     "sampleName": {
       "description": "Name of the sample written on the tube (given by the customer)",
       "type": "string",
       "openBisTerm": "Q_SECONDARY_NAME",
-      "sampleLevel": "Q_TEST_SAMPLE"
+      "sampleLevel": "^Q_*_RUN$"
     },
     "individual": {
       "description": "Individual living organism or cell line",
@@ -134,7 +134,8 @@
       "description": "Type of molecule extracted from biological material",
       "type": "string",
       "enum": ["Small Molecules","Ribosomal RNA","RNA","Proteins","Phosphoproteins","Phosphopeptides","Phospholipids","Peptides","Messenger RNA","Lipids","Glycopeptides","Glycans","DNA","Circulating free DNA","Cell Lysate","Carbohydrates"],
-      "openBisTerm": "Q_SAMPLE_TYPES"
+      "openBisTerm": "Q_SAMPLE_TYPE",
+      "sampleLevel": "Q_TEST_SAMPLE"
     },
     "integrityNumber": {
       "description": "RIN or DIN of the biological material",
