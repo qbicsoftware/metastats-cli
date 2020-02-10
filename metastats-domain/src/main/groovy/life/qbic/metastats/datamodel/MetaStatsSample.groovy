@@ -11,7 +11,9 @@ class MetaStatsSample {
     MetaStatsSample(String code, String type, List<MetaStatsSample> samples, Map<String,String> properties){
         this.code = code
         this.type = type
-        relatives = samples
+        if(type == "Q_TEST_SAMPLE"){
+            relatives = samples
+        }
         this.properties = properties
     }
 

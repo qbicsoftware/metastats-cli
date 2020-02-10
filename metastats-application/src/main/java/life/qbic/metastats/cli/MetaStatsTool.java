@@ -1,10 +1,15 @@
 package life.qbic.metastats.cli;
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi;
 import life.qbic.cli.QBiCTool;
+import life.qbic.metastats.MetaStatsPresenter;
+import life.qbic.metastats.PrepareMetaData;
 import life.qbic.metastats.request.*;
+import life.qbic.metastats.filter.*;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Map;
 
 /**
  * Implementation of MetaStats-CLI. Its command-line arguments are contained in instances of {@link MetaStatsCommand}.
@@ -26,13 +31,28 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
     public void execute() {
         // get the parsed command-line arguments
         final MetaStatsCommand command = super.getCommand();
-        /**OpenBisSession session =
-        DatabaseGateway db = new OpenBisSearch(IApplicationServerApi,"")
-        ProjectSpecification spec = new RequestExperimentData()
+        // get properties
+        ToolProperties props = new ToolProperties(command.conf);
+        Map credentials = (Map) props.parse();
 
-        MetaStatsController msc = new MetaStatsController(command.conf,command.projectCode);*/
+        //define output classes
+        MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter();
+        PropertiesMapper mapper = new OpenBisMapper();
+        //define use case
+        FilterExperimentData filter = new FilterExperimentDataImpl(metaStatsPresenter,mapper);
+
+        //define db classes
+        OpenBisSession session = new OpenBisSession((String) credentials.get("user"),
+                (String) credentials.get("password"),
+                (String) credentials.get("as_url"));
+        //todo add dss_url
+        DatabaseGateway db = new OpenBisSearch(session.getV3(),session.getSessionToken());
+        //define input for connector class
+        ExperimentDataOutput experimentData = new PrepareMetaData(filter);
+        //define use case
+        ProjectSpecification spec = new RequestExperimentData(db,experimentData);
+
+        spec.requestProjectMetadata(command.projectCode);
 
     }
-
-    // TODO: override the shutdown() method if you are implementing a daemon and want to take advantage of a shutdown hook for clean-up tasks
 }

@@ -7,9 +7,7 @@ import spock.lang.Specification
 
 class OpenBisSearchSpecification extends Specification{
 
-
-
-   /** def "find all biological entities"(){
+    /**def "Retrieve all Preparation Samples"(){
         given:
         OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
         search.getProject("QFSVI")
@@ -21,38 +19,22 @@ class OpenBisSearchSpecification extends Specification{
         res.size() == 8
     }
 
-    def "set preparation sample code to parent of preparation sample"(){
+    def "Retrieve all Children of a Preparation Sample"(){
         given:
         OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
         search.getProject("QFSVI")
 
         when:
-        def res = search.findBiologicalEntity()
-        search.setPreparationCodeForParent(res)
+        List<MetaStatsSample> res = search.findBiologicalEntity()
+
 
         then:
         res.each {
-            def prepSample = it.children.get(0)
-            it.preparationSample.get(0) == prepSample.code
+            if(it.code == "QFSVI010AP"){
+                it.relatives.size() == 3
+            }
         }
-    }
+    }*/
 
-    def "set preparation sample code to children of preparation sample"(){
-        given:
-        OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
-        search.getProject("QFSVI")
-
-        when:
-        def res = search.findBiologicalEntity()
-        def prepSample = res.get(0).children.get(0)
-
-        search.setPreparationCodeForChildren(prepSample.code,prepSample.children)
-
-        then:
-        prepSample.children.each {
-            it.preparationSample.get(0) == "QFSVI001AQ"
-        }
-    }
- */
 
 }
