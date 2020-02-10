@@ -66,6 +66,22 @@ class OpenBisMapper implements PropertiesMapper{
         return metaStatsProperties
     }
 
+    Map<String,String> mapExpDesignProperties(Map<String,String> openBisProperties){
+        "Q_SECONDARY_NAME"
+        return null
+    }
+
+    Map<String,String> mapMeasurementProperties(Map<String,String> openBisProperties){
+        "Q_SEQUENCER_DEVICE"
+        //optional: Q_SEQUENCING_MODE, Q_SEQUENCING_TYPE
+        return null
+    }
+
+    Map<String,String> mapProjectDetails(Map<String,String> openBisProperties){
+        "Q_EXPERIMENTAL_SETUP"
+        return null
+
+    }
 
 
 }

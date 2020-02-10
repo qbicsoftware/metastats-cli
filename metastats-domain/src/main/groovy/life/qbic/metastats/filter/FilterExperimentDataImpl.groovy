@@ -17,15 +17,14 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     @Override
     def filterProjectMetaData(List<MetaStatsSample> samples, List<MetaStatsExperiment> experiments) {
 
-        samples.each { biologicalSample ->
+        samples.each { prepSamples ->
             //map the metadata terms first (otherwise duplicate names make problems later)
-            mapToMetaStatsTerms(biologicalSample)
+            mapToMetaStatsTerms(prepSamples)
             //organize data so that one preparation sample has assigned all the meta data
         }
 
         experiments.each { experiment ->
-           // mapToMetaStatsTerms(experiment)
-            print "null"
+           mapToMetaStatsTerms(experiment) //todo remember: samples of experiment also need to be mapped to prep samples
         }
         return null
     }
@@ -34,31 +33,45 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
         Map<String,String> meta = new HashMap<>()
 
-        if (sample.type == "Q_BIOLOGICAL_ENTITY"){
-            meta.put("individual",sample.code)
-            add(meta, mapper.mapEntityProperties(sample.properties))
-        }
-        if (sample.type == "Q_BIOLOGICAL_SAMPLE"){
-            meta.put("extractCode",sample.code)
-            add(meta, mapper.mapBioSampleProperties(sample.properties))
-        }
         if (sample.type == "Q_TEST_SAMPLE"){
             meta.put("samplePreparationId",sample.code)
             add(meta,mapper.mapTestSampleProperties(sample.properties))
         }
-        if (sample.type =~ "^Q.+_RUN\$"){
-            add(meta,mapper.mapRunProperties(sample.properties))
+
+        sample.relatives.each {
+            if (it.type == "Q_BIOLOGICAL_ENTITY"){
+                meta.put("individual",it.code)
+                add(meta, mapper.mapEntityProperties(it.properties))
+            }
+            if (it.type == "Q_BIOLOGICAL_SAMPLE"){
+                meta.put("extractCode",it.code)
+                add(meta, mapper.mapBioSampleProperties(it.properties))
+            }
+
+            if (it.type =~ "^Q.+_RUN\$"){
+                add(meta,mapper.mapRunProperties(it.properties))
+            }
         }
+
         //todo add dataset to download
         /**if (sample.type == "Q_DATA_SET"){ //??? what is the property type?
            //todo add XXX "filename"
             //multiple files per sample are possible
         }*/
 
-        if (sample.relatives != null){
-            sample.relatives.each { child ->
-                mapToMetaStatsTerms(child)
-            }
+    }
+
+    def mapToMetaStatsTerms(MetaStatsExperiment experiment) {
+        Map<String,String> meta = new HashMap<>()
+
+        if (experiment.type == "Q_EXPERIMENTAL_DESIGN"){
+            add(meta, mapper.mapExpDesignProperties(experiment.properties))
+        }
+        if (experiment.type =~ "Q_[A-Z]*_MEASUREMENT"){
+            add(meta, mapper.mapMeasurementProperties(experiment.properties))
+        }
+        if (experiment.type == "Q_PROJECT_DETAILS"){
+            add(meta, mapper.mapProjectDetails(experiment.properties))
         }
     }
 
