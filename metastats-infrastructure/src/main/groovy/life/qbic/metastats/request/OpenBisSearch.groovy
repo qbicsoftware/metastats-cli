@@ -9,6 +9,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetc
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
+
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 
@@ -87,64 +88,54 @@ class OpenBisSearch implements DatabaseGateway{
 
 
     List<MetaStatsSample> findBiologicalEntity(){
-        List samples = []
+        List prepSamples = []
+        List<Experiment> experiments = project.experiments
+        List<Sample> openBisSamples
 
-        project.experiments.each { exp ->
-            println exp.code
-            //only do it for the Experiment with Biological Samples since from here all other samples can be found
-            if(exp.code == project.code+"E2"){
-                println "heeeeeeere"
-                List<Sample> openBisSamples = exp.getSamples()
-                List<MetaStatsSample> exp_samples = getPreparationSamples(openBisSamples)
-               // samples = exp_samples
-            }
-        }
-        return samples
+       experiments.each { exp ->
+           //only do it for the Experiment with Biological Samples since from here all other samples can be found
+           if (exp.code == project.code+"E2" && exp.getSamples() != null){ //todo manchmal gibts e2 2x --> only consider exp with samples
+               openBisSamples = exp.getSamples()
+               prepSamples += getPreparationSamples(openBisSamples)
+           }
+       }
+        return prepSamples
     }
 
 
-    def getPreparationSamples(List<Sample> samples){
+    List<MetaStatsSample> getPreparationSamples(List<Sample> samples){
         List<MetaStatsSample> allSamples = []
-        List<String> visited = []
 
         samples.each{sample ->
             //create sample object
             String code = sample.code
             String type = sample.type.code
-            println type+" is the sample type"
 
             if(type == "Q_TEST_SAMPLE"){
-                println "found test sample"
-                println code
-                visited.add(sample.code)
-
                 //get parent samples
                 List parents = getAllParents(sample)
                 //get children samples
                 List children = getAllChildren(sample)
 
                 //concatenate list and put is as children list
-                allSamples << new MetaStatsSample(code, type, parents+children, properties)
+                MetaStatsSample mss = new MetaStatsSample(code, type, parents+children, sample.properties)
+                allSamples << mss
             }
             else{
-                //nullpointer??
-                getPreparationSamples(sample.children)
+                allSamples += getPreparationSamples(sample.children)
             }
         }
-
         return allSamples
     }
 
     List<MetaStatsSample> getAllParents(Sample preparationSample){
         List parents = []
-        println " error in parent"
 
         preparationSample.parents.each {parent->
-            println "i am parent"+parent.type.code
             MetaStatsSample parentSample = new MetaStatsSample(parent.code, parent.type.code,parent.properties)
             parents.add(parentSample)
 
-            if(parent.parents != null && parent.parents.get(0) instanceof Sample){
+            if(parent.parents != null){//parent.parents.size() > 0 && parent.parents.get(0) instanceof Sample){
                 parents += getAllParents(parent)
             }
         }
@@ -153,16 +144,13 @@ class OpenBisSearch implements DatabaseGateway{
     }
 
     List<MetaStatsSample> getAllChildren(Sample preparationSample){
-        print "error in child"
-
         List children = []
 
         preparationSample.children.each {child->
-            println "i am child"+child.type.code
             MetaStatsSample childSample = new MetaStatsSample(child.code, child.type.code,child.properties)
             children.add(childSample)
 
-            if(child.children != null && child.children.get(0) instanceof Sample){
+            if(child.children.size() > 0 && child.children.get(0) instanceof Sample){
                 children += getAllChildren(child)
             }
         }

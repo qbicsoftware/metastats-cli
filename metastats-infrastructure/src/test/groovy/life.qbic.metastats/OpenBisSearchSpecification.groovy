@@ -8,12 +8,13 @@ import spock.lang.Specification
 class OpenBisSearchSpecification extends Specification{
 
 
-   /** def "Retrieve all Samples"(){
+   /**def "Retrieve all Samples"(){
+        given:
         OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
-        search.getProject("QFSVI")
+        search.getProject("XXXX")
 
         when:
-        def res = search.getSamplesWithMetadata()
+        def res = search.findBiologicalEntity()
 
         then:
         res.size() == 8
