@@ -25,6 +25,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
         experiments.each { experiment ->
            // mapToMetaStatsTerms(experiment)
+            print "null"
         }
         return null
     }
@@ -54,8 +55,8 @@ class FilterExperimentDataImpl implements FilterExperimentData{
             //multiple files per sample are possible
         }*/
 
-        if (sample.children != null){
-            sample.children.each {child ->
+        if (sample.relatives != null){
+            sample.relatives.each { child ->
                 mapToMetaStatsTerms(child)
             }
         }

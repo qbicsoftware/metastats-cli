@@ -1,6 +1,6 @@
 package life.qbic.metastats
 
-
+import life.qbic.metastats.datamodel.MetaStatsSample
 import life.qbic.metastats.request.OpenBisSearch
 import life.qbic.metastats.request.OpenBisSession
 import spock.lang.Specification
@@ -8,17 +8,6 @@ import spock.lang.Specification
 class OpenBisSearchSpecification extends Specification{
 
 
-   /**def "Retrieve all Samples"(){
-        given:
-        OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
-        search.getProject("XXXX")
-
-        when:
-        def res = search.findBiologicalEntity()
-
-        then:
-        res.size() == 8
-    }*/
 
    /** def "find all biological entities"(){
         given:

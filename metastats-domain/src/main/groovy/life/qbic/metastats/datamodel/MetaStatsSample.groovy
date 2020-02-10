@@ -4,14 +4,14 @@ class MetaStatsSample {
 
     String type
     String code
-    List<MetaStatsSample> children = null
+    List<MetaStatsSample> relatives = null //only collect relatives for preparation sample
     Map<String,String> properties
-    List<String> preparationSample = []
+    //List<String> preparationSample = []
 
     MetaStatsSample(String code, String type, List<MetaStatsSample> samples, Map<String,String> properties){
         this.code = code
         this.type = type
-        children = samples
+        relatives = samples
         this.properties = properties
     }
 
