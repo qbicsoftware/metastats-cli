@@ -73,6 +73,12 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         if (experiment.type == "Q_PROJECT_DETAILS"){
             add(meta, mapper.mapProjectDetails(experiment.properties))
         }
+        if (experiment.type == "Q_SAMPLE_EXTRACTION"){
+            add(meta, mapper.mapSampleExtraction(experiment.properties))
+        }
+        if (experiment.type == "Q_SAMPLE_PREPARATION"){
+            add(meta, mapper.mapSamplePrep(experiment.properties))
+        }
     }
 
     static def add(Map target, Map values){

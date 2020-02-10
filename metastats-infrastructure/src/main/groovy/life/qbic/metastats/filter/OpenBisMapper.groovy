@@ -67,7 +67,7 @@ class OpenBisMapper implements PropertiesMapper{
     }
 
     Map<String,String> mapExpDesignProperties(Map<String,String> openBisProperties){
-        "Q_SECONDARY_NAME"
+        "Q_EXPERIMENTAL_SETUP"
         return null
     }
 
@@ -83,5 +83,16 @@ class OpenBisMapper implements PropertiesMapper{
 
     }
 
+    Map<String,String> mapSampleExtraction(Map<String,String> openBisProperties){
+        "Q_EXPERIMENTAL_SETUP"
+        return null
+
+    }
+
+    Map<String,String> mapSamplePrep(Map<String,String> openBisProperties){
+        "Q_EXPERIMENTAL_SETUP"
+        return null
+
+    }
 
 }

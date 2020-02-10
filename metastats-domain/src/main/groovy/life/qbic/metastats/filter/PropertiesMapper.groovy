@@ -14,6 +14,10 @@ interface PropertiesMapper {
 
     Map<String,String> mapExpDesignProperties(Map<String,String> openBisProperties)
 
+    Map<String,String> mapSampleExtraction(Map<String,String> openBisProperties)
+
+    Map<String,String> mapSamplePrep(Map<String,String> openBisProperties)
+
     Map<String,String> mapMeasurementProperties(Map<String,String> openBisProperties)
 
     Map<String,String> mapProjectDetails(Map<String,String> openBisProperties)
