@@ -19,8 +19,8 @@ class OpenBisMapperSpecification extends Specification{
 
         then:
         res == ["species":"value","sex":"value"]
-        res.size() == 2
-        props.size() == 3
+        assert res.size() == 2
+        assert props.size() == 3
     }
 
     def "mapping of biological sample properties is successful"(){
@@ -35,7 +35,7 @@ class OpenBisMapperSpecification extends Specification{
 
         then:
         res == ["tissue":"value"]
-        res.size() == 1
+        assert res.size() == 1
     }
 
     def "mapping of test sample properties is successful"(){
@@ -50,7 +50,7 @@ class OpenBisMapperSpecification extends Specification{
 
         then:
         res == ["analyte":"value","sequencingFacilityId":"value","integrityNumber":"value"]
-        res.size() == 3
+        assert res.size() == 3
     }
 
     def "mapping of sample runs properties is successful"(){
@@ -65,6 +65,6 @@ class OpenBisMapperSpecification extends Specification{
 
         then:
         res == ["sampleName":"value"]
-        res.size() == 1
+        assert res.size() == 1
     }
 }

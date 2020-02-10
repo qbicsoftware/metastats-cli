@@ -59,6 +59,8 @@ class OpenBisSearch implements DatabaseGateway{
         project.getExperiments().each { exp ->
             String type = exp.type.code
             List<String> samples = getSamplesForExperiment(exp)
+            println samples
+
             Map<String,String> props = exp.properties
 
             MetaStatsExperiment experiment = new MetaStatsExperiment(type,samples,props)
@@ -73,10 +75,11 @@ class OpenBisSearch implements DatabaseGateway{
         List<String> sampleCodes = []
 
         exp.getSamples().each {
-           sampleCodes.add(it.code)
+            sampleCodes += it.code
         }
         return sampleCodes
     }
+
 
     @Override
     List<MetaStatsSample> getSamplesWithMetadata() {

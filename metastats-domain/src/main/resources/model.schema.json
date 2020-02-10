@@ -35,8 +35,9 @@
     "sampleName": {
       "description": "Name of the sample written on the tube (given by the customer)",
       "type": "string",
+      "pattern": "^Q_[A-Z]*_RUN$",
       "openBisTerm": "Q_SECONDARY_NAME",
-      "sampleLevel": "^Q_*_RUN$"
+      "sampleLevel": "^Q_[A-Z]*_RUN$"
     },
     "individual": {
       "description": "Individual living organism or cell line",
@@ -161,7 +162,9 @@
       "description": "Name of the sequencer device",
       "type": "string",
       "enum": ["ThermoFisher Ion PGM System at Pathology (UKT)","Not specified sequencer instrument","Illumina MiSeq at MPIDB","Illumina MiSeq at IMGAG","Illumina HiSeq 2500 at unspecified lab","Illumina HiSeq 2500 at IMGAG","Illumina HiSeq 2500 at CeGaT","Illumina HiSeq 2000 at unspecified lab","Illumina HiSeq 2000 at MPIDB"],
-      "openBisTerm": "Q_SEQUENCER_DEVICE"
+      "openBisTerm": "Q_SEQUENCER_DEVICE",
+      "pattern": "Q_*[A-Z]_MEASUREMENT",
+      "experimentLevel": "Q_*[A-Z]_MEASUREMENT"
     }
   },
   "required": ["species"]

@@ -1,13 +1,24 @@
 package life.qbic.metastats
 
+import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 import life.qbic.metastats.request.OpenBisSearch
 import life.qbic.metastats.request.OpenBisSession
+import life.qbic.metastats.request.ToolProperties
 import spock.lang.Specification
 
 class OpenBisSearchSpecification extends Specification{
 
-    /**def "Retrieve all Preparation Samples"(){
+    OpenBisSession session
+
+    def setup(){
+        def file = OpenBisSearchSpecification.class.getClassLoader().getResource("credentials.json.properties")
+        ToolProperties props = new ToolProperties(file.path)
+        Map cred = (Map) props.parse()
+        session = new OpenBisSession((String) cred.get("user"), (String) cred.get("password"), (String) cred.get("as_url"))
+    }
+
+    def "Retrieve all Preparation Samples"(){
         given:
         OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
         search.getProject("QFSVI")
@@ -34,7 +45,23 @@ class OpenBisSearchSpecification extends Specification{
                 it.relatives.size() == 3
             }
         }
-    }*/
+    }
 
+    def "Retrieve all Experiments with preparation sample"(){
+        given:
+        OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
+        search.getProject("QFSVI")
+
+        when:
+        List<MetaStatsExperiment> res = search.getExperimentsWithMetadata()
+
+        then:
+        res.size() == 13
+        res.each {
+            if(it.type == "Q_PROJECT_DETAILS"){
+                assert it.properties.size() == 1
+            }
+        }
+    }
 
 }
