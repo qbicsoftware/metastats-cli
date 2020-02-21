@@ -7,6 +7,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
     MSMetadataPackageOutput output
     PropertiesMapper mapper
+    List<MetaStatsSample> prepSamples
     //Map<String,String>
 
     FilterExperimentDataImpl(MSMetadataPackageOutput output, PropertiesMapper mapper){
@@ -16,6 +17,8 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
     @Override
     def filterProjectMetaData(List<MetaStatsSample> samples, List<MetaStatsExperiment> experiments) {
+
+        prepSamples = samples
 
         samples.each { prepSamples ->
             //map the metadata terms first (otherwise duplicate names make problems later)
@@ -82,7 +85,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
             add(meta, mapper.mapSamplePrep(experiment.properties))
         }
         if (experiment.type == "Q_PROJECT_INFO"){
-            add(meta, mapper.mapExperimentProperties(experiment.properties))
+            add(meta, mapper.mapExperimentProperties(experiment.properties, prepSamples))
         }
 
         return meta
