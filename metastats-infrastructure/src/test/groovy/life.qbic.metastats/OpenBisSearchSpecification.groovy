@@ -61,8 +61,6 @@ class OpenBisSearchSpecification extends Specification{
             if(it.type == "Q_PROJECT_DETAILS"){
                 assert it.properties.size() == 1
             }
-            println it.properties
-            println it.type
         }
     }
 

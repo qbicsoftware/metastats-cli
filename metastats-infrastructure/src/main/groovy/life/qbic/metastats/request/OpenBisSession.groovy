@@ -21,6 +21,6 @@ class OpenBisSession {
     }
 
     def logout(){
-        v3.logout(sessionToken);
+        v3.logout(sessionToken)
     }
 }

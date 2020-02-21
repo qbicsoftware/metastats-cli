@@ -58,6 +58,7 @@ class OpenBisSearch implements DatabaseGateway{
 
         project.getExperiments().each { exp ->
             String type = exp.type.code
+
             List<String> samples = getSamplesForExperiment(exp)
             println samples
 

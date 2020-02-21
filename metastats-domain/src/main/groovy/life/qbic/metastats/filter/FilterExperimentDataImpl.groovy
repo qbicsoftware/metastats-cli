@@ -59,9 +59,11 @@ class FilterExperimentDataImpl implements FilterExperimentData{
             //multiple files per sample are possible
         }*/
 
+        return meta
     }
 
     def mapToMetaStatsTerms(MetaStatsExperiment experiment) {
+
         Map<String,String> meta = new HashMap<>()
 
         if (experiment.type == "Q_EXPERIMENTAL_DESIGN"){
@@ -79,6 +81,11 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         if (experiment.type == "Q_SAMPLE_PREPARATION"){
             add(meta, mapper.mapSamplePrep(experiment.properties))
         }
+        if (experiment.type == "Q_PROJECT_INFO"){
+            add(meta, mapper.mapExperimentProperties(experiment.properties))
+        }
+
+        return meta
     }
 
     static def add(Map target, Map values){
