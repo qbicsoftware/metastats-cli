@@ -25,9 +25,14 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         prepSamples = samples
 
         LOG.info "filter metadata from samples ..."
-        samples.each { prepSamples ->
+        samples.each { prep ->
             //map the metadata terms first (otherwise duplicate names make problems later)
-            mapToMetaStatsTerms(prepSamples)
+            LOG.debug prep.properties
+            mapper.mapSampleProperties(prep.properties)
+
+            //todo add mapping value to openbismapper
+            //todo add sample codes to openbisparser and in mapper
+
             //organize data so that one preparation sample has assigned all the meta data
         }
 
@@ -38,63 +43,35 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         return null
     }
 
-    def mapToMetaStatsTerms(MetaStatsSample sample){
+    /*
+    Map mapToMetaStatsTerms(MetaStatsSample sample){
 
-        Map<String,String> meta = new HashMap<>()
+        return mapper.mapSampleProperties(sample.properties)
 
-        if (sample.type == "Q_TEST_SAMPLE"){
-            meta.put("samplePreparationId",sample.code)
-            add(meta,mapper.mapTestSampleProperties(sample.properties))
-        }
-
-        sample.relatives.each {
-            if (it.type == "Q_BIOLOGICAL_ENTITY"){
-                meta.put("individual",it.code)
-                add(meta, mapper.mapEntityProperties(it.properties))
-            }
-            if (it.type == "Q_BIOLOGICAL_SAMPLE"){
-                meta.put("extractCode",it.code)
-                add(meta, mapper.mapBioSampleProperties(it.properties))
-            }
-
-            if (it.type =~ "^Q.+_RUN\$"){
-                add(meta,mapper.mapRunProperties(it.properties))
-            }
-        }
-
-        //todo add dataset to download
-        /**if (sample.type == "Q_DATA_SET"){ //??? what is the property type?
+        //todo add dataset information
+        if (sample.type == "Q_DATA_SET"){ //??? what is the property type?
            //todo add XXX "filename"
             //multiple files per sample are possible
-        }*/
-
-        return meta
+        }
     }
+    */
 
     def mapToMetaStatsTerms(MetaStatsExperiment experiment) {
 
         Map<String,String> meta = new HashMap<>()
 
-        if (experiment.type == "Q_EXPERIMENTAL_DESIGN"){
-            add(meta, mapper.mapExpDesignProperties(experiment.properties))
-        }
-        if (experiment.type =~ "Q_[A-Z]*_MEASUREMENT"){
-            add(meta, mapper.mapMeasurementProperties(experiment.properties))
-        }
-        if (experiment.type == "Q_PROJECT_DETAILS"){
-            add(meta, mapper.mapProjectDetails(experiment.properties))
-        }
-        if (experiment.type == "Q_SAMPLE_EXTRACTION"){
-            add(meta, mapper.mapSampleExtraction(experiment.properties))
-        }
-        if (experiment.type == "Q_SAMPLE_PREPARATION"){
-            add(meta, mapper.mapSamplePrep(experiment.properties))
-        }
         if (experiment.type == "Q_PROJECT_INFO"){
             add(meta, mapper.mapExperimentProperties(experiment.properties, prepSamples))
+        }else{
+            LOG.warn "missing information about experiment conditions!"
         }
 
         return meta
+    }
+
+
+    def validateSchema(){
+        LOG.info "validate metastats-object-model-schema ..."
     }
 
     static def add(Map target, Map values){
@@ -102,11 +79,4 @@ class FilterExperimentDataImpl implements FilterExperimentData{
             target.put(key,value)
         }
     }
-
-    def validateSchema(){
-        LOG.info "validate metastats-object-model-schema ..."
-
-
-    }
-
 }

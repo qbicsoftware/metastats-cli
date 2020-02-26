@@ -1,123 +1,102 @@
 package life.qbic.metastats.filter
 
 import groovy.json.JsonSlurper
+import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class OpenBisMapper implements PropertiesMapper{
 
-    //todo conditions, filename, sequencing device
+    //todo conditions, filename
+    private static final Logger LOG = LogManager.getLogger(OpenBisMapper.class)
+
 
     Map<String,String> mapExperimentProperties(Map<String,String> openBisProperties, List<MetaStatsSample> samples){
         Map<String,String> metaStatsProperties = new HashMap<>()
 
         ConditionParser parser = new ConditionParser()
         parser.parseProperties(openBisProperties)
-        println samples
+        LOG.debug "parse the experiment conditions TODO"
+
 
         samples.each {prepSample ->
             //check all children of prep sample to find the samples condition
             //add field "condition:$label" : "$value" -> add to samples properties
             prepSample.relatives.each {relative ->
-                def res = parser.getSampleConditions(relative.code)
+                def res = parser.getSampleConditions(relative)
                 if (res != null){
                     res.each {sampleProp ->
                         String value = sampleProp.value
                         String label = sampleProp.label
                         prepSample.properties.put("condition:"+label,value)
                     }
+                }else{
+                    LOG.info "no experiment conditions where found, check your openbis project"
                 }
             }
         }
-        println "parsed xml strings"
-        println samples
+
+        LOG.info "parsed experiment conditions"
+        LOG.debug samples
 
         return metaStatsProperties
     }
 
-    Map<String,String> mapEntityProperties(Map<String,String> openBisProperties){
+    Map<String,String> mapSampleProperties(Map<String,String> openBisProperties){
         Map<String,String> metaStatsProperties = new HashMap<>()
 
-        openBisProperties.each { type, prop ->
-            if (type == "Q_NCBI_ORGANISM") {
-                metaStatsProperties.put("species", prop)
-            }
-            if (type == "SEX") {
-                metaStatsProperties.put("sex", prop)
-            }
-        }
-        return metaStatsProperties
-    }
+        //ENTITY LEVEL
+        String value = containsProperty(openBisProperties,"Q_BIOLOGICAL_ENTITY_CODE")
+        metaStatsProperties.put("individual", value)
 
-    Map<String,String> mapBioSampleProperties(Map<String,String> openBisProperties){
-        Map<String,String> metaStatsProperties = new HashMap<>()
+        value = containsProperty(openBisProperties,"Q_NCBI_ORGANISM")
+        metaStatsProperties.put("species", value)
 
-        openBisProperties.each { type, prop ->
-            if (type == "Q_PRIMARY_TISSUE") {
-                metaStatsProperties.put("tissue", prop)
-            }
-        }
-        return metaStatsProperties
-    }
+        value = containsProperty(openBisProperties,"SEX")
+        metaStatsProperties.put("sex", value)
 
-    Map<String,String> mapTestSampleProperties(Map<String,String> openBisProperties){
-        Map<String,String> metaStatsProperties = new HashMap<>()
+        //BIOLOGICAL SAMPLE level
+        value = containsProperty(openBisProperties,"Q_BIOLOGICAL_SAMPLE_CODE")
+        metaStatsProperties.put("extractCode", value)
 
-        openBisProperties.each {type, prop ->
-            if(type == "Q_SAMPLE_TYPE"){
-                metaStatsProperties.put("analyte",prop)
-            }
-            if(type == "Q_SECONDARY_NAME"){
-                metaStatsProperties.put("sequencingFacilityId",prop)
-            }
-            if(type == "Q_RIN"){
-                metaStatsProperties.put("integrityNumber",prop)
-            }
-        }
-        return metaStatsProperties
-    }
+        value = containsProperty(openBisProperties,"Q_PRIMARY_TISSUE")
+        metaStatsProperties.put("tissue", value)
 
-    Map<String,String> mapRunProperties(Map<String,String> openBisProperties){
-        Map<String,String> metaStatsProperties = new HashMap<>()
+        //TEST_SAMPLE level
+        value = containsProperty(openBisProperties,"Q_SAMPLE_TYPE_CODE")//or Q_EXTERNALDB_ID
+        metaStatsProperties.put("samplePreparationId", value)
 
-        //openBisProperties.get("Q_SECONDARY_NAME")
+        value = containsProperty(openBisProperties,"Q_SAMPLE_TYPE")
+        metaStatsProperties.put("analyte", value)
 
-        openBisProperties.each { type, prop ->
-            if (type == "Q_SECONDARY_NAME") {
-                metaStatsProperties.put("sampleName", prop)
-            }
-        }
-        return metaStatsProperties
-    }
+        value = containsProperty(openBisProperties,"Q_SECONDARY_NAME")
+        metaStatsProperties.put("sequencingFacilityId", value)
 
-    Map<String,String> mapMeasurementProperties(Map<String,String> openBisProperties){
-        HashMap<String,String> meta = new HashMap<>()
+        value = containsProperty(openBisProperties,"Q_RIN")
+        metaStatsProperties.put("integrityNumber", value)
 
-        meta.put("sequencingDevice",openBisProperties.get("Q_SEQUENCER_DEVICE"))
+        //RUN Level
+        value = containsProperty(openBisProperties,"Q_SECONDARY_NAME_Q_NGS_SINGLE_SAMPLE_RUN")
+        metaStatsProperties.put("sampleName", value)
+
+        //MEASUREMENT level
+        value = containsProperty(openBisProperties,"Q_SEQUENCER_DEVICE")
+        metaStatsProperties.put("sequencingDevice", value)
         //optional: Q_SEQUENCING_MODE, Q_SEQUENCING_TYPE
-        return null
+
+        return metaStatsProperties
     }
 
-    //not used for first version! TODO implement the required fields that are needed
 
-    Map<String,String> mapExpDesignProperties(Map<String,String> openBisProperties){
-        //currently no property is needed from here
-        return null
-    }
+    String containsProperty(Map openBisProperties, String openBisProperty){
 
-    Map<String,String> mapProjectDetails(Map<String,String> openBisProperties){
-        //currently no property is needed from here
-        return null
-
-    }
-
-    Map<String,String> mapSampleExtraction(Map<String,String> openBisProperties){
-        //currently no property is needed from here
-        return null
-    }
-
-    Map<String,String> mapSamplePrep(Map<String,String> openBisProperties){
-        //currently no property is needed from here
-        return null
+        if(openBisProperties.containsKey(openBisProperty)){
+            return openBisProperties.get(openBisProperty)
+        }else{
+           LOG.warn "missing '$openBisProperty' property"
+        }
+        return "NA"
     }
 
 }
