@@ -1,9 +1,15 @@
 package life.qbic.metastats.request
 
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
+
 class RequestExperimentData implements ProjectSpecification{
 
     DatabaseGateway search
     ExperimentDataOutput output
+
+    private static final Logger LOG = LogManager.getLogger(RequestExperimentData.class);
+
 
     RequestExperimentData(DatabaseGateway search, ExperimentDataOutput output){
         this.search = search
@@ -14,17 +20,15 @@ class RequestExperimentData implements ProjectSpecification{
     def requestProjectMetadata(String projectCode) {
 
         if(!verifyQbicCode(projectCode)){
-            //add log4j??
-            //todo show in commandline
-            println "The project code was not valid"
-            return null
+            LOG.error "The project code was not valid!"
+            return
         }
 
+        LOG.info "searching for the openbis project ..."
         search.getProject(projectCode)
 
+        LOG.info "retrieved openbis project"
         output.metaDataForProject(search.getSamplesWithMetadata(), search.getExperimentsWithMetadata())
-
-        println "successfully parsed openbis project"
     }
 
     static boolean verifyQbicCode(String code){

@@ -12,6 +12,9 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchO
 
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
+import life.qbic.metastats.filter.ConditionParser
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 
 class OpenBisSearch implements DatabaseGateway{
@@ -20,6 +23,9 @@ class OpenBisSearch implements DatabaseGateway{
     Project project
     IApplicationServerApi v3
     String sessionToken
+
+    private static final Logger LOG = LogManager.getLogger(ConditionParser.class);
+
 
     OpenBisSearch(IApplicationServerApi v3, String session){
         this.v3 = v3
@@ -60,7 +66,7 @@ class OpenBisSearch implements DatabaseGateway{
             String type = exp.type.code
 
             List<String> samples = getSamplesForExperiment(exp)
-            println samples
+            //println samples
 
             Map<String,String> props = exp.properties
 
@@ -98,7 +104,11 @@ class OpenBisSearch implements DatabaseGateway{
        experiments.each { exp ->
            //only do it for the Experiment with Biological Samples since from here all other samples can be found
            if (exp.code == project.code+"E2" && exp.getSamples() != null){ //todo manchmal gibts e2 2x --> only consider exp with samples
+               LOG.info "found $exp.type.code"
+
+               LOG.info "fetch all samples from experiment"
                openBisSamples = exp.getSamples()
+
                prepSamples += getPreparationSamples(openBisSamples)
            }
        }

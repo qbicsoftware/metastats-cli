@@ -28,6 +28,7 @@ class OpenBisMapper implements PropertiesMapper{
                 }
             }
         }
+        println "parsed xml strings"
         println samples
 
         return metaStatsProperties

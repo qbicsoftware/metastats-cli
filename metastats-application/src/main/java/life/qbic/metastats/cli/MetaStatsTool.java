@@ -52,6 +52,8 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         //define use case
         ProjectSpecification spec = new RequestExperimentData(db,experimentData);
 
+        LOG.info("started metastats-cli");
+
         spec.requestProjectMetadata(command.projectCode);
 
     }
