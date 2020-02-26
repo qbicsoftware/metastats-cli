@@ -27,7 +27,6 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         LOG.info "filter metadata from samples ..."
         samples.each { prep ->
             //map the metadata terms first (otherwise duplicate names make problems later)
-            LOG.debug prep.properties
             mapper.mapSampleProperties(prep.properties)
 
             //todo add mapping value to openbismapper

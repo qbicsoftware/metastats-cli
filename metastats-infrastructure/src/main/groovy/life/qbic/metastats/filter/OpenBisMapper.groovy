@@ -37,6 +37,12 @@ class OpenBisMapper implements PropertiesMapper{
             }
         }
 
+
+        //MEASUREMENT level
+        String value = containsProperty(openBisProperties,"Q_SEQUENCER_DEVICE")
+        metaStatsProperties.put("sequencingDevice", value)
+        //optional: Q_SEQUENCING_MODE, Q_SEQUENCING_TYPE
+
         LOG.info "parsed experiment conditions"
         LOG.debug samples
 
@@ -73,17 +79,12 @@ class OpenBisMapper implements PropertiesMapper{
         value = containsProperty(openBisProperties,"Q_SECONDARY_NAME")
         metaStatsProperties.put("sequencingFacilityId", value)
 
-        value = containsProperty(openBisProperties,"Q_RIN")
+        value = containsProperty(openBisProperties,"Q_RNA_INTEGRITY_NUMBER")
         metaStatsProperties.put("integrityNumber", value)
 
         //RUN Level
         value = containsProperty(openBisProperties,"Q_SECONDARY_NAME_Q_NGS_SINGLE_SAMPLE_RUN")
         metaStatsProperties.put("sampleName", value)
-
-        //MEASUREMENT level
-        value = containsProperty(openBisProperties,"Q_SEQUENCER_DEVICE")
-        metaStatsProperties.put("sequencingDevice", value)
-        //optional: Q_SEQUENCING_MODE, Q_SEQUENCING_TYPE
 
         return metaStatsProperties
     }
@@ -94,7 +95,7 @@ class OpenBisMapper implements PropertiesMapper{
         if(openBisProperties.containsKey(openBisProperty)){
             return openBisProperties.get(openBisProperty)
         }else{
-           LOG.warn "missing '$openBisProperty' property"
+           //LOG.warn "missing '$openBisProperty' property"
         }
         return "NA"
     }
