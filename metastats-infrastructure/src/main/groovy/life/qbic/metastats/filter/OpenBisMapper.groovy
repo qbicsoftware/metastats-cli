@@ -20,6 +20,7 @@ class OpenBisMapper implements PropertiesMapper{
         LOG.debug "parse the experiment conditions TODO"
 
 
+        //if (experiment.type == "Q_PROJECT_INFO"){
         samples.each {prepSample ->
             //check all children of prep sample to find the samples condition
             //add field "condition:$label" : "$value" -> add to samples properties

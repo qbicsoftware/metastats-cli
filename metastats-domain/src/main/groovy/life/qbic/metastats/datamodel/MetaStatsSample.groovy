@@ -4,7 +4,7 @@ class MetaStatsSample {
 
     String type
     String code
-    List<String> relatives = [] //only collect relatives for preparation sample
+    List<String> relatives = []
     Map<String,String> properties
 
     /*MetaStatsSample(String code, String type, List<MetaStatsSample> samples, Map<String,String> properties){

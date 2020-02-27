@@ -26,6 +26,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
         LOG.info "filter metadata from samples ..."
         samples.each { prep ->
+            if(prep.type != "Q_TEST_SAMPLE") LOG.debug "the metastats sample is not a Q_TEST_SAMPLE, please check the implementation"
             //map the metadata terms first (otherwise duplicate names make problems later)
             mapper.mapSampleProperties(prep.properties)
 
@@ -37,35 +38,14 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
         LOG.info "filter metadata from experiment ..."
         experiments.each { experiment ->
-           mapToMetaStatsTerms(experiment) //todo remember: samples of experiment also need to be mapped to prep samples
+            mapper.mapExperimentProperties(experiment.properties, prepSamples) //todo remember: samples of experiment also need to be mapped to prep samples
         }
+
+        prepSamples.each {
+            println "> "+prepSamples.properties
+        }
+
         return null
-    }
-
-    /*
-    Map mapToMetaStatsTerms(MetaStatsSample sample){
-
-        return mapper.mapSampleProperties(sample.properties)
-
-        //todo add dataset information
-        if (sample.type == "Q_DATA_SET"){ //??? what is the property type?
-           //todo add XXX "filename"
-            //multiple files per sample are possible
-        }
-    }
-    */
-
-    def mapToMetaStatsTerms(MetaStatsExperiment experiment) {
-
-        Map<String,String> meta = new HashMap<>()
-
-        if (experiment.type == "Q_PROJECT_INFO"){
-            add(meta, mapper.mapExperimentProperties(experiment.properties, prepSamples))
-        }else{
-            LOG.warn "missing information about experiment conditions!"
-        }
-
-        return meta
     }
 
 
