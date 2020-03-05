@@ -11,20 +11,33 @@ class OpenBisSearchSpecification extends Specification{
 
     OpenBisSession session
 
-    /*def setup(){
+    def setup(){
         def file = OpenBisSearchSpecification.class.getClassLoader().getResource("credentials.json.properties")
         ToolProperties props = new ToolProperties(file.path)
         Map cred = (Map) props.parse()
-        session = new OpenBisSession((String) cred.get("user"), (String) cred.get("password"), (String) cred.get("as_url"))
+        session = new OpenBisSession((String) cred.get("user"), (String) cred.get("password"), (String) cred.get("url"))
+    }
+
+    def "Fetch all files"(){
+        given:
+        OpenBisSearch search = new OpenBisSearch(session.v3, session.dss ,session.sessionToken)
+        search.getProject("QFSVI")
+
+        when:
+        HashMap res = search.fetchDatasets("QFSVI009AM","fastq")
+        print res
+
+        then:
+        res.size() == 1
     }
 
     def "Retrieve all Preparation Samples"(){
         given:
-        OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
+        OpenBisSearch search = new OpenBisSearch(session.v3, session.dss ,session.sessionToken)
         search.getProject("QFSVI")
 
         when:
-        def res = search.findBiologicalEntity()
+        def res = search.fetchBiologicalEntity()
 
         then:
         res.size() == 8
@@ -32,11 +45,11 @@ class OpenBisSearchSpecification extends Specification{
 
     def "Retrieve all Children of a Preparation Sample"(){
         given:
-        OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
+        OpenBisSearch search = new OpenBisSearch(session.v3, session.dss ,session.sessionToken)
         search.getProject("QFSVI")
 
         when:
-        List<MetaStatsSample> res = search.findBiologicalEntity()
+        List<MetaStatsSample> res = search.fetchBiologicalEntity()
 
 
         then:
@@ -49,11 +62,11 @@ class OpenBisSearchSpecification extends Specification{
 
     def "Retrieve all Experiments with preparation sample"(){
         given:
-        OpenBisSearch search = new OpenBisSearch(session.v3,session.sessionToken)
+        OpenBisSearch search = new OpenBisSearch(session.v3, session.dss ,session.sessionToken)
         search.getProject("QFSVI")
 
         when:
-        List<MetaStatsExperiment> res = search.getExperimentsWithMetadata()
+        List<MetaStatsExperiment> res = search.fetchExperimentsWithMetadata()
 
         then:
         res.size() == 13
@@ -62,6 +75,6 @@ class OpenBisSearchSpecification extends Specification{
                 assert it.properties.size() == 1
             }
         }
-    }*/
+    }
 
 }

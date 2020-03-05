@@ -46,7 +46,7 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
                 (String) credentials.get("password"),
                 (String) credentials.get("as_url"));
         //todo add dss_url
-        DatabaseGateway db = new OpenBisSearch(session.getV3(),session.getSessionToken());
+        DatabaseGateway db = new OpenBisSearch(session.getV3(), session.getDss(), session.getSessionToken());
         //define input for connector class
         ExperimentDataOutput experimentData = new PrepareMetaData(filter);
         //define use case

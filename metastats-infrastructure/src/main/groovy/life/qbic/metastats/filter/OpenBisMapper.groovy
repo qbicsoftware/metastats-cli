@@ -19,8 +19,6 @@ class OpenBisMapper implements PropertiesMapper{
         parser.parseProperties(openBisProperties)
         LOG.debug "parse the experiment conditions TODO"
 
-
-        //if (experiment.type == "Q_PROJECT_INFO"){
         samples.each {prepSample ->
             //check all children of prep sample to find the samples condition
             //add field "condition:$label" : "$value" -> add to samples properties
@@ -87,6 +85,9 @@ class OpenBisMapper implements PropertiesMapper{
         value = containsProperty(openBisProperties,"Q_SECONDARY_NAME_Q_NGS_SINGLE_SAMPLE_RUN")
         metaStatsProperties.put("sampleName", value)
 
+        //DATASET Level
+        value = containsProperty(openBisProperties,"Q_NGS_RAW_DATA")
+
         return metaStatsProperties
     }
 
@@ -100,5 +101,7 @@ class OpenBisMapper implements PropertiesMapper{
         }
         return "NA"
     }
+
+
 
 }

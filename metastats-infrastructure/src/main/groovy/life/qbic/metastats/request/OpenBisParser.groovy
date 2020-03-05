@@ -4,14 +4,12 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
-import life.qbic.metastats.filter.ConditionParser
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 class OpenBisParser {
 
-    private static final Logger LOG = LogManager.getLogger(OpenBisParser.class);
-
+    private static final Logger LOG = LogManager.getLogger(OpenBisParser.class)
 
     def createMetaStatsExperiment(Experiment exp){
         String type = exp.type.code
@@ -37,7 +35,7 @@ class OpenBisParser {
                 allSamples << createMetaStatsSample(parents+children, sample)
             }
             else{
-                //todo is this check required? --> get datasets
+                //todo is this required?
                 allSamples += getPreparationSamples(sample.children)
             }
         }

@@ -9,10 +9,19 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetc
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
-
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.VocabularyTerm
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.fetchoptions.VocabularyTermFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.search.VocabularyTermSearchCriteria
+import ch.ethz.sis.openbis.generic.dssapi.v3.IDataStoreServerApi
+import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.DataSetFile
+import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.fetchoptions.DataSetFileFetchOptions
+import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.search.DataSetFileSearchCriteria
+import life.qbic.dataLoading.PostmanDataFilterer
+import life.qbic.dataLoading.PostmanDataFinder
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 import life.qbic.metastats.filter.ConditionParser
+import org.apache.commons.lang.StringUtils
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -22,14 +31,17 @@ class OpenBisSearch implements DatabaseGateway{
 
     Project project
     IApplicationServerApi v3
+    IDataStoreServerApi dss
     String sessionToken
+
     OpenBisParser parser = new OpenBisParser()
 
 
     private static final Logger LOG = LogManager.getLogger(ConditionParser.class);
 
-    OpenBisSearch(IApplicationServerApi v3, String session){
+    OpenBisSearch(IApplicationServerApi v3, IDataStoreServerApi dss, String session){
         this.v3 = v3
+        this.dss = dss
         sessionToken = session
     }
 
@@ -60,7 +72,7 @@ class OpenBisSearch implements DatabaseGateway{
     }
 
     @Override
-    List<MetaStatsExperiment> getExperimentsWithMetadata() {
+    List<MetaStatsExperiment> fetchExperimentsWithMetadata() {
         List<MetaStatsExperiment> experiments = []
 
         project.getExperiments().each { exp ->
@@ -71,14 +83,15 @@ class OpenBisSearch implements DatabaseGateway{
     }
 
     @Override
-    List<MetaStatsSample> getSamplesWithMetadata() {
-        List<MetaStatsSample> samples = findBiologicalEntity()
+    List<MetaStatsSample> fetchSamplesWithMetadata() {
+        List<MetaStatsSample> samples = fetchBiologicalEntity()
 
         return samples
     }
 
 
-    List<MetaStatsSample> findBiologicalEntity(){
+
+    List<MetaStatsSample> fetchBiologicalEntity(){
         List prepSamples = []
         List<Experiment> experiments = project.experiments
         List<Sample> openBisSamples
@@ -94,10 +107,72 @@ class OpenBisSearch implements DatabaseGateway{
                prepSamples += parser.getPreparationSamples(openBisSamples)
            }
        }
+
+        //translate vocabularies to meaningfully
+        translateVocabulary(prepSamples)
+        //add filenames to sample
+        addFile(prepSamples)
+
         return prepSamples
     }
 
+    def translateVocabulary(List<MetaStatsSample> samples){
+        samples.each {sample ->
+            sample.properties.each {key, value ->
+                if(StringUtils.isNumeric(value)){
+                    String vocabulary = fetchVocabulary(value)
+                    properties.put(key,vocabulary)
+                }
+            }
+        }
+    }
 
+    def fetchVocabulary(String code){
+        VocabularyTermSearchCriteria vocabularyTermSearchCriteria = new VocabularyTermSearchCriteria()
+        vocabularyTermSearchCriteria.withCode().thatEquals(code)
+
+        SearchResult<VocabularyTerm> vocabularyTermSearchResult = v3.searchVocabularyTerms(sessionToken, vocabularyTermSearchCriteria, new VocabularyTermFetchOptions())
+
+        String term =  vocabularyTermSearchResult.objects.get(0).label
+
+        return term
+    }
+
+    def addFile(List<MetaStatsSample> prepSamples){
+        LOG.info "Fetch DataSets ..."
+        prepSamples.each {sample ->
+            HashMap files = fetchDatasets(sample.code, sample.type)
+            properties << files
+        }
+    }
+
+    HashMap<String,List> fetchDatasets(String sampleCode, String fileType){
+        PostmanDataFinder finder = new PostmanDataFinder(v3, dss, new PostmanDataFilterer(), sessionToken)
+
+        HashMap allDataSets = new HashMap()
+
+        finder.findAllDatasetsRecursive(sampleCode).each { dataSet ->
+            DataSetFileSearchCriteria criteria = new DataSetFileSearchCriteria()
+            criteria.withDataSet().withPermId().thatEquals(dataSet.permId.permId)
+            criteria.withDataSet().withType()
+
+            SearchResult<DataSetFile> result = dss.searchFiles(sessionToken, criteria, new DataSetFileFetchOptions())
+            List<DataSetFile> files = result.getObjects()
+
+            List<String> dataFiles = []
+
+            for (DataSetFile file : files) {
+                if (file.getPermId().toString().contains("." + fileType)
+                        && !file.getPermId().toString().contains(".sha256sum")
+                        && !file.getPermId().toString().contains("origlabfilename")) {
+                    String[] path = file.getPermId().toString().split("/")
+                    dataFiles << path[path.size() - 1]
+                }
+            }
+            allDataSets.put(dataSet.type.code,dataFiles)
+        }
+        return allDataSets
+    }
 
 
 }
