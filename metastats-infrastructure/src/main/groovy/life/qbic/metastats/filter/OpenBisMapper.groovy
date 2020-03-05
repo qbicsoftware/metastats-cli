@@ -43,7 +43,6 @@ class OpenBisMapper implements PropertiesMapper{
         //optional: Q_SEQUENCING_MODE, Q_SEQUENCING_TYPE
 
         LOG.info "parsed experiment conditions"
-        LOG.debug samples
 
         return metaStatsProperties
     }

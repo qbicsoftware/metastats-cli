@@ -43,7 +43,7 @@ class OpenBisParser {
 
     def createMetaStatsSample(List<Sample> relatedSamples, Sample prepSample){
         String code = prepSample.code
-        String type = prepSample.code
+        String type = prepSample.type.code
 
         HashMap allProperties = prepSample.properties
         //add the code
