@@ -11,11 +11,10 @@ class OpenBisParser {
 
     private static final Logger LOG = LogManager.getLogger(OpenBisParser.class)
 
-    def createMetaStatsExperiment(Experiment exp){
+    static def createMetaStatsExperiment(Experiment exp){
         String type = exp.type.code
-        Map<String,String> props = exp.properties
 
-        return new MetaStatsExperiment(type,props)
+        return new MetaStatsExperiment(type,exp.properties)
     }
 
     List<MetaStatsSample> getPreparationSamples(List<Sample> samples){

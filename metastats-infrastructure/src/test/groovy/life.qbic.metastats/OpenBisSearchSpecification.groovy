@@ -24,7 +24,7 @@ class OpenBisSearchSpecification extends Specification{
         search.getProject("QFSVI")
 
         when:
-        HashMap res = search.fetchDatasets("QFSVI009AM","fastq")
+        HashMap res = search.fetchDataSets("QFSVI009AM","fastq")
         print res
 
         then:

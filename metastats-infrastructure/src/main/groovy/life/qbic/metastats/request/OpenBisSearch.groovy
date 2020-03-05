@@ -20,7 +20,6 @@ import life.qbic.dataLoading.PostmanDataFilterer
 import life.qbic.dataLoading.PostmanDataFinder
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
-import life.qbic.metastats.filter.ConditionParser
 import org.apache.commons.lang.StringUtils
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -37,7 +36,7 @@ class OpenBisSearch implements DatabaseGateway{
     OpenBisParser parser = new OpenBisParser()
 
 
-    private static final Logger LOG = LogManager.getLogger(ConditionParser.class);
+    private static final Logger LOG = LogManager.getLogger(OpenBisSearch.class);
 
     OpenBisSearch(IApplicationServerApi v3, IDataStoreServerApi dss, String session){
         this.v3 = v3
@@ -119,9 +118,10 @@ class OpenBisSearch implements DatabaseGateway{
     def translateVocabulary(List<MetaStatsSample> samples){
         samples.each {sample ->
             sample.properties.each {key, value ->
-                if(StringUtils.isNumeric(value)){
+                if(key == "Q_NCBI_ORGANISM" || key == "Q_PRIMARY_TISSUE"){
                     String vocabulary = fetchVocabulary(value)
-                    properties.put(key,vocabulary)
+                    //overwrite old key
+                    sample.properties.put(key,vocabulary)
                 }
             }
         }
@@ -139,14 +139,15 @@ class OpenBisSearch implements DatabaseGateway{
     }
 
     def addFile(List<MetaStatsSample> prepSamples){
-        LOG.info "Fetch DataSets ..."
         prepSamples.each {sample ->
-            HashMap files = fetchDatasets(sample.code, sample.type)
-            properties << files
+            HashMap files = fetchDataSets(sample.code, "fastq")
+            sample.properties << files
         }
     }
 
-    HashMap<String,List> fetchDatasets(String sampleCode, String fileType){
+    HashMap<String,List> fetchDataSets(String sampleCode, String fileType){
+        LOG.info "fetch DataSet for $sampleCode"
+
         PostmanDataFinder finder = new PostmanDataFinder(v3, dss, new PostmanDataFilterer(), sessionToken)
 
         HashMap allDataSets = new HashMap()

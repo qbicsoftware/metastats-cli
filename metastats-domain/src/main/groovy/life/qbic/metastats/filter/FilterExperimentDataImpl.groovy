@@ -26,12 +26,9 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
         LOG.info "filter metadata from samples ..."
         samples.each { prep ->
-            if(prep.type != "Q_TEST_SAMPLE") LOG.debug "the metastats sample is not a Q_TEST_SAMPLE, please check the implementation"
+            if(prep.type != "Q_TEST_SAMPLE") LOG.debug "the metastats sample is not a Q_TEST_SAMPLE but $prep.type"
             //map the metadata terms first (otherwise duplicate names make problems later)
-            mapper.mapSampleProperties(prep.properties)
-
-            //todo add mapping value to openbismapper
-            //todo add sample codes to openbisparser and in mapper
+            prep.properties = mapper.mapSampleProperties(prep.properties)
 
             //organize data so that one preparation sample has assigned all the meta data
         }
@@ -42,7 +39,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         }
 
         prepSamples.each {
-            println "> "+prepSamples.properties
+            println "> "+it.properties
         }
 
         return null

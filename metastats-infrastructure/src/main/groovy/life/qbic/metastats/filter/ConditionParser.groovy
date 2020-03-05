@@ -20,11 +20,11 @@ class ConditionParser {
     def parseProperties(Map designExperiment){
 
         String xmlString = designExperiment.get("Q_EXPERIMENTAL_SETUP")
-
         try {
             LOG.info "parsing experiment conditions"
             expDesign = studyParser.parseXMLString(xmlString)
-            }
+            LOG.debug xmlString
+        }
         catch (JAXBException e) {
             LOG.info "could not create new experimental design xml from experiment."
             e.printStackTrace()
