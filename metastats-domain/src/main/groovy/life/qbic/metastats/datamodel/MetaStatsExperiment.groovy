@@ -3,7 +3,7 @@ package life.qbic.metastats.datamodel
 class MetaStatsExperiment {
 
     String type
-    //String prepSampleCode
+    List<String> samples
     Map<String,String> properties
 
     MetaStatsExperiment(String type, Map<String,String> properties){
@@ -11,8 +11,14 @@ class MetaStatsExperiment {
         this.properties = properties
     }
 
-    /*def addPrepSample(String sampleCode){
-        this.prepSampleCode = sampleCode
-    }*/
+    MetaStatsExperiment(String type, Map<String,String> properties, List samples){
+        this.type = type
+        this.properties = properties
+        this.samples = samples
+    }
+
+    def addSamples(List<String> sampleCodes){
+        this.samples = sampleCodes
+    }
 
 }

@@ -13,8 +13,13 @@ class OpenBisParser {
 
     static def createMetaStatsExperiment(Experiment exp){
         String type = exp.type.code
+        List samples = []
 
-        return new MetaStatsExperiment(type,exp.properties)
+        exp.samples.each {sample ->
+            samples << sample.code
+        }
+
+        return new MetaStatsExperiment(type,exp.properties,samples)
     }
 
     List<MetaStatsSample> getPreparationSamples(List<Sample> samples){
@@ -45,7 +50,7 @@ class OpenBisParser {
         String code = prepSample.code
         String type = prepSample.type.code
 
-        HashMap allProperties = prepSample.properties
+        Map allProperties = prepSample.properties
         //add the code
         allProperties.put("Q_TEST_SAMPLE_CODE",code)
 

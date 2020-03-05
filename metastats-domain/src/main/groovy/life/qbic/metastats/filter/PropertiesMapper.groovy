@@ -1,10 +1,11 @@
 package life.qbic.metastats.filter
 
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 
 interface PropertiesMapper {
 
-    Map<String,String> mapExperimentProperties(Map<String,String> openBisProperties, List<MetaStatsSample> samples)
+    def mapExperimentProperties(MetaStatsExperiment experiment, List<MetaStatsSample> samples)
     Map<String,String> mapSampleProperties(Map<String,String> openBisProperties)
 }

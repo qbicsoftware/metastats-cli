@@ -29,17 +29,21 @@ class FilterExperimentDataImpl implements FilterExperimentData{
             if(prep.type != "Q_TEST_SAMPLE") LOG.debug "the metastats sample is not a Q_TEST_SAMPLE but $prep.type"
             //map the metadata terms first (otherwise duplicate names make problems later)
             prep.properties = mapper.mapSampleProperties(prep.properties)
-
-            //organize data so that one preparation sample has assigned all the meta data
         }
 
         LOG.info "filter metadata from experiment ..."
-        experiments.each { experiment ->
-            mapper.mapExperimentProperties(experiment.properties, prepSamples) //todo remember: samples of experiment also need to be mapped to prep samples
+        experiments.each {experiment ->
+            mapper.mapExperimentProperties(experiment, prepSamples)
         }
 
+        LOG.info "finished filtering of metadata package"
+
+
+        validateSchema()
+
         prepSamples.each {
-            println "> "+it.properties
+            output.createMetaStatsMetadataPackage(it.properties)
+            LOG.debug it.properties
         }
 
         return null
