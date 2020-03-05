@@ -54,7 +54,7 @@ class OpenBisMapper implements PropertiesMapper {
         boolean contained = false
         //check if experiment is conducted for sample
         experimentSamples.each {expSampleCode ->
-            //check prepsample code
+            //check prepSample code
             if(sample.code == expSampleCode) contained = true
             //check relatives
             sample.relatives.each {relativeCode ->

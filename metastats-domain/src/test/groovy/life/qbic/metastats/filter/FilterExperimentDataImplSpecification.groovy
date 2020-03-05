@@ -5,9 +5,6 @@ import spock.lang.Specification
 
 class FilterExperimentDataImplSpecification extends Specification{
 
-    def mockedMSMetadataPackageOutput = Mock(MSMetadataPackageOutput)
-    def mockedMapper = Mock(PropertiesMapper)
-    def filterExperimentData = new FilterExperimentDataImpl(mockedMSMetadataPackageOutput,mockedMapper)
 
     def "add method extends map successfully"(){
         given:

@@ -3,6 +3,7 @@ package life.qbic.metastats.cli;
 import life.qbic.cli.QBiCTool;
 import life.qbic.metastats.MetaStatsPresenter;
 import life.qbic.metastats.PrepareMetaData;
+import life.qbic.metastats.io.JsonParser;
 import life.qbic.metastats.request.*;
 import life.qbic.metastats.filter.*;
 
@@ -32,14 +33,17 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         // get the parsed command-line arguments
         final MetaStatsCommand command = super.getCommand();
         // get properties
-        ToolProperties props = new ToolProperties(command.conf);
-        Map credentials = (Map) props.parse();
+        JsonParser props = new JsonParser(command.conf);
+        Map credentials = props.parse();
+
+        JsonParser parser= new JsonParser("model.schema.json");
+        Map modelSchema = parser.parse();
 
         //define output classes
         MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter();
         PropertiesMapper mapper = new OpenBisMapper();
         //define use case
-        FilterExperimentData filter = new FilterExperimentDataImpl(metaStatsPresenter,mapper);
+        FilterExperimentData filter = new FilterExperimentDataImpl(metaStatsPresenter,mapper,modelSchema);
 
         //define db classes
         OpenBisSession session = new OpenBisSession((String) credentials.get("user"),

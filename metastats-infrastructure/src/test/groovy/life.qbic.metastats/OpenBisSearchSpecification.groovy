@@ -2,9 +2,9 @@ package life.qbic.metastats
 
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
+import life.qbic.metastats.io.JsonParser
 import life.qbic.metastats.request.OpenBisSearch
 import life.qbic.metastats.request.OpenBisSession
-import life.qbic.metastats.request.ToolProperties
 import spock.lang.Specification
 
 class OpenBisSearchSpecification extends Specification{
@@ -13,7 +13,7 @@ class OpenBisSearchSpecification extends Specification{
 
     def setup(){
         def file = OpenBisSearchSpecification.class.getClassLoader().getResource("credentials.json.properties")
-        ToolProperties props = new ToolProperties(file.path)
+        JsonParser props = new JsonParser(file.path)
         Map cred = (Map) props.parse()
         session = new OpenBisSession((String) cred.get("user"), (String) cred.get("password"), (String) cred.get("url"))
     }

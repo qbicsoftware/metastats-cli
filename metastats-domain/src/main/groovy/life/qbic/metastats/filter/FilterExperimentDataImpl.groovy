@@ -10,13 +10,15 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     MSMetadataPackageOutput output
     PropertiesMapper mapper
     List<MetaStatsSample> prepSamples
+    Map validSchema
 
     private static final Logger LOG = LogManager.getLogger(FilterExperimentDataImpl.class);
 
 
-    FilterExperimentDataImpl(MSMetadataPackageOutput output, PropertiesMapper mapper){
+    FilterExperimentDataImpl(MSMetadataPackageOutput output, PropertiesMapper mapper, Map schema){
         this.output = output
         this.mapper = mapper
+        validSchema = schema
     }
 
     @Override
@@ -52,6 +54,11 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
     def validateSchema(){
         LOG.info "validate metastats-object-model-schema ..."
+        SchemaValidator validator = new SchemaValidator(validSchema)
+        //1. are filenames valid
+        //2. are required schema fields included
+        //3. are valid names used
+        //4. more files found than prepSamples?
     }
 
     static def add(Map target, Map values){
