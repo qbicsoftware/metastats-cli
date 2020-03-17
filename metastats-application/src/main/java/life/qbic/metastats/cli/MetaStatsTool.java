@@ -33,6 +33,7 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         // get the parsed command-line arguments
         final MetaStatsCommand command = super.getCommand();
         // get properties
+        LOG.debug(command.conf);
         JsonParser props = new JsonParser(command.conf);
         Map credentials = props.parse();
 

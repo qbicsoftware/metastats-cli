@@ -35,7 +35,12 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
         LOG.info "filter metadata from experiment ..."
         experiments.each {experiment ->
-            mapper.mapExperimentProperties(experiment, prepSamples)
+            //mapper.mapExperimentProperties(experiment, prepSamples)
+            //map to samples
+            samples.each {sample ->
+                //only add the properties, do not overwrite!
+                sample.properties << mapper.mapExperimentToSample(experiment,sample)
+            }
         }
 
         LOG.info "finished filtering of metadata package"
@@ -52,12 +57,12 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     }
 
 
-    def validateSchema(){
+    def validateSchema(Map metadata){
         LOG.info "validate metastats-object-model-schema ..."
         SchemaValidator validator = new SchemaValidator(validSchema)
         //1. are filenames valid
-        //2. are required schema fields included
-        //3. are valid names used
+        //2. metadata need to follow schema
+        validator.validate(metadata)
         //4. more files found than prepSamples?
     }
 

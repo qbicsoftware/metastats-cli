@@ -38,10 +38,9 @@ class OpenBisMapper implements PropertiesMapper {
                     }
                 }
             }
-        }
-        else{
-            samples.each {sample ->
-                if(isSampleOfExperiment(experiment.samples,sample)){
+        } else {
+            samples.each { sample ->
+                if (isSampleOfExperiment(experiment.samples, sample)) {
                     String value = containsProperty(experiment.properties, "Q_SEQUENCER_DEVICE")
                     sample.properties.put("sequencingDevice", value)
                     //optional: Q_SEQUENCING_MODE, Q_SEQUENCING_TYPE
@@ -50,15 +49,47 @@ class OpenBisMapper implements PropertiesMapper {
         }
     }
 
-    boolean isSampleOfExperiment(List<String> experimentSamples, MetaStatsSample sample){
+    Map mapExperimentToSample(MetaStatsExperiment experiment, MetaStatsSample sample) {
+        Map<String, String> metaStatsProperties = new HashMap<>()
+
+        if (experiment.type == "Q_PROJECT_DETAILS") {
+            ConditionParser parser = new ConditionParser()
+            parser.parseProperties(experiment.properties)
+
+            //check all children of prep sample to find the samples condition
+            //add field "condition:$label" : "$value" -> add to samples properties
+            sample.relatives.each { relative ->
+                def res = parser.getSampleConditions(relative)
+                if (res != null) {
+                    res.each { sampleProp ->
+                        String value = sampleProp.value
+                        String label = sampleProp.label
+                        LOG.debug sample.properties
+                        metaStatsProperties.put("condition " + label + ":", value)
+                    }
+                } else {
+                    LOG.info "no experiment conditions where found, check your openbis project"
+                }
+            }
+        }
+        else if (isSampleOfExperiment(experiment.samples, sample)) {
+            String value = containsProperty(experiment.properties, "Q_SEQUENCER_DEVICE")
+            metaStatsProperties.put("sequencingDevice", value)
+            //optional: Q_SEQUENCING_MODE, Q_SEQUENCING_TYPE
+        }
+
+        return metaStatsProperties
+    }
+
+    boolean isSampleOfExperiment(List<String> experimentSamples, MetaStatsSample sample) {
         boolean contained = false
         //check if experiment is conducted for sample
-        experimentSamples.each {expSampleCode ->
+        experimentSamples.each { expSampleCode ->
             //check prepSample code
-            if(sample.code == expSampleCode) contained = true
+            if (sample.code == expSampleCode) contained = true
             //check relatives
-            sample.relatives.each {relativeCode ->
-                if(relativeCode == expSampleCode) contained = true
+            sample.relatives.each { relativeCode ->
+                if (relativeCode == expSampleCode) contained = true
             }
         }
         return contained
