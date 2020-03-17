@@ -17,4 +17,5 @@ public class MetaStatsCommand extends AbstractCommand {
 
     @CommandLine.Option(names={"-p", "--projectcode"}, description="project code for openbis project.", required=true)
     String projectCode;
+
 }

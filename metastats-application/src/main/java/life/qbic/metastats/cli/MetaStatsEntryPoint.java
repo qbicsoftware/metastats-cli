@@ -21,6 +21,11 @@ public class MetaStatsEntryPoint {
     public static void main(final String[] args) {
         LOG.debug("Starting MetaStats tool");
         final ToolExecutor executor = new ToolExecutor();
-        executor.invoke(MetaStatsTool.class, MetaStatsCommand.class, args);
+
+        if(args.length != 0){
+            executor.invoke(MetaStatsTool.class, MetaStatsCommand.class, args);
+        }else{
+            LOG.error("Please define the commandline parameters, for more information use -h for help");
+        }
     }
 }
