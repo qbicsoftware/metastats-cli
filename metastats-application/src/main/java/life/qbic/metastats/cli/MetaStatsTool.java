@@ -37,14 +37,14 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         JsonParser props = new JsonParser(command.conf);
         Map credentials = props.parse();
 
-        JsonParser parser= new JsonParser("model.schema.json");
-        Map modelSchema = parser.parse();
+        JsonValidator validator = new JsonValidator("/model.schema.json");
 
         //define output classes
         MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter();
         PropertiesMapper mapper = new OpenBisMapper();
+
         //define use case
-        FilterExperimentData filter = new FilterExperimentDataImpl(metaStatsPresenter,mapper,modelSchema);
+        FilterExperimentData filter = new FilterExperimentDataImpl(metaStatsPresenter,mapper,validator);
 
         //define db classes
         OpenBisSession session = new OpenBisSession((String) credentials.get("user"),

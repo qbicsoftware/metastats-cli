@@ -8,46 +8,7 @@ import org.apache.logging.log4j.Logger
 
 class OpenBisMapper implements PropertiesMapper {
 
-    //todo conditions, filename
     private static final Logger LOG = LogManager.getLogger(OpenBisMapper.class)
-
-
-    def mapExperimentProperties(MetaStatsExperiment experiment, List<MetaStatsSample> samples) {
-        println experiment.properties.keySet()
-
-        LOG.info "parse experiment conditions ..."
-
-        if (experiment.type == "Q_PROJECT_DETAILS") {
-            ConditionParser parser = new ConditionParser()
-            parser.parseProperties(experiment.properties)
-
-            samples.each { prepSample ->
-                //check all children of prep sample to find the samples condition
-                //add field "condition:$label" : "$value" -> add to samples properties
-                prepSample.relatives.each { relative ->
-                    def res = parser.getSampleConditions(relative)
-                    if (res != null) {
-                        res.each { sampleProp ->
-                            String value = sampleProp.value
-                            String label = sampleProp.label
-                            LOG.debug prepSample.properties
-                            prepSample.properties.put("condition " + label + ":", value)
-                        }
-                    } else {
-                        LOG.info "no experiment conditions where found, check your openbis project"
-                    }
-                }
-            }
-        } else {
-            samples.each { sample ->
-                if (isSampleOfExperiment(experiment.samples, sample)) {
-                    String value = containsProperty(experiment.properties, "Q_SEQUENCER_DEVICE")
-                    sample.properties.put("sequencingDevice", value)
-                    //optional: Q_SEQUENCING_MODE, Q_SEQUENCING_TYPE
-                }
-            }
-        }
-    }
 
     Map mapExperimentToSample(MetaStatsExperiment experiment, MetaStatsSample sample) {
         Map<String, String> metaStatsProperties = new HashMap<>()

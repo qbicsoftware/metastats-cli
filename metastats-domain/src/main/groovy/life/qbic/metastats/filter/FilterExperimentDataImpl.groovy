@@ -1,5 +1,6 @@
 package life.qbic.metastats.filter
 
+import com.github.fge.jsonschema.main.JsonValidator
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.logging.log4j.LogManager
@@ -10,15 +11,15 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     MSMetadataPackageOutput output
     PropertiesMapper mapper
     List<MetaStatsSample> prepSamples
-    Map validSchema
+    SchemaValidator validator
 
     private static final Logger LOG = LogManager.getLogger(FilterExperimentDataImpl.class);
 
 
-    FilterExperimentDataImpl(MSMetadataPackageOutput output, PropertiesMapper mapper, Map schema){
+    FilterExperimentDataImpl(MSMetadataPackageOutput output, PropertiesMapper mapper, SchemaValidator validator){
         this.output = output
         this.mapper = mapper
-        validSchema = schema
+        this.validator = validator
     }
 
     @Override
@@ -57,13 +58,18 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     }
 
 
-    def validateSchema(Map metadata){
+    def validateSchema(List<MetaStatsSample> samples){
         LOG.info "validate metastats-object-model-schema ..."
-        SchemaValidator validator = new SchemaValidator(validSchema)
-        //1. are filenames valid
-        //2. metadata need to follow schema
-        validator.validate(metadata)
-        //4. more files found than prepSamples?
+
+        samples.each {sample ->
+            //1. are filenames valid
+            //2. metadata need to follow schema
+            if(!validator.validate(sample.properties)){
+               LOG.info "Sample "+ sample.code +" does not follow the schema"
+            }
+            //4. more files found than prepSamples?
+        }
+
     }
 
     static def add(Map target, Map values){
