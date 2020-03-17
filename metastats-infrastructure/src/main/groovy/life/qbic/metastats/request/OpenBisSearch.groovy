@@ -118,7 +118,7 @@ class OpenBisSearch implements DatabaseGateway{
     def translateVocabulary(List<MetaStatsSample> samples){
         samples.each {sample ->
             sample.properties.each {key, value ->
-                if(key == "Q_NCBI_ORGANISM" || key == "Q_PRIMARY_TISSUE"){
+                if(key == "Q_NCBI_ORGANISM" || key == "Q_PRIMARY_TISSUE" || key == "Q_SEQUENCER_DEVICE"){
                     String vocabulary = fetchVocabulary(value)
                     //overwrite old key
                     sample.properties.put(key,vocabulary)

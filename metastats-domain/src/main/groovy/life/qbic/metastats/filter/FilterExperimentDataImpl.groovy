@@ -47,12 +47,12 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         LOG.info "finished filtering of metadata package"
 
 
-        validateSchema()
+        validateSchema(samples)
 
-        prepSamples.each {
+        /*prepSamples.each {
             output.createMetaStatsMetadataPackage(it.properties)
             LOG.debug it.properties
-        }
+        }*/
 
         return null
     }
@@ -70,6 +70,11 @@ class FilterExperimentDataImpl implements FilterExperimentData{
             //4. more files found than prepSamples?
         }
 
+    }
+
+    def validFilenames(MetaStatsSample sample){
+        //a valid filename either contains the sample preparation qbic code
+        //or the seqFacilityID
     }
 
     static def add(Map target, Map values){

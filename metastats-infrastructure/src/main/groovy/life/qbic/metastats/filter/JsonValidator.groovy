@@ -26,8 +26,7 @@ class JsonValidator implements SchemaValidator{
 
     @Override
     boolean validate(Map valueMap){
-        //todo process conditions
-        //todo handel rin
+        //todo process conditions somehow different (skipped for now)
 
         ProcessingReport report
         ObjectMapper mapper = new ObjectMapper()
@@ -42,7 +41,5 @@ class JsonValidator implements SchemaValidator{
 
         return !report.contains("error")
     }
-    //todo handle conditions.. use further schema information, handel different types like integer for integrity number
-
 
 }

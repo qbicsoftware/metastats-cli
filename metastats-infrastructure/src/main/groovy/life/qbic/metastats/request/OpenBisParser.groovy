@@ -46,7 +46,7 @@ class OpenBisParser {
         return allSamples
     }
 
-    def createMetaStatsSample(List<Sample> relatedSamples, Sample prepSample){
+    static def createMetaStatsSample(List<Sample> relatedSamples, Sample prepSample){
         String code = prepSample.code
         String type = prepSample.type.code
 

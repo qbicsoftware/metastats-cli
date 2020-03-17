@@ -122,9 +122,8 @@
     },
     "integrityNumber": {
       "description": "RIN or DIN of the biological material",
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 10
+      "type": "string",
+      "pattern": "[1-9]|10"
     },
     "conditions": {
       "description": "Sample group characteristic",
