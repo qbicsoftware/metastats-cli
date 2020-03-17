@@ -63,6 +63,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
         samples.each {sample ->
             //1. are filenames valid
+            validFilenames(sample)
             //2. metadata need to follow schema
             if(!validator.validate(sample.properties)){
                LOG.info "Sample "+ sample.code +" does not follow the schema"
@@ -73,8 +74,18 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     }
 
     def validFilenames(MetaStatsSample sample){
-        //a valid filename either contains the sample preparation qbic code
-        //or the seqFacilityID
+        boolean valid = true
+        List<String> fileNames = sample.properties.get("fileName")
+
+        fileNames.each {file ->
+            //a valid filename either contains the sample preparation qbic code
+            def prepID = sample.properties.get("samplePreparationId")
+            //or the seqFacilityID
+            def seqFacility = sample.properties.get("sequencingFacilityId")
+            if(!file.contains(prepID) && !file.contains(seqFacility)) valid = false
+        }
+
+        return valid
     }
 
     static def add(Map target, Map values){
