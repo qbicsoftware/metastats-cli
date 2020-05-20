@@ -49,7 +49,7 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         //define db classes
         OpenBisSession session = new OpenBisSession((String) credentials.get("user"),
                 (String) credentials.get("password"),
-                (String) credentials.get("url"));
+                (String) credentials.get("server_url"));
 
         DatabaseGateway db = new OpenBisSearch(session.getV3(), session.getDss(), session.getSessionToken());
         //define input for connector class

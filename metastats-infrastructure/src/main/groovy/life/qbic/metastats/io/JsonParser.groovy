@@ -11,8 +11,8 @@ class JsonParser {
     }
 
     Map parse(){
-        InputStream stream = getClass().getClassLoader().getResourceAsStream(conf)
-        (Map) new JsonSlurper().parseText(stream.text)
+        File file = new File(conf)
+        return (Map) new JsonSlurper().parseText(file.text)
     }
 
 }

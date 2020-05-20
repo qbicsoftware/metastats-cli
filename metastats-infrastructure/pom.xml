@@ -24,11 +24,6 @@
             <version>1.7.0</version>
         </dependency>
         <dependency>
-            <groupId>life.qbic</groupId>
-            <artifactId>postman-core-lib</artifactId>
-            <version>1.0.5-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.3.1</version>

@@ -2,6 +2,8 @@ package life.qbic.metastats.request
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.search.SearchResult
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.DataSet
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.fetchoptions.DataSetFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project
@@ -9,6 +11,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetc
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.VocabularyTerm
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.fetchoptions.VocabularyTermFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.search.VocabularyTermSearchCriteria
@@ -16,8 +19,6 @@ import ch.ethz.sis.openbis.generic.dssapi.v3.IDataStoreServerApi
 import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.DataSetFile
 import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.fetchoptions.DataSetFileFetchOptions
 import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.search.DataSetFileSearchCriteria
-import life.qbic.dataLoading.PostmanDataFilterer
-import life.qbic.dataLoading.PostmanDataFinder
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.commons.lang.StringUtils
@@ -148,11 +149,9 @@ class OpenBisSearch implements DatabaseGateway{
     HashMap<String,List> fetchDataSets(String sampleCode, String fileType){
         LOG.info "fetch DataSet for $sampleCode"
 
-        PostmanDataFinder finder = new PostmanDataFinder(v3, dss, new PostmanDataFilterer(), sessionToken)
-
         HashMap allDataSets = new HashMap()
 
-        finder.findAllDatasetsRecursive(sampleCode).each { dataSet ->
+        findAllDatasetsRecursive(sampleCode).each { dataSet ->
             DataSetFileSearchCriteria criteria = new DataSetFileSearchCriteria()
             criteria.withDataSet().withPermId().thatEquals(dataSet.permId.permId)
             criteria.withDataSet().withType()
@@ -173,6 +172,44 @@ class OpenBisSearch implements DatabaseGateway{
             allDataSets.put(dataSet.type.code,dataFiles)
         }
         return allDataSets
+    }
+
+    List<DataSet> findAllDatasetsRecursive(final String sampleId) {
+        SampleSearchCriteria criteria = new SampleSearchCriteria()
+        criteria.withCode().thatEquals(sampleId)
+
+        // tell the API to fetch all descendants for each returned sample
+        SampleFetchOptions fetchOptions = new SampleFetchOptions()
+        DataSetFetchOptions dsFetchOptions = new DataSetFetchOptions()
+        dsFetchOptions.withType()
+        fetchOptions.withChildrenUsing(fetchOptions)
+        fetchOptions.withDataSetsUsing(dsFetchOptions)
+        SearchResult<Sample> result = v3.searchSamples(sessionToken, criteria, fetchOptions)
+
+        List<DataSet> foundDatasets = new ArrayList<>()
+
+        for (Sample sample : result.getObjects()) {
+            // add the datasets of the sample itself
+            foundDatasets.addAll(sample.getDataSets())
+
+            // fetch all datasets of the children
+            foundDatasets.addAll(fetchDescendantDatasets(sample))
+        }
+
+        return foundDatasets
+    }
+
+    private static List<DataSet> fetchDescendantDatasets(final Sample sample) {
+        List<DataSet> foundSets = new ArrayList<>()
+
+        // fetch all datasets of the children recursively
+        for (Sample child : sample.getChildren()) {
+            final List<DataSet> foundChildrenDatasets = child.getDataSets()
+            foundSets.addAll(foundChildrenDatasets)
+            foundSets.addAll(fetchDescendantDatasets(child))
+        }
+
+        return foundSets
     }
 
 
