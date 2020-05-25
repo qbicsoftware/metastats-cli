@@ -1,6 +1,5 @@
 package life.qbic.metastats.filter
 
-import com.github.fge.jsonschema.main.JsonValidator
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.logging.log4j.LogManager

@@ -21,7 +21,6 @@ import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.fetchoptions.DataSe
 import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.search.DataSetFileSearchCriteria
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
-import org.apache.commons.lang.StringUtils
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -39,10 +38,10 @@ class OpenBisSearch implements DatabaseGateway{
 
     private static final Logger LOG = LogManager.getLogger(OpenBisSearch.class);
 
-    OpenBisSearch(IApplicationServerApi v3, IDataStoreServerApi dss, String session){
-        this.v3 = v3
-        this.dss = dss
-        sessionToken = session
+    OpenBisSearch(OpenBisSession session){
+        this.v3 = session.v3
+        this.dss = session.dss
+        sessionToken = session.sessionToken
     }
 
     @Override
@@ -79,6 +78,8 @@ class OpenBisSearch implements DatabaseGateway{
             experiments.add(parser.createMetaStatsExperiment(exp))
         }
 
+        translateExperimentVocabulary(experiments)
+
         return experiments
     }
 
@@ -109,20 +110,33 @@ class OpenBisSearch implements DatabaseGateway{
        }
 
         //translate vocabularies to meaningfully
-        translateVocabulary(prepSamples)
+        translateSampleVocabulary(prepSamples)
         //add filenames to sample
         addFile(prepSamples)
 
         return prepSamples
     }
 
-    def translateVocabulary(List<MetaStatsSample> samples){
+    def translateSampleVocabulary(List<MetaStatsSample> samples){
         samples.each {sample ->
             sample.properties.each {key, value ->
-                if(key == "Q_NCBI_ORGANISM" || key == "Q_PRIMARY_TISSUE" || key == "Q_SEQUENCER_DEVICE"){
+                if(key == "Q_NCBI_ORGANISM" || key == "Q_PRIMARY_TISSUE"){
                     String vocabulary = fetchVocabulary(value)
                     //overwrite old key
                     sample.properties.put(key,vocabulary)
+                }
+            }
+        }
+    }
+
+    def translateExperimentVocabulary(List<MetaStatsExperiment> experiments){
+        experiments.each {experiment ->
+            experiment.properties.each {key, value ->
+                if(key == "Q_SEQUENCER_DEVICE"){
+                    LOG.info("this is a sequencer device")
+                    String vocabulary = fetchVocabulary(value)
+                    //overwrite old key
+                    experiments.properties.put(key,vocabulary)
                 }
             }
         }

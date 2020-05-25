@@ -12,10 +12,11 @@ class OpenBisSearchSpecification extends Specification{
     OpenBisSession session
 
     def setup(){
-        def file = OpenBisSearchSpecification.class.getClassLoader().getResource("credentials.json.properties")
+        def file = new File("/Users/jnnfr/private/credentials.json.properties")
         JsonParser props = new JsonParser(file.path)
         Map cred = (Map) props.parse()
-        session = new OpenBisSession((String) cred.get("user"), (String) cred.get("password"), (String) cred.get("url"))
+        session = new OpenBisSession((String) cred.get("user"), (String) cred.get("password"), (String) cred.get("server_url"))
+        println session
     }
 
     def "Fetch all files"(){
