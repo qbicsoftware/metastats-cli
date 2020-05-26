@@ -3,11 +3,26 @@ package life.qbic.metastats
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 import life.qbic.metastats.filter.OpenBisMapper
+import life.qbic.metastats.io.JsonParser
 import spock.lang.Specification
 
 class OpenBisMapperSpecification extends Specification{
 
-    OpenBisMapper obm = new OpenBisMapper()
+    private OpenBisMapper obm
+
+    def setup(){
+        URL url = OpenBisMapper.class.getClassLoader().getResource("openbisToMetastatsSample.json")
+       // OpenBisMapper.class.classLoader.getResourceAsStream()
+        JsonParser props = new JsonParser(url.getPath())
+        Map mappingInfo = props.parse()
+
+        URL url2 = OpenBisMapper.class.getClassLoader().getResource("openbisToMetastatsExperiment.json")
+        // OpenBisMapper.class.classLoader.getResourceAsStream()
+        JsonParser props2 = new JsonParser(url2.getPath())
+        Map mappingInfo2 = props2.parse()
+
+        obm = new OpenBisMapper(mappingInfo2,mappingInfo)
+    }
 
     def "mapping of entity properties is successful"(){
         given:
@@ -20,9 +35,7 @@ class OpenBisMapperSpecification extends Specification{
         def res = obm.mapSampleProperties(props)
 
         then:
-        res == ["species":"value","sex":"value"]
-        assert res.size() == 2
-        assert props.size() == 3
+        res.sort() == ["extractCode":"", "sampleName":"", "filename":"", "individual":"", "integrityNumber":"", "species":"value", "samplePreparationId":"", "sex":"value", "analyte":"", "tissue":"", "sequencingFacilityId":""].sort()
     }
 
     def "mapping of biological sample properties is successful"(){
@@ -36,8 +49,7 @@ class OpenBisMapperSpecification extends Specification{
         def res = obm.mapSampleProperties(props)
 
         then:
-        res == ["tissue":"value"]
-        assert res.size() == 1
+        res.sort() == ["extractCode":"", "sampleName":"", "filename":"", "individual":"", "integrityNumber":"", "species":"", "samplePreparationId":"", "sex":"value", "analyte":"", "tissue":"value", "sequencingFacilityId":""].sort()
     }
 
     def "mapping of test sample properties is successful"(){
@@ -51,14 +63,13 @@ class OpenBisMapperSpecification extends Specification{
         def res = obm.mapSampleProperties(props)
 
         then:
-        res == ["analyte":"value","sequencingFacilityId":"value","integrityNumber":"value"]
-        assert res.size() == 3
+        res.sort() == ["extractCode":"", "sampleName":"", "filename":"", "individual":"", "integrityNumber":"", "species":"", "samplePreparationId":"", "sex":"", "analyte":"value", "tissue":"", "sequencingFacilityId":"value"].sort()
     }
 
     def "mapping of sample runs properties is successful"(){
         given:
         Map props = new HashMap<String, String>()
-        props.put("Q_SECONDARY_NAME","value")
+        props.put("Q_SECONDARY_NAME_Q_NGS_SINGLE_SAMPLE_RUN","value")
         props.put("SEX","value")
         props.put("IgnoreThatKey","value")
 
@@ -66,8 +77,7 @@ class OpenBisMapperSpecification extends Specification{
         def res = obm.mapSampleProperties(props)
 
         then:
-        res == ["sampleName":"value"]
-        assert res.size() == 1
+        res.sort() == ["extractCode":"", "sampleName":"value", "filename":"", "individual":"", "integrityNumber":"", "species":"", "samplePreparationId":"", "sex":"value", "analyte":"", "tissue":"", "sequencingFacilityId":""].sort()
     }
 
     def "condition for experiment is mapped to correct sample"(){
@@ -89,6 +99,8 @@ class OpenBisMapperSpecification extends Specification{
                 "</qexperiment>"
         properties.put("Q_EXPERIMENTAL_SETUP",condition)
 
+        MetaStatsExperiment experiment = new MetaStatsExperiment("Q_PROJECT_DETAILS",properties)
+
         //MetaStatsExperiment experiment = new MetaStatsExperiment("Q_PROJECT_INFO", properties)
         MetaStatsSample sample1 = new MetaStatsSample("QXXXXXX","Q_TEST_SAMPLE",new HashMap<String, String>())
         sample1.addRelatives("QFSVIENTITY-1")
@@ -103,10 +115,32 @@ class OpenBisMapperSpecification extends Specification{
         expected2.put("condition:genotype","wildtype")
 
         when:
-        def res = obm.mapExperimentProperties(properties,[sample1,sample2])
+        def res1 = obm.mapExperimentToSample(experiment,sample1)
+        def res2 = obm.mapExperimentToSample(experiment,sample2)
+
 
         then:
-        sample1.properties == expected1
-        assert sample2.properties == expected2
+        res1.sort() == ["condition genotype:":"mutant"]
+        assert res2.sort() == ["condition genotype:":"wildtype"]
     }
+
+    def "test"(){
+        given:
+        Map props = new HashMap<String, String>()
+        props.put("Q_SEQUENCER_DEVICE","value")
+
+        MetaStatsSample sample1 = new MetaStatsSample("QXXXXXX","Q_TEST_SAMPLE",props)
+        sample1.addRelatives("QFSVIENTITY-1")
+
+        MetaStatsExperiment experiment = new MetaStatsExperiment("Q_OTHER",props)
+        experiment.addSamples(["QXXXXXX"])
+
+        when:
+        def res = obm.mapExperimentToSample(experiment,sample1)
+
+        then:
+        res.sort() == ["sequencingDevice":"value"].sort()
+
+    }
+    //Q_SEQUENCER_DEVIC
 }

@@ -1,6 +1,6 @@
 package life.qbic.metastats.filter
 
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment
+
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.logging.log4j.LogManager
@@ -8,7 +8,15 @@ import org.apache.logging.log4j.Logger
 
 class OpenBisMapper implements PropertiesMapper {
 
+    private Map sampleMappingProperties
+    private Map experimentMappingProperties
+
     private static final Logger LOG = LogManager.getLogger(OpenBisMapper.class)
+
+    OpenBisMapper(Map experimentProps, Map sampleProps){
+        experimentMappingProperties = experimentProps
+        sampleMappingProperties = sampleProps
+    }
 
     Map mapExperimentToSample(MetaStatsExperiment experiment, MetaStatsSample sample) {
         Map<String, String> metaStatsProperties = new HashMap<>()
@@ -25,7 +33,7 @@ class OpenBisMapper implements PropertiesMapper {
                     res.each { sampleProp ->
                         String value = sampleProp.value
                         String label = sampleProp.label
-                        LOG.debug sample.properties
+                        //LOG.debug sample.properties
                         metaStatsProperties.put("condition " + label + ":", value)
                     }
                 } else {
@@ -34,11 +42,11 @@ class OpenBisMapper implements PropertiesMapper {
             }
         }
         else if (isSampleOfExperiment(experiment.samples, sample)) {
-            String value = containsProperty(experiment.properties, "Q_SEQUENCER_DEVICE")
-            metaStatsProperties.put("sequencingDevice", value)
-            //optional: Q_SEQUENCING_MODE, Q_SEQUENCING_TYPE
+            experimentMappingProperties.each { openBisTerm,metastatsTerm ->
+                String value = containsProperty(experiment.properties, openBisTerm as String)
+                metaStatsProperties.put(metastatsTerm as String, value)
+            }
         }
-
         return metaStatsProperties
     }
 
@@ -58,58 +66,21 @@ class OpenBisMapper implements PropertiesMapper {
 
     Map<String, String> mapSampleProperties(Map<String, String> openBisProperties) {
         Map<String, String> metaStatsProperties = new HashMap<>()
-
+        //todo use mapping info from mapping json
         //ENTITY LEVEL
-        String value = containsProperty(openBisProperties, "Q_BIOLOGICAL_ENTITY_CODE")
-        metaStatsProperties.put("individual", value)
-
-        value = containsProperty(openBisProperties, "Q_NCBI_ORGANISM")
-        metaStatsProperties.put("species", value)
-
-        value = containsProperty(openBisProperties, "SEX")
-        metaStatsProperties.put("sex", value)
-
-        //BIOLOGICAL SAMPLE level
-        value = containsProperty(openBisProperties, "Q_BIOLOGICAL_SAMPLE_CODE")
-        metaStatsProperties.put("extractCode", value)
-
-        value = containsProperty(openBisProperties, "Q_PRIMARY_TISSUE")
-        metaStatsProperties.put("tissue", value)
-
-        //TEST_SAMPLE level
-        value = containsProperty(openBisProperties, "Q_TEST_SAMPLE_CODE")
-        metaStatsProperties.put("samplePreparationId", value)
-
-        value = containsProperty(openBisProperties, "Q_SAMPLE_TYPE")
-        metaStatsProperties.put("analyte", value)
-
-        value = containsProperty(openBisProperties, "Q_SECONDARY_NAME")//or Q_EXTERNALDB_ID in test sample level
-        metaStatsProperties.put("sequencingFacilityId", value)
-
-        value = containsProperty(openBisProperties, "Q_RNA_INTEGRITY_NUMBER")
-        metaStatsProperties.put("integrityNumber", value)
-
-        //RUN Level
-        value = containsProperty(openBisProperties, "Q_SECONDARY_NAME_Q_NGS_SINGLE_SAMPLE_RUN")
-        metaStatsProperties.put("sampleName", value)
-
-        //DATASET Level
-        value = containsProperty(openBisProperties, "Q_NGS_RAW_DATA")
-        //todo convert list to proper output
-        metaStatsProperties.put("filename", value)
-
+        sampleMappingProperties.each { openBisTerm, metastatsTerm ->
+            String value = containsProperty(openBisProperties, openBisTerm as String)
+            metaStatsProperties.put(metastatsTerm as String, value)
+        }
         return metaStatsProperties
     }
 
 
     String containsProperty(Map openBisProperties, String openBisProperty) {
-
         if (openBisProperties.containsKey(openBisProperty)) {
             return openBisProperties.get(openBisProperty)
-        } else {
-            //LOG.warn "missing '$openBisProperty' property"
         }
-        return "NA"
+        return ""
     }
 
 

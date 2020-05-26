@@ -32,6 +32,7 @@ class OpenBisSearch implements DatabaseGateway{
     IApplicationServerApi v3
     IDataStoreServerApi dss
     String sessionToken
+    private OpenBisSession session
 
     OpenBisParser parser = new OpenBisParser()
 
@@ -39,6 +40,7 @@ class OpenBisSearch implements DatabaseGateway{
     private static final Logger LOG = LogManager.getLogger(OpenBisSearch.class);
 
     OpenBisSearch(OpenBisSession session){
+        this.session = session
         this.v3 = session.v3
         this.dss = session.dss
         sessionToken = session.sessionToken
@@ -90,7 +92,10 @@ class OpenBisSearch implements DatabaseGateway{
         return samples
     }
 
-
+    @Override
+    void logout() {
+        session.logout()
+    }
 
     List<MetaStatsSample> fetchBiologicalEntity(){
         List prepSamples = []

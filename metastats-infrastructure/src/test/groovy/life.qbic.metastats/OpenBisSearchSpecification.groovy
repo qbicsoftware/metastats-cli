@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class OpenBisSearchSpecification extends Specification{
 
-    OpenBisSession session
+  /*  OpenBisSession session
 
     def setup(){
         def file = new File("/Users/jnnfr/private/credentials.json.properties")
@@ -21,7 +21,7 @@ class OpenBisSearchSpecification extends Specification{
 
     def "Fetch all files"(){
         given:
-        OpenBisSearch search = new OpenBisSearch(session.v3, session.dss ,session.sessionToken)
+        OpenBisSearch search = new OpenBisSearch(session)
         search.getProject("QFSVI")
 
         when:
@@ -34,7 +34,7 @@ class OpenBisSearchSpecification extends Specification{
 
     def "Retrieve all Preparation Samples"(){
         given:
-        OpenBisSearch search = new OpenBisSearch(session.v3, session.dss ,session.sessionToken)
+        OpenBisSearch search = new OpenBisSearch(session)
         search.getProject("QFSVI")
 
         when:
@@ -46,7 +46,7 @@ class OpenBisSearchSpecification extends Specification{
 
     def "Retrieve all Children of a Preparation Sample"(){
         given:
-        OpenBisSearch search = new OpenBisSearch(session.v3, session.dss ,session.sessionToken)
+        OpenBisSearch search = new OpenBisSearch(session)
         search.getProject("QFSVI")
 
         when:
@@ -63,7 +63,7 @@ class OpenBisSearchSpecification extends Specification{
 
     def "Retrieve all Experiments with preparation sample"(){
         given:
-        OpenBisSearch search = new OpenBisSearch(session.v3, session.dss ,session.sessionToken)
+        OpenBisSearch search = new OpenBisSearch(session)
         search.getProject("QFSVI")
 
         when:
@@ -76,6 +76,6 @@ class OpenBisSearchSpecification extends Specification{
                 assert it.properties.size() == 1
             }
         }
-    }
+    }*/
 
 }

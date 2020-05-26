@@ -29,6 +29,7 @@ class RequestExperimentData implements ProjectSpecification{
 
         LOG.info "retrieved openbis project"
         output.metaDataForProject(search.fetchSamplesWithMetadata(), search.fetchExperimentsWithMetadata())
+        search.logout()
     }
 
     static boolean verifyQbicCode(String code){
