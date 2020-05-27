@@ -8,6 +8,7 @@ class MetaStatsPresenter implements MSMetadataPackageOutput{
 
     FileCreator creator
     String fileName = "metastats-package"
+    StringBuilder fileContent = new StringBuilder()
 
     MetaStatsPresenter(FileCreator creator){
         this.creator = creator
@@ -15,16 +16,16 @@ class MetaStatsPresenter implements MSMetadataPackageOutput{
 
     @Override
     def createMetaStatsMetadataPackage(List<MetaStatsPackageEntry> entries) {
-        StringBuilder fileContent = creator.createFileContent(entries)
-
-        String home = System.getProperty("user.home")
-        String path = home+"/Downloads/" + fileName + ".tsv"
-        File file = new File(path)
-
-        file.write(fileContent.toString())
+        fileContent = creator.createFileContent(entries)
     }
 
     @Override
     def downloadMetadataPackage() {
+        String home = System.getProperty("user.home")
+        String path = home+"/Downloads/" + fileName + ".tsv"
+
+        File file = new File(path)
+
+        file.write(fileContent.toString())
     }
 }
