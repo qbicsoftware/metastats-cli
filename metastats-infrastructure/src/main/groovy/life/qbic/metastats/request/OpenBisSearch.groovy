@@ -138,10 +138,9 @@ class OpenBisSearch implements DatabaseGateway{
         experiments.each {experiment ->
             experiment.properties.each {key, value ->
                 if(key == "Q_SEQUENCER_DEVICE"){
-                    LOG.info("this is a sequencer device")
                     String vocabulary = fetchVocabulary(value)
                     //overwrite old key
-                    experiments.properties.put(key,vocabulary)
+                    experiment.properties.put(key,vocabulary)
                 }
             }
         }

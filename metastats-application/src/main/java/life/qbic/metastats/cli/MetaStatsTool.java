@@ -43,16 +43,11 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         //define output classes
         MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter();
 
-        URL experimentURL = MetaStatsTool.class.getClassLoader().getResource("openbisToMetastatsExperiment.json");
-        assert experimentURL != null;
-        experimentProps = new JsonParser(experimentURL.getPath());
-        Map expMappingInfo = experimentProps.parse();
+        experimentProps = new JsonParser("openbisToMetastatsExperiment.json");
+        Map expMappingInfo = experimentProps.parseStream();
 
-        URL sampleUrl = MetaStatsTool.class.getClassLoader().getResource("openbisToMetastatsSample.json");
-        // OpenBisMapper.class.classLoader.getResourceAsStream()
-        assert sampleUrl != null;
-        JsonParser sampleProps = new JsonParser(sampleUrl.getPath());
-        Map sampleMappingInfo = sampleProps.parse();
+        JsonParser sampleProps = new JsonParser("openbisToMetastatsSample.json");
+        Map sampleMappingInfo = sampleProps.parseStream();
 
         PropertiesMapper mapper = new OpenBisMapper(expMappingInfo, sampleMappingInfo);
 

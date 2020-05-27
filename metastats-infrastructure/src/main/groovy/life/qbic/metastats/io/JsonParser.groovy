@@ -4,15 +4,20 @@ import groovy.json.JsonSlurper
 
 class JsonParser {
 
-    String conf
+    String path
 
-    JsonParser(String configFile){
-        conf = configFile
+    JsonParser(String filePath){
+        path = filePath
     }
 
     Map parse(){
-        File file = new File(conf)
+        File file = new File(path)
         return (Map) new JsonSlurper().parseText(file.text)
+    }
+
+    Map parseStream(){
+        InputStream stream = JsonParser.class.classLoader.getResourceAsStream(path)
+        return (Map) new JsonSlurper().parseText(stream.text)
     }
 
 }
