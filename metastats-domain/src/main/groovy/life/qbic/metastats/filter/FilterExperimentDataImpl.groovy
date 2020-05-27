@@ -1,9 +1,11 @@
 package life.qbic.metastats.filter
 
 import life.qbic.metastats.datamodel.MetaStatsExperiment
+import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.codehaus.groovy.util.HashCodeHelper
 
 class FilterExperimentDataImpl implements FilterExperimentData{
 
@@ -33,7 +35,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
             prep.properties = mapper.mapSampleProperties(prep.properties)
         }
 
-        LOG.info "filter metadata from experiment ..."
+        LOG.info "filter metadata from experiment for samples ..."
         experiments.each {experiment ->
             //mapper.mapExperimentProperties(experiment, prepSamples)
             //map to samples
@@ -44,43 +46,63 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         }
 
         LOG.info "finished filtering of metadata package"
+        LOG.info "create metadata package entries"
 
 
-        validateSchema(samples)
+        List<MetaStatsPackageEntry> entries = createMetadataPackageEntries(samples)
+
+        validateMetadataPackage(entries)
 
         /*prepSamples.each {
             output.createMetaStatsMetadataPackage(it.properties)
             LOG.debug it.properties
         }*/
+        output.createMetaStatsMetadataPackage(entries)
 
         return null
     }
 
-
-    def validateSchema(List<MetaStatsSample> samples){
-        LOG.info "validate metastats-object-model-schema ..."
+    static List<MetaStatsPackageEntry> createMetadataPackageEntries(List<MetaStatsSample> samples){
+        List packageEntries = []
 
         samples.each {sample ->
+            String sampleName = sample.properties.get("sampleName")
+
+            HashMap props = sample.properties as HashMap
+            props.remove("sampleName")
+
+            MetaStatsPackageEntry entry = new MetaStatsPackageEntry(sampleName,props)
+            packageEntries.add(entry)
+        }
+
+        return packageEntries
+    }
+
+
+    def validateMetadataPackage(List<MetaStatsPackageEntry> metadataPackage){
+        LOG.info "validate metastats-object-model-schema ..."
+
+        metadataPackage.each {entry ->
             //1. are filenames valid
-            validFilenames(sample)
+            validFilenames(entry.properties)
             //2. metadata need to follow schema
-            if(!validator.validate(sample.properties)){
-               LOG.info "Sample "+ sample.code +" does not follow the schema"
+            if(!validator.validateMetaStatsMetadataPackage(entry.properties)){
+               LOG.info "Sample "+ entry.sampleName +" does not follow the schema"
             }
             //4. more files found than prepSamples?
         }
 
     }
 
-    def validFilenames(MetaStatsSample sample){
+    def validFilenames(HashMap<String,String> entryProps){
         boolean valid = true
-        List<String> fileNames = sample.properties.get("fileName")
+        List<String> fileNames = entryProps.get("fileName")
 
         fileNames.each {file ->
             //a valid filename either contains the sample preparation qbic code
-            def prepID = sample.properties.get("samplePreparationId")
+            def prepID = entryProps.get("samplePreparationId")
             //or the seqFacilityID
-            def seqFacility = sample.properties.get("sequencingFacilityId")
+            def seqFacility = entryProps.get("sequencingFacilityId")
             if(!file.contains(prepID) && !file.contains(seqFacility)) valid = false
         }
 

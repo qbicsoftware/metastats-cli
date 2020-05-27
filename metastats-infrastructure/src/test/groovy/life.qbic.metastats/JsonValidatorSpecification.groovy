@@ -1,7 +1,6 @@
 package life.qbic.metastats
 
 
-import groovy.json.JsonSlurper
 import life.qbic.metastats.filter.JsonValidator
 import spock.lang.Specification
 
@@ -16,7 +15,7 @@ class JsonValidatorSpecification extends Specification {
                         "fileName":"thisIsAFile.txt, thisisAnotherFile.txt","sequencingDevice":"Illumina MiSeq at MPIDB"]
 
         when:
-        def res = validator.validate(valueMap)
+        def res = validator.validateMetaStatsMetadataPackage(valueMap)
 
         then:
         res
@@ -31,7 +30,7 @@ class JsonValidatorSpecification extends Specification {
                         "fileName":"thisIsAFile.txt, thisisAnotherFile.txt","sequencingDevice":"Illumina MiSeq at MPIDB"]
 
         when:
-        def res = validator.validate(valueMap)
+        def res = validator.validateMetaStatsMetadataPackage(valueMap)
 
         then:
         res

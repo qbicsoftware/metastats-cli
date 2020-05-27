@@ -21,6 +21,24 @@ class FilterExperimentDataImplSpecification extends Specification{
         meta == ["Q_Test":"value","haha":"hihi"]
     }
 
+    def "correctly transform metastats samples to package entries"(){
+        given:
+        Map props = new HashMap<String, String>()
+        props.put("sampleName","QXXXXXX")
+        props.put("species","value")
+        props.put("sequencingDevice","value")
+
+        MetaStatsSample sample1 = new MetaStatsSample("QXXXXXX","Q_TEST_SAMPLE",props)
+        sample1.addRelatives("QFSVIENTITY-1")
+
+        when:
+        List res = FilterExperimentDataImpl.createMetadataPackageEntries([sample1])
+
+        then:
+        res.get(0).sampleName == "QXXXXXX"
+        assert !res.get(0).properties.containsKey("sampleName")
+    }
+
    /** def "incomplete metaStats-metadata-package gives a warning"(){
         given:
         def projectMetadata = new HashMap<String,String>()

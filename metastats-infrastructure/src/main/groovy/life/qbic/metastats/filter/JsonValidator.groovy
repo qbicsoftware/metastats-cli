@@ -25,7 +25,7 @@ class JsonValidator implements SchemaValidator{
     }
 
     @Override
-    boolean validate(Map valueMap){
+    boolean validateMetaStatsMetadataPackage(Map valueMap){
         //todo process conditions somehow different (skipped for now)
 
         ProcessingReport report
