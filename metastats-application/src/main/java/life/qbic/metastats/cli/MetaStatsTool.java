@@ -3,6 +3,7 @@ package life.qbic.metastats.cli;
 import life.qbic.cli.QBiCTool;
 import life.qbic.metastats.MetaStatsPresenter;
 import life.qbic.metastats.PrepareMetaData;
+import life.qbic.metastats.fileCreator.TSVFileCreator;
 import life.qbic.metastats.io.JsonParser;
 import life.qbic.metastats.request.*;
 import life.qbic.metastats.filter.*;
@@ -41,7 +42,7 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         JsonValidator validator = new JsonValidator("/model.schema.json");
 
         //define output classes
-        MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter();
+        MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter(new TSVFileCreator());
 
         experimentProps = new JsonParser("openbisToMetastatsExperiment.json");
         Map expMappingInfo = experimentProps.parseStream();
