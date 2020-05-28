@@ -5,7 +5,6 @@ import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import org.codehaus.groovy.util.HashCodeHelper
 
 class FilterExperimentDataImpl implements FilterExperimentData{
 
@@ -14,7 +13,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
     List<MetaStatsSample> prepSamples
     SchemaValidator validator
 
-    private static final Logger LOG = LogManager.getLogger(FilterExperimentDataImpl.class);
+    private static final Logger LOG = LogManager.getLogger(FilterExperimentDataImpl.class)
 
 
     FilterExperimentDataImpl(MSMetadataPackageOutput output, PropertiesMapper mapper, SchemaValidator validator){
@@ -58,6 +57,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
             LOG.debug it.properties
         }*/
         output.createMetaStatsMetadataPackage(entries)
+        output.downloadMetadataPackage()
 
         return null
     }
@@ -66,10 +66,15 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         List packageEntries = []
 
         samples.each {sample ->
-            String sampleName = sample.properties.get("sampleName")
+            String sampleName = sample.properties.get("samplePreparationId")
 
             HashMap props = sample.properties as HashMap
-            props.remove("sampleName")
+            //props.remove("samplePreparationId")#
+
+            //parse files to string
+            /*List f = props.get("fileName") as List
+            String files = createFileString(f)
+            props.put("fileName",files)*/
 
             MetaStatsPackageEntry entry = new MetaStatsPackageEntry(sampleName,props)
             packageEntries.add(entry)
@@ -78,6 +83,16 @@ class FilterExperimentDataImpl implements FilterExperimentData{
         return packageEntries
     }
 
+    String createFileString(List files){
+        StringBuilder filesString = new StringBuilder()
+
+        files.each {filename ->
+            filesString << filename + ", "
+        }
+        filesString.deleteCharAt(filesString.length()-1)
+
+        return filesString.toString()
+    }
 
     def validateMetadataPackage(List<MetaStatsPackageEntry> metadataPackage){
         LOG.info "validate metastats-object-model-schema ..."
@@ -87,7 +102,7 @@ class FilterExperimentDataImpl implements FilterExperimentData{
             validFilenames(entry.properties)
             //2. metadata need to follow schema
             if(!validator.validateMetaStatsMetadataPackage(entry.properties)){
-               LOG.info "Sample "+ entry.sampleName +" does not follow the schema"
+               LOG.info "Sample "+ entry.entryId +" does not follow the schema"
             }
             //4. more files found than prepSamples?
         }

@@ -1,11 +1,11 @@
 package life.qbic.metastats.datamodel
 
 class MetaStatsPackageEntry {
-    String sampleName
+    String entryId
     HashMap<String,String> properties
 
-    MetaStatsPackageEntry(String sampleName, HashMap<String,String> properties){
-        this.sampleName = sampleName
+    MetaStatsPackageEntry(String entryId, HashMap<String,String> properties){
+        this.entryId = entryId
         this.properties = properties
     }
 }

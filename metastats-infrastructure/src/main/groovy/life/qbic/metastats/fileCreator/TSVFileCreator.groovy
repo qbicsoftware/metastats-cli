@@ -5,18 +5,54 @@ import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 class TSVFileCreator implements FileCreator{
 
     private String missingValues = "NA"
+    private String fileEnding = "tsv"
+    private ArrayList<String> order = ["samplePreparationId","sequencingFacilityId","sampleName",
+                                        "individual","species","extractCode","sex","tissue",
+                                        "analyte","integrityNumber","fileName","sequencingDevice"]
 
     @Override
     StringBuilder createFileContent(List<MetaStatsPackageEntry> entries) {
         StringBuilder fileContent = new StringBuilder()
+
+        //add different conditions
+        order.addAll(getConditions(entries))
+        order.each {header ->
+            fileContent << header + "\t"
+        }
+
+        fileContent.deleteCharAt(fileContent.length()-1)
+        fileContent << "\n"
+
+        //todo sort the properties for the respective samples
         //create header with keywords and search for values in the samples
         entries.each {entry ->
-            fileContent << entry.sampleName
-            entry.properties.each {property ->
-                fileContent << "\t" + property.value
+            //fileContent << entry.entryId
+            order.each {header ->
+                String cellValue = entry.properties.get(header)
+                if(cellValue == null || cellValue == "") cellValue = missingValues
+
+                fileContent <<  cellValue + "\t"
             }
+            fileContent.deleteCharAt(fileContent.length()-1)
             fileContent << "\n"
         }
         return fileContent
+    }
+
+    List<String> getConditions(List<MetaStatsPackageEntry> entries){
+        List conditionTypes = []
+
+        entries.each {entry ->
+            entry.properties.each {prop ->
+                if(prop.key.contains("condition") && !conditionTypes.contains(prop.key)) conditionTypes << prop.key
+            }
+        }
+
+        return conditionTypes
+    }
+
+    @Override
+    String getFileEnding() {
+        return fileEnding
     }
 }
