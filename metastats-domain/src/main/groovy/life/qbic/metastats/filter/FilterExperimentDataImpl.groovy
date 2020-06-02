@@ -50,6 +50,8 @@ class FilterExperimentDataImpl implements FilterExperimentData{
 
         List<MetaStatsPackageEntry> entries = createMetadataPackageEntries(samples)
 
+        println entries
+
         validateMetadataPackage(entries)
 
         /*prepSamples.each {

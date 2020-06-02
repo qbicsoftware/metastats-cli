@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class OpenBisSearchSpecification extends Specification{
 
-  /*  OpenBisSession session
+ /*   OpenBisSession session
 
     def setup(){
         def file = new File("/Users/jnnfr/private/credentials.json.properties")
@@ -68,6 +68,9 @@ class OpenBisSearchSpecification extends Specification{
 
         when:
         List<MetaStatsExperiment> res = search.fetchExperimentsWithMetadata()
+        res.each {exp ->
+            println exp.properties
+        }
 
         then:
         res.size() == 13

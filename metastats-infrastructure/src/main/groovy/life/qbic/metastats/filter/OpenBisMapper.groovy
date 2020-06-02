@@ -1,6 +1,6 @@
 package life.qbic.metastats.filter
 
-
+import life.qbic.metastats.datamodel.Condition
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.logging.log4j.LogManager
@@ -19,9 +19,9 @@ class OpenBisMapper implements PropertiesMapper {
     }
 
     Map mapExperimentToSample(MetaStatsExperiment experiment, MetaStatsSample sample) {
-        Map<String, String> metaStatsProperties = new HashMap<>()
+        Map metaStatsProperties = new HashMap<>()
 
-        if (experiment.type == "Q_PROJECT_DETAILS") {
+        if (experimentMappingProperties.get(experiment.type) == "condition") {
             ConditionParser parser = new ConditionParser()
             parser.parseProperties(experiment.properties)
 
@@ -34,7 +34,16 @@ class OpenBisMapper implements PropertiesMapper {
                         String value = sampleProp.value
                         String label = sampleProp.label
                         //LOG.debug sample.properties
-                        metaStatsProperties.put("condition: " + label, value)
+                        //todo this should be done in file writing
+                        if(metaStatsProperties.containsKey("condition")){
+                            List conditions = metaStatsProperties.get("condition") as List
+                            conditions.add(new Condition(label,value))
+
+                            metaStatsProperties.put("condition",conditions)
+                        }else{
+                            metaStatsProperties.put("condition",[new Condition(label,value)])
+                        }
+                        //metaStatsProperties.put("condition: " + label, value)
                     }
                 } else {
                     LOG.info "no experiment conditions where found, check your openbis project"

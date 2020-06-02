@@ -2,7 +2,7 @@ package life.qbic.metastats.datamodel
 
 class MetaStatsPackageEntry {
     String entryId
-    HashMap<String,String> properties
+    HashMap properties
 
     MetaStatsPackageEntry(String entryId, HashMap<String,String> properties){
         this.entryId = entryId

@@ -1,5 +1,6 @@
 package life.qbic.metastats.fileCreator
 
+import life.qbic.metastats.datamodel.Condition
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 
 class TSVFileCreator implements FileCreator{
@@ -28,7 +29,14 @@ class TSVFileCreator implements FileCreator{
         entries.each {entry ->
             //fileContent << entry.entryId
             order.each {header ->
-                String cellValue = entry.properties.get(header)
+                String cellValue = entry.properties.get(header).toString()
+
+                if(header.contains("condition")){
+                    String conditionLabel = header.split(":")[0].trim()
+                    entry.properties.get("condition").each {Condition cond ->
+                        if(cond.label == conditionLabel) cellValue = cond.value
+                    }
+                }
                 if(cellValue == null || cellValue == "") cellValue = missingValues
 
                 fileContent <<  cellValue + "\t"
@@ -44,7 +52,11 @@ class TSVFileCreator implements FileCreator{
 
         entries.each {entry ->
             entry.properties.each {prop ->
-                if(prop.key.contains("condition") && !conditionTypes.contains(prop.key)) conditionTypes << prop.key
+                if(prop.key == "condition"){
+                   prop.value.each { Condition condition ->
+                       conditionTypes << "condition: "+condition.label
+                   }
+                }
             }
         }
 
