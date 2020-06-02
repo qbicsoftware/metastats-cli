@@ -26,20 +26,21 @@ class JsonValidator implements SchemaValidator{
 
     @Override
     boolean validateMetaStatsMetadataPackage(Map valueMap){
-        //todo process conditions somehow different (skipped for now)
 
         ProcessingReport report
         ObjectMapper mapper = new ObjectMapper()
         JsonNode node = mapper.convertValue(valueMap, JsonNode.class)
 
-        report = jsonSchema.validate(node)
+        report = jsonSchema.validate(node, true)
 
-        LOG.info "Json validation report start "
-        LOG.info report
-        LOG.info "Json validation report end "
+        if(!report.isSuccess()){
+            LOG.info "Json validation report start "
+            LOG.info report
+            LOG.info "Json validation report end "
+        }
 
+        return report.isSuccess()
 
-        return !report.contains("error")
     }
 
 }

@@ -34,7 +34,7 @@ class OpenBisMapper implements PropertiesMapper {
                         String value = sampleProp.value
                         String label = sampleProp.label
                         //LOG.debug sample.properties
-                        metaStatsProperties.put("condition " + label + ":", value)
+                        metaStatsProperties.put("condition: " + label, value)
                     }
                 } else {
                     LOG.info "no experiment conditions where found, check your openbis project"
