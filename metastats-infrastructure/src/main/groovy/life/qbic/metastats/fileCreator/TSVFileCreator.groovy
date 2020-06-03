@@ -32,7 +32,7 @@ class TSVFileCreator implements FileCreator{
                 String cellValue = entry.properties.get(header).toString()
 
                 if(header.contains("condition")){
-                    String conditionLabel = header.split(":")[0].trim()
+                    String conditionLabel = header.split(":")[1].trim()
                     entry.properties.get("condition").each {Condition cond ->
                         if(cond.label == conditionLabel) cellValue = cond.value
                     }
@@ -54,7 +54,8 @@ class TSVFileCreator implements FileCreator{
             entry.properties.each {prop ->
                 if(prop.key == "condition"){
                    prop.value.each { Condition condition ->
-                       conditionTypes << "condition: "+condition.label
+                       String headerValue = "condition: "+condition.label
+                       if(!conditionTypes.contains(headerValue)) conditionTypes << headerValue
                    }
                 }
             }

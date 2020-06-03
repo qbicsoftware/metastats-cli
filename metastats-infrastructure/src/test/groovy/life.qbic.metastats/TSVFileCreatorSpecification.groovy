@@ -14,7 +14,7 @@ class TSVFileCreatorSpecification extends Specification{
         TSVFileCreator creator = new TSVFileCreator()
 
         when:
-        def res = creator.getConditions([entry])
+        def res = creator.getConditions([entry,entry])
 
         then:
         res.sort() == ["condition: genotype","condition: treatment"].sort()
@@ -27,12 +27,15 @@ class TSVFileCreatorSpecification extends Specification{
         TSVFileCreator creator = new TSVFileCreator()
 
         when:
-        def res = creator.createFileContent([entry])
+        def res = creator.createFileContent([entry,entry,entry])
 
-        println res
+        def output = res.toString().split("\n")
+        def headerRow = output[0].split("\t")
 
         then:
-        !res.contains("null")
+        headerRow[-1].contains("condition:")
+        headerRow[-2].contains("condition:")
+        !headerRow[-3].contains("condition:")
         assert res != null
     }
 }
