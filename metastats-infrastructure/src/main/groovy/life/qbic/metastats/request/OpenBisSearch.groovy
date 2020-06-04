@@ -164,7 +164,7 @@ class OpenBisSearch implements DatabaseGateway{
         }
     }
 
-    HashMap<String,List> fetchDataSets(String sampleCode, String fileType){
+    HashMap<String,String> fetchDataSets(String sampleCode, String fileType){
         LOG.info "fetch DataSet for $sampleCode"
 
         HashMap allDataSets = new HashMap()
@@ -177,16 +177,17 @@ class OpenBisSearch implements DatabaseGateway{
             SearchResult<DataSetFile> result = dss.searchFiles(sessionToken, criteria, new DataSetFileFetchOptions())
             List<DataSetFile> files = result.getObjects()
 
-            List<String> dataFiles = []
+            StringBuilder dataFiles = new StringBuilder()
 
             for (DataSetFile file : files) {
                 if (file.getPermId().toString().contains("." + fileType)
                         && !file.getPermId().toString().contains(".sha256sum")
                         && !file.getPermId().toString().contains("origlabfilename")) {
                     String[] path = file.getPermId().toString().split("/")
-                    dataFiles << path[path.size() - 1]
+                    dataFiles << path[path.size() - 1]+", "
                 }
             }
+            dataFiles.delete(dataFiles.length() - 2, dataFiles.length())
             allDataSets.put(dataSet.type.code,dataFiles)
         }
         return allDataSets

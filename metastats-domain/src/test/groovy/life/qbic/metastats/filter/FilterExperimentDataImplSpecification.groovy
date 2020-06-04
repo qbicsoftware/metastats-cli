@@ -1,5 +1,6 @@
 package life.qbic.metastats.filter
 
+import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 import life.qbic.metastats.datamodel.MetaStatsSample
 import spock.lang.Specification
 
@@ -33,49 +34,46 @@ class FilterExperimentDataImplSpecification extends Specification{
         sample1.addRelatives("QFSVIENTITY-1")
 
         when:
-        List res = FilterExperimentDataImpl.createMetadataPackageEntries([sample1])
+        List<MetaStatsPackageEntry> res = FilterExperimentDataImpl.createMetadataPackageEntries([sample1])
 
         then:
         res.get(0).entryId == "QXXXXXX"
+        assert res.get(0).properties.get("fileName") == ["file2", "file1", "file3"]
+
     }
 
-   /** def "incomplete metaStats-metadata-package gives a warning"(){
+    def "filename must reflect either sampleName name or sequencingFacilityID"(){
         given:
-        def projectMetadata = new HashMap<String,String>()
-        //todo fill
-
+        HashMap sampleProperties = ["samplePreparationId":"QXXX","sampleName":"IR1234","otherProp":"value","filename":"QXXXIR1234_1.fastq, QXXX.fastq, IR1234_3.fastq"]
         when:
-        filterExperimentData.createMetaStatsMetadataPackage(projectMetadata)
-
+        boolean res = FilterExperimentDataImpl.validFilenames(sampleProperties)
         then:
-        thrown(IllegalArgumentException)
+        res
     }
 
-    def "complete metaStats-metadata-package gives no warning"(){
+    def "invalid filenames are detected"(){
         given:
-        def projectMetadata = new HashMap<String,String>()
-        //todo fill
-
+        HashMap sampleProperties = ["samplePreparationId":"QXXX","sampleName":"IR1234","otherProp":"value","filename":"234_1.fastq, Q2.fastq, _3.fastq"]
         when:
-        filterExperimentData.createMetaStatsMetadataPackage(projectMetadata)
-
+        boolean res = FilterExperimentDataImpl.validFilenames(sampleProperties)
         then:
-        !thrown(IllegalArgumentException)
-    }*/
+        !res
+    }
 
-    /** def "loading schema successfully"(){
-         given:
-         //MetaStatsMetadata m = new MetaStatsMetadata()
+    def "missing files are detected"(){
+        given:
+        HashMap sampleProperties = ["samplePreparationId":"QXXX","sampleName":"IR1234","otherProp":"value","filename":""]
+        when:
+        boolean res = FilterExperimentDataImpl.validFilenames(sampleProperties)
+        then:
+        !res
+    }
 
-         when:
-         //def res = m.getPropertiesFromSchema()
 
-         //def list = res.get("properties")
-         //list.each{key, val -> println "$key"}
+    def "More samples than files"(){
+        //validateMetadataPackage()
+        //todo
+    }
 
-         then:
-         res != null
-         assert res instanceof Map
-    }*/
 
 }

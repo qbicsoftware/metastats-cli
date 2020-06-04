@@ -38,4 +38,8 @@ class TSVFileCreatorSpecification extends Specification{
         !headerRow[-3].contains("condition:")
         assert res != null
     }
+
+    def "filenames must separated with coma"(){
+
+    }
 }

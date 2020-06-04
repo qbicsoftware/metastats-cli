@@ -9,7 +9,7 @@ class TSVFileCreator implements FileCreator{
     private String fileEnding = "tsv"
     private ArrayList<String> order = ["samplePreparationId","sequencingFacilityId","sampleName",
                                         "individual","species","extractCode","sex","tissue",
-                                        "analyte","integrityNumber","fileName","sequencingDevice"]
+                                        "analyte","integrityNumber","filename","sequencingDevice"]
 
     @Override
     StringBuilder createFileContent(List<MetaStatsPackageEntry> entries) {
@@ -62,6 +62,20 @@ class TSVFileCreator implements FileCreator{
         }
 
         return conditionTypes
+    }
+
+    static String createFileString(ArrayList files) {
+        StringBuilder filesString = new StringBuilder()
+
+        if (files != null && files.size() > 0) {
+            //1. are filenames valid
+            files.each { filename ->
+                filesString << filename + ", "
+            }
+            filesString.delete(filesString.length() - 2, filesString.length())
+        }
+
+        return filesString.toString()
     }
 
     @Override
