@@ -22,11 +22,13 @@ MetaStats can be started with the command:
 
 ``java -jar metastats-application/target/metastats-1.0.0-SNAPSHOT-jar-with-dependencies.jar -c path-to-conf -p projectCode``
 
+
 **-c** defines the path to the config file (see next section for more details)
 
 **-p** specifies the project code of the desired project for which the description should be loaded
 (note: information can only be loaded for projects the users has access to)
-### Examplary Configuration File
+
+### Exemplary Configuration File
 ```
 {
    "url" : "https://example.url.de",
