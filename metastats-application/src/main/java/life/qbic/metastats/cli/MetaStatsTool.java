@@ -11,6 +11,7 @@ import life.qbic.metastats.filter.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Map;
 
@@ -35,9 +36,13 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         // get the parsed command-line arguments
         final MetaStatsCommand command = super.getCommand();
         // get properties
-        LOG.debug(command.conf);
         JsonParser experimentProps = new JsonParser(command.conf);
-        Map credentials = experimentProps.parse();
+        Map credentials = null;
+        try {
+            credentials = experimentProps.parse();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         JsonValidator validator = new JsonValidator("/model.schema.json");
 
@@ -45,15 +50,25 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter(new TSVFileCreator());
 
         experimentProps = new JsonParser("openbisToMetastatsExperiment.json");
-        Map expMappingInfo = experimentProps.parseStream();
+        Map expMappingInfo = null;
+        try {
+            expMappingInfo = experimentProps.parseStream();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         JsonParser sampleProps = new JsonParser("openbisToMetastatsSample.json");
-        Map sampleMappingInfo = sampleProps.parseStream();
+        Map sampleMappingInfo = null;
+        try {
+            sampleMappingInfo = sampleProps.parseStream();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
         PropertiesMapper mapper = new OpenBisMapper(expMappingInfo, sampleMappingInfo);
 
         //define use case
-        FilterExperimentData filter = new FilterExperimentDataImpl(metaStatsPresenter,mapper,validator);
+        FilterExperimentData filter = new FilterExperimentDataImpl(metaStatsPresenter, mapper, validator);
 
         //define db classes
         OpenBisSession session = new OpenBisSession((String) credentials.get("user"),
@@ -64,7 +79,7 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         //define input for connector class
         ExperimentDataOutput experimentData = new PrepareMetaData(filter);
         //define use case
-        ProjectSpecification spec = new RequestExperimentData(db,experimentData);
+        ProjectSpecification spec = new RequestExperimentData(db, experimentData);
 
         LOG.info("started metastats-cli");
 

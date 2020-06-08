@@ -22,9 +22,9 @@ public class MetaStatsEntryPoint {
         LOG.debug("Starting MetaStats tool");
         final ToolExecutor executor = new ToolExecutor();
 
-        if(args.length != 0){
+        if(args.length == 4){
             executor.invoke(MetaStatsTool.class, MetaStatsCommand.class, args);
-        }else{
+        } else {
             LOG.error("Please define the commandline parameters, for more information use -h for help");
         }
     }

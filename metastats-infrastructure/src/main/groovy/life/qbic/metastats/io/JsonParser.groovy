@@ -10,14 +10,20 @@ class JsonParser {
         path = filePath
     }
 
-    Map parse(){
+    Map parse() throws FileNotFoundException{
         File file = new File(path)
-        return (Map) new JsonSlurper().parseText(file.text)
+        if(file != null) return (Map) new JsonSlurper().parseText(file.text)
+
+        throw new FileNotFoundException("File $path was not found")
     }
 
-    Map parseStream(){
+    Map parseStream()throws FileNotFoundException{
         InputStream stream = JsonParser.class.classLoader.getResourceAsStream(path)
-        return (Map) new JsonSlurper().parseText(stream.text)
+
+        if(stream != null){
+            return (Map) new JsonSlurper().parseText(stream.text)
+        }
+        throw new FileNotFoundException("Resource $path was not found")
     }
 
 }
