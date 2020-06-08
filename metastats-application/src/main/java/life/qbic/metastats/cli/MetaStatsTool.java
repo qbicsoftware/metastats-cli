@@ -1,9 +1,10 @@
 package life.qbic.metastats.cli;
 
 import life.qbic.cli.QBiCTool;
+import life.qbic.metastats.MetaStatsController;
 import life.qbic.metastats.MetaStatsPresenter;
 import life.qbic.metastats.PrepareMetaData;
-import life.qbic.metastats.fileCreator.TSVFileCreator;
+import life.qbic.metastats.fileCreator.TSVFileOutput;
 import life.qbic.metastats.io.JsonParser;
 import life.qbic.metastats.request.*;
 import life.qbic.metastats.filter.*;
@@ -12,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
-import java.net.URL;
 import java.util.Map;
 
 /**
@@ -21,6 +21,11 @@ import java.util.Map;
 public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsTool.class);
+
+    private static final String schemaPath = "/model.schema.json";
+    private static final String sampleSchema = "openbisToMetastatsExperiment.json";
+    private static final String experimentSchema = "openbisToMetastatsSample.json";
+
 
     /**
      * Constructor.
@@ -35,55 +40,9 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
     public void execute() {
         // get the parsed command-line arguments
         final MetaStatsCommand command = super.getCommand();
-        // get properties
-        JsonParser experimentProps = new JsonParser(command.conf);
-        Map credentials = null;
-        try {
-            credentials = experimentProps.parse();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
 
-        JsonValidator validator = new JsonValidator("/model.schema.json");
-
-        //define output classes
-        MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter(new TSVFileCreator());
-
-        experimentProps = new JsonParser("openbisToMetastatsExperiment.json");
-        Map expMappingInfo = null;
-        try {
-            expMappingInfo = experimentProps.parseStream();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        JsonParser sampleProps = new JsonParser("openbisToMetastatsSample.json");
-        Map sampleMappingInfo = null;
-        try {
-            sampleMappingInfo = sampleProps.parseStream();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        PropertiesMapper mapper = new OpenBisMapper(expMappingInfo, sampleMappingInfo);
-
-        //define use case
-        FilterExperimentData filter = new FilterExperimentDataImpl(metaStatsPresenter, mapper, validator);
-
-        //define db classes
-        OpenBisSession session = new OpenBisSession((String) credentials.get("user"),
-                (String) credentials.get("password"),
-                (String) credentials.get("server_url"));
-
-        DatabaseGateway db = new OpenBisSearch(session);
-        //define input for connector class
-        ExperimentDataOutput experimentData = new PrepareMetaData(filter);
-        //define use case
-        ProjectSpecification spec = new RequestExperimentData(db, experimentData);
-
-        LOG.info("started metastats-cli");
-
-        spec.requestProjectMetadata(command.projectCode);
+        MetaStatsController controller = new MetaStatsController(command.conf,command.projectCode);
+        controller.execute(schemaPath,sampleSchema,experimentSchema);
 
     }
 }

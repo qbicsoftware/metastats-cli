@@ -2,16 +2,16 @@ package life.qbic.metastats
 
 import life.qbic.metastats.datamodel.Condition
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
-import life.qbic.metastats.fileCreator.TSVFileCreator
+import life.qbic.metastats.fileCreator.TSVFileOutput
 import spock.lang.Specification
 
-class TSVFileCreatorSpecification extends Specification{
+class TSVFileOutputSpecification extends Specification{
 
     def "create correct header from metastats entries"(){
         given:
         List<Condition> conditions = [new Condition("genotype","mutant"),new Condition("treatment","non")]
         MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["condition":conditions, "sampleName":"name"] as HashMap)
-        TSVFileCreator creator = new TSVFileCreator()
+        TSVFileOutput creator = new TSVFileOutput()
 
         when:
         def res = creator.getConditions([entry,entry])
@@ -24,7 +24,7 @@ class TSVFileCreatorSpecification extends Specification{
         given:
         List<Condition> conditions = [new Condition("genotype","mutant"),new Condition("treatment","non")]
         MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["condition":conditions, "sampleName":"name"] as HashMap)
-        TSVFileCreator creator = new TSVFileCreator()
+        TSVFileOutput creator = new TSVFileOutput()
 
         when:
         def res = creator.createFileContent([entry,entry,entry])

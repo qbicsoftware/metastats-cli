@@ -3,7 +3,7 @@ package life.qbic.metastats.fileCreator
 import life.qbic.metastats.datamodel.Condition
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 
-class TSVFileCreator implements FileCreator{
+class TSVFileOutput implements FileOutput{
 
     private String missingValues = "NA"
     private String fileEnding = "tsv"

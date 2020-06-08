@@ -1,0 +1,89 @@
+package life.qbic.metastats
+
+import life.qbic.metastats.fileCreator.TSVFileOutput
+import life.qbic.metastats.filter.FilterExperimentData
+import life.qbic.metastats.filter.FilterExperimentDataImpl
+import life.qbic.metastats.filter.JsonValidator
+import life.qbic.metastats.filter.MSMetadataPackageOutput
+import life.qbic.metastats.filter.OpenBisMapper
+import life.qbic.metastats.filter.PropertiesMapper
+import life.qbic.metastats.io.JsonParser
+import life.qbic.metastats.request.DatabaseGateway
+import life.qbic.metastats.request.ExperimentDataOutput
+import life.qbic.metastats.request.OpenBisSearch
+import life.qbic.metastats.request.OpenBisSession
+import life.qbic.metastats.request.ProjectSpecification
+import life.qbic.metastats.request.RequestExperimentData
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
+
+class MetaStatsController {
+
+    private String configFile
+    private String projectCode
+    private ProjectSpecification spec
+    private FilterExperimentData filter
+
+    private static final Logger LOG = LogManager.getLogger(MetaStatsController.class)
+
+    MetaStatsController(String conf, String projectCode){
+        this.configFile = conf
+        this.projectCode = projectCode
+    }
+
+    def execute(String schemaPath, String sampleSchema, String experimentSchema){
+        // get properties
+        JsonParser metastatsProps = new JsonParser(configFile)
+        Map credentials = null
+
+        try {
+            credentials = metastatsProps.parse()
+        } catch (FileNotFoundException e) {
+            e.printStackTrace()
+        }
+
+        JsonValidator validator = new JsonValidator(schemaPath)
+
+        //define output classes
+        MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter(new TSVFileOutput())
+
+        Map expMappingInfo = getMapFromJson(experimentSchema)
+        Map sampleMappingInfo = getMapFromJson(sampleSchema)
+
+        PropertiesMapper mapper = new OpenBisMapper(expMappingInfo, sampleMappingInfo)
+
+        //define use case
+        filter = new FilterExperimentDataImpl(metaStatsPresenter, mapper, validator)
+
+        //define db classes
+        setupDB(credentials)
+
+        LOG.info("started metastats-cli")
+
+        spec.requestProjectMetadata(projectCode)
+    }
+
+    static Map getMapFromJson(String schema){
+        JsonParser experimentProps = new JsonParser(schema)
+        try {
+            return experimentProps.parseStream()
+        } catch (FileNotFoundException e) {
+            e.printStackTrace()
+            System.exit(-1)
+        }
+        return null
+    }
+
+    def setupDB(Map credentials){
+        OpenBisSession session = new OpenBisSession((String) credentials.get("user"),
+                (String) credentials.get("password"),
+                (String) credentials.get("server_url"))
+
+        DatabaseGateway db = new OpenBisSearch(session)
+        //define input for connector class
+        ExperimentDataOutput experimentData = new PrepareMetaData(filter)
+        //define use case
+        spec = new RequestExperimentData(db, experimentData)
+    }
+
+}

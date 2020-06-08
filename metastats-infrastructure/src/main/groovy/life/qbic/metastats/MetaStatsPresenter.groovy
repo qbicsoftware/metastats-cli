@@ -1,14 +1,14 @@
 package life.qbic.metastats
 
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
-import life.qbic.metastats.fileCreator.FileCreator
+import life.qbic.metastats.fileCreator.FileOutput
 import life.qbic.metastats.filter.MSMetadataPackageOutput
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 class MetaStatsPresenter implements MSMetadataPackageOutput{
 
-    FileCreator creator
+    FileOutput creator
     String fileName = "metastats-metadata-sheet"
     StringBuilder fileContent = new StringBuilder()
 
@@ -18,7 +18,7 @@ class MetaStatsPresenter implements MSMetadataPackageOutput{
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsPresenter.class)
 
-    MetaStatsPresenter(FileCreator creator){
+    MetaStatsPresenter(FileOutput creator){
         this.creator = creator
     }
 
