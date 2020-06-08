@@ -3,13 +3,13 @@ package life.qbic.metastats.fileCreator
 import life.qbic.metastats.datamodel.Condition
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 
-class TsvFileOutput implements FileOutput{
+class TsvFileOutput implements FileOutput {
 
     private String missingValues = "NA"
     private String fileEnding = "tsv"
-    private ArrayList<String> order = ["samplePreparationId","sequencingFacilityId","sampleName",
-                                        "individual","species","extractCode","sex","tissue",
-                                        "analyte","integrityNumber","filename","sequencingDevice"]
+    private ArrayList<String> order = ["samplePreparationId", "sequencingFacilityId", "sampleName",
+                                       "individual", "species", "extractCode", "sex", "tissue",
+                                       "analyte", "integrityNumber", "filename", "sequencingDevice"]
 
     @Override
     StringBuilder createFileContent(List<MetaStatsPackageEntry> entries) {
@@ -17,46 +17,46 @@ class TsvFileOutput implements FileOutput{
 
         //add different conditions
         order.addAll(getConditions(entries))
-        order.each {header ->
+        order.each { header ->
             fileContent << header + "\t"
         }
 
-        fileContent.deleteCharAt(fileContent.length()-1)
+        fileContent.deleteCharAt(fileContent.length() - 1)
         fileContent << "\n"
 
         //todo sort the properties for the respective samples
         //create header with keywords and search for values in the samples
-        entries.each {entry ->
+        entries.each { entry ->
             //fileContent << entry.entryId
-            order.each {header ->
+            order.each { header ->
                 String cellValue = entry.properties.get(header).toString()
 
-                if(header.contains("condition")){
+                if (header.contains("condition")) {
                     String conditionLabel = header.split(":")[1].trim()
-                    entry.properties.get("condition").each {Condition cond ->
-                        if(cond.label == conditionLabel) cellValue = cond.value
+                    entry.properties.get("condition").each { Condition cond ->
+                        if (cond.label == conditionLabel) cellValue = cond.value
                     }
                 }
-                if(cellValue == null || cellValue == "") cellValue = missingValues
+                if (cellValue == null || cellValue == "") cellValue = missingValues
 
-                fileContent <<  cellValue + "\t"
+                fileContent << cellValue + "\t"
             }
-            fileContent.deleteCharAt(fileContent.length()-1)
+            fileContent.deleteCharAt(fileContent.length() - 1)
             fileContent << "\n"
         }
         return fileContent
     }
 
-    List<String> getConditions(List<MetaStatsPackageEntry> entries){
+    List<String> getConditions(List<MetaStatsPackageEntry> entries) {
         List conditionTypes = []
 
-        entries.each {entry ->
-            entry.properties.each {prop ->
-                if(prop.key == "condition"){
-                   prop.value.each { Condition condition ->
-                       String headerValue = "condition: "+condition.label
-                       if(!conditionTypes.contains(headerValue)) conditionTypes << headerValue
-                   }
+        entries.each { entry ->
+            entry.properties.each { prop ->
+                if (prop.key == "condition") {
+                    prop.value.each { Condition condition ->
+                        String headerValue = "condition: " + condition.label
+                        if (!conditionTypes.contains(headerValue)) conditionTypes << headerValue
+                    }
                 }
             }
         }

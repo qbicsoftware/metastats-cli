@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Entry point for the MetaStats-CLI application.
- *
+ * <p>
  * The purpose of this class is to act as a bridge between the command line and the <i>real</i> implementation of a tool by using a {@link ToolExecutor}.
  */
 public class MetaStatsEntryPoint {
@@ -22,7 +22,7 @@ public class MetaStatsEntryPoint {
         LOG.debug("Starting MetaStats tool");
         final ToolExecutor executor = new ToolExecutor();
 
-        if(args.length == 4){
+        if (args.length == 4) {
             executor.invoke(MetaStatsTool.class, MetaStatsCommand.class, args);
         } else {
             LOG.error("Please define the commandline parameters, for more information use -h for help");

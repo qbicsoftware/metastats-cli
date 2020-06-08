@@ -3,7 +3,7 @@ package life.qbic.metastats.request
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-class RequestExperimentData implements ProjectSpecification{
+class RequestExperimentData implements ProjectSpecification {
 
     DatabaseGateway search
     ExperimentDataOutput output
@@ -11,7 +11,7 @@ class RequestExperimentData implements ProjectSpecification{
     private static final Logger LOG = LogManager.getLogger(RequestExperimentData.class);
 
 
-    RequestExperimentData(DatabaseGateway search, ExperimentDataOutput output){
+    RequestExperimentData(DatabaseGateway search, ExperimentDataOutput output) {
         this.search = search
         this.output = output
     }
@@ -19,7 +19,7 @@ class RequestExperimentData implements ProjectSpecification{
     @Override
     def requestProjectMetadata(String projectCode) {
 
-        if(!verifyQbicCode(projectCode)){
+        if (!verifyQbicCode(projectCode)) {
             LOG.error "The project code was not valid!"
             return
         }
@@ -32,8 +32,8 @@ class RequestExperimentData implements ProjectSpecification{
         search.logout()
     }
 
-    static boolean verifyQbicCode(String code){
-        code ==~"Q[A-X0-9]{4}"
+    static boolean verifyQbicCode(String code) {
+        code ==~ "Q[A-X0-9]{4}"
     }
 
 }

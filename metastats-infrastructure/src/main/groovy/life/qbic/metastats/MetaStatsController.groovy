@@ -1,19 +1,9 @@
 package life.qbic.metastats
 
 import life.qbic.metastats.fileCreator.TsvFileOutput
-import life.qbic.metastats.filter.FilterExperimentData
-import life.qbic.metastats.filter.FilterExperimentDataImpl
-import life.qbic.metastats.filter.JsonValidator
-import life.qbic.metastats.filter.MSMetadataPackageOutput
-import life.qbic.metastats.filter.OpenBisMapper
-import life.qbic.metastats.filter.PropertiesMapper
+import life.qbic.metastats.filter.*
 import life.qbic.metastats.io.JsonParser
-import life.qbic.metastats.request.DatabaseGateway
-import life.qbic.metastats.request.ExperimentDataOutput
-import life.qbic.metastats.request.OpenBisSearch
-import life.qbic.metastats.request.OpenBisSession
-import life.qbic.metastats.request.ProjectSpecification
-import life.qbic.metastats.request.RequestExperimentData
+import life.qbic.metastats.request.*
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -26,12 +16,12 @@ class MetaStatsController {
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsController.class)
 
-    MetaStatsController(String conf, String projectCode){
+    MetaStatsController(String conf, String projectCode) {
         this.configFile = conf
         this.projectCode = projectCode
     }
 
-    def execute(String schemaPath, String sampleSchema, String experimentSchema){
+    def execute(String schemaPath, String sampleSchema, String experimentSchema) {
         // get properties
         JsonParser metastatsProps = new JsonParser(configFile)
         Map credentials = null
@@ -63,7 +53,7 @@ class MetaStatsController {
         spec.requestProjectMetadata(projectCode)
     }
 
-    static Map getMapFromJson(String schema){
+    static Map getMapFromJson(String schema) {
         JsonParser experimentProps = new JsonParser(schema)
         try {
             return experimentProps.parseStream()
@@ -74,7 +64,7 @@ class MetaStatsController {
         return null
     }
 
-    def setupDB(Map<String,String> credentials){
+    def setupDB(Map<String, String> credentials) {
         OpenBisSession session = new OpenBisSession(credentials.get("user"), credentials.get("password"), credentials.get("server_url"))
 
         DatabaseGateway db = new OpenBisSearch(session)

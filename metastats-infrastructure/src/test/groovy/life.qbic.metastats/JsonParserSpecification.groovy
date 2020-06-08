@@ -3,9 +3,9 @@ package life.qbic.metastats
 import life.qbic.metastats.io.JsonParser
 import spock.lang.Specification
 
-class JsonParserSpecification extends Specification{
+class JsonParserSpecification extends Specification {
 
-    def "Right resource path is parsed without error"(){
+    def "Right resource path is parsed without error"() {
         given:
         JsonParser parser = new JsonParser("model.schema.json")
 
@@ -19,7 +19,7 @@ class JsonParserSpecification extends Specification{
         assert req == ["species"]
     }
 
-    def "Right file path is parsed without error"(){
+    def "Right file path is parsed without error"() {
         given:
         URL url = JsonParserSpecification.class.getClassLoader().getResource("model.schema.json")
         assert url != null
@@ -35,7 +35,7 @@ class JsonParserSpecification extends Specification{
         assert req == ["species"]
     }
 
-    def "Wrong file path throws error"(){
+    def "Wrong file path throws error"() {
         given:
         JsonParser parser = new JsonParser("Modelschema.json")
 
@@ -48,7 +48,7 @@ class JsonParserSpecification extends Specification{
         thrown(FileNotFoundException)
     }
 
-    def "Wrong resource path throws error"(){
+    def "Wrong resource path throws error"() {
         given:
         JsonParser parser = new JsonParser("Modelschema.json")
 

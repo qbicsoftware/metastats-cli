@@ -5,29 +5,29 @@ import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 import life.qbic.metastats.fileCreator.TsvFileOutput
 import spock.lang.Specification
 
-class TsvFileOutputSpecification extends Specification{
+class TsvFileOutputSpecification extends Specification {
 
-    def "create correct header from metastats entries"(){
+    def "create correct header from metastats entries"() {
         given:
-        List<Condition> conditions = [new Condition("genotype","mutant"),new Condition("treatment","non")]
-        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["condition":conditions, "sampleName":"name"] as HashMap)
+        List<Condition> conditions = [new Condition("genotype", "mutant"), new Condition("treatment", "non")]
+        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["condition": conditions, "sampleName": "name"] as HashMap)
         TsvFileOutput creator = new TsvFileOutput()
 
         when:
-        def res = creator.getConditions([entry,entry])
+        def res = creator.getConditions([entry, entry])
 
         then:
-        res.sort() == ["condition: genotype","condition: treatment"].sort()
+        res.sort() == ["condition: genotype", "condition: treatment"].sort()
     }
 
-    def "associate condition header correctly with sample value"(){
+    def "associate condition header correctly with sample value"() {
         given:
-        List<Condition> conditions = [new Condition("genotype","mutant"),new Condition("treatment","non")]
-        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["condition":conditions, "sampleName":"name"] as HashMap)
+        List<Condition> conditions = [new Condition("genotype", "mutant"), new Condition("treatment", "non")]
+        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["condition": conditions, "sampleName": "name"] as HashMap)
         TsvFileOutput creator = new TsvFileOutput()
 
         when:
-        def res = creator.createFileContent([entry,entry,entry])
+        def res = creator.createFileContent([entry, entry, entry])
 
         def output = res.toString().split("\n")
         def headerRow = output[0].split("\t")
@@ -39,7 +39,7 @@ class TsvFileOutputSpecification extends Specification{
         assert res != null
     }
 
-    def "filenames must separated with coma"(){
+    def "filenames must separated with coma"() {
 
     }
 }

@@ -13,7 +13,7 @@ class OpenBisMapper implements PropertiesMapper {
 
     private static final Logger LOG = LogManager.getLogger(OpenBisMapper.class)
 
-    OpenBisMapper(Map experimentProps, Map sampleProps){
+    OpenBisMapper(Map experimentProps, Map sampleProps) {
         experimentMappingProperties = experimentProps
         sampleMappingProperties = sampleProps
 
@@ -39,13 +39,13 @@ class OpenBisMapper implements PropertiesMapper {
                         String label = sampleProp.label
                         //LOG.debug sample.properties
                         //todo this should be done in file writing
-                        if(metaStatsProperties.containsKey("condition")){
+                        if (metaStatsProperties.containsKey("condition")) {
                             List conditions = metaStatsProperties.get("condition") as List
-                            conditions.add(new Condition(label,value))
+                            conditions.add(new Condition(label, value))
 
-                            metaStatsProperties.put("condition",conditions)
-                        }else{
-                            metaStatsProperties.put("condition",[new Condition(label,value)])
+                            metaStatsProperties.put("condition", conditions)
+                        } else {
+                            metaStatsProperties.put("condition", [new Condition(label, value)])
                         }
                         //metaStatsProperties.put("condition: " + label, value)
                     }
@@ -53,9 +53,8 @@ class OpenBisMapper implements PropertiesMapper {
                     LOG.info "no experiment conditions where found, check your openbis project"
                 }
             }
-        }
-        else if (isSampleOfExperiment(experiment.samples, sample)) {
-            experimentMappingProperties.each { openBisTerm,metastatsTerm ->
+        } else if (isSampleOfExperiment(experiment.samples, sample)) {
+            experimentMappingProperties.each { openBisTerm, metastatsTerm ->
                 String value = containsProperty(experiment.properties, openBisTerm as String)
                 metaStatsProperties.put(metastatsTerm as String, value)
             }
@@ -91,7 +90,7 @@ class OpenBisMapper implements PropertiesMapper {
 
 
     String containsProperty(Map openBisProperties, String openBisProperty) {
-        println openBisProperties.toString() +" "+ openBisProperty
+        println openBisProperties.toString() + " " + openBisProperty
 
         println openBisProperties.containsKey(openBisProperty)
 

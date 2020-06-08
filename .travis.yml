@@ -3,17 +3,17 @@ language: java
 jdk: openjdk8
 cache:
   directories:
-  - "$HOME/.m2/repository"
-  - "$HOME/.cache/pip"
-  - "$HOME/miniconda3"
+    - "$HOME/.m2/repository"
+    - "$HOME/.cache/pip"
+    - "$HOME/miniconda3"
 branches:
   only:
-  - master
-  - development
-  - "/^[vV]?\\d+\\.\\d+\\.\\d+$/"
+    - master
+    - development
+    - "/^[vV]?\\d+\\.\\d+\\.\\d+$/"
 before_install: unset _JAVA_OPTIONS
 install:
-- "$HOME/miniconda3/bin/conda --version || ./.install-reports-dependencies.sh"
+  - "$HOME/miniconda3/bin/conda --version || ./.install-reports-dependencies.sh"
 before_script: if [ "$VAADIN_CHARTS_LICENSE_CODE" != "" ]; then echo "$VAADIN_CHARTS_LICENSE_CODE"
   > ~/.vaadin.charts.developer.license; fi;
 script: mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion}-SNAPSHOT
@@ -21,32 +21,32 @@ script: mvn build-helper:parse-version versions:set -DnewVersion=\${parsedVersio
   !development-build,!release-build --settings .travis.settings.xml clean cobertura:cobertura
   package
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)
 deploy:
-- skip_cleanup: true
-  provider: script
-  script: mvn --quiet --activate-profiles development-build,!release-build --settings
-    .travis.settings.xml deploy -DskipITs
-  on:
-    branch: development
-    condition: '"$TRAVIS_EVENT_TYPE" = "push"'
-- skip_cleanup: true
-  provider: script
-  script: mvn build-helper:parse-version versions:set -DnewVersion=$TRAVIS_TAG -DprocessAllModules
-    && mvn versions:commit && mvn --quiet --activate-profiles !development-build,release-build
-    --settings .travis.settings.xml deploy -DskipITs
-  on:
-    condition: '"$TRAVIS_EVENT_TYPE" = "push"'
-    tags: true
+  - skip_cleanup: true
+    provider: script
+    script: mvn --quiet --activate-profiles development-build,!release-build --settings
+      .travis.settings.xml deploy -DskipITs
+    on:
+      branch: development
+      condition: '"$TRAVIS_EVENT_TYPE" = "push"'
+  - skip_cleanup: true
+    provider: script
+    script: mvn build-helper:parse-version versions:set -DnewVersion=$TRAVIS_TAG -DprocessAllModules
+      && mvn versions:commit && mvn --quiet --activate-profiles !development-build,release-build
+      --settings .travis.settings.xml deploy -DskipITs
+    on:
+      condition: '"$TRAVIS_EVENT_TYPE" = "push"'
+      tags: true
 after_deploy:
-- echo ". $HOME/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc && source ~/.bashrc
-  && conda activate qbic-docs-build
-- mvn --quiet --activate-profiles !development-build,!release-build --settings .travis.settings.xml
-  site
-- ./.generate-reports.py $TRAVIS_BRANCH $TRAVIS_REPO_SLUG "[skip travis] Updated gh-pages"
-  "This commit was performed from travis-ci.com using a personal access key" "Build
-  ID $TRAVIS_BUILD_ID" "Job ID TRAVIS_JOB_ID" "Branch $TRAVIS_BRANCH" "Log of this
-  build found at $TRAVIS_JOB_WEB_URL"
+  - echo ". $HOME/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc && source ~/.bashrc
+    && conda activate qbic-docs-build
+  - mvn --quiet --activate-profiles !development-build,!release-build --settings .travis.settings.xml
+    site
+  - ./.generate-reports.py $TRAVIS_BRANCH $TRAVIS_REPO_SLUG "[skip travis] Updated gh-pages"
+    "This commit was performed from travis-ci.com using a personal access key" "Build
+    ID $TRAVIS_BUILD_ID" "Job ID TRAVIS_JOB_ID" "Branch $TRAVIS_BRANCH" "Log of this
+    build found at $TRAVIS_JOB_WEB_URL"
 notifications:
   email:
     on_success: never
@@ -55,8 +55,8 @@ notifications:
     on_success: never
     on_failure: always
     rooms:
-    - secure: "***"
+      - secure: "***"
 env:
   global:
-  - secure: YTDCTQ3FxDyN+TGKTUNdkaUAYScalovvagjK41udlgwymZDAqH9jl20HN7202V5tPXlDwt44iJW0KtQIfyO7fnZd0xlOF3OFbk7Z+r3tpaXhz4oiKVn1GKkWjFqqsMUakOzGWyjoO0j5dKkxh+2nfoFXsqSr72y6AjrtXc4VeLmabJJDBl/bg82iA37QfGjWOm98zt/BynuGvb//5m/izYgVncrrC038cHdhtttpBOFX1pD67oIJBDWLr4SkBcpYlfa4qPoQ3cCY4joKqe3Cz+mStrSTlEzG8B0tjzjdHY7KyV7n915M9ERum8rewwsSQlyCgdLIGbNJSJqUEjwG40/LqninHGsFbdCiqxjZs03kvwVv9nyzt7aNgjTdDFQCGZeBh6t6JJnGsASWRjAjChurc09V1Ti+uoWnwSPyR/RirNmdwfXidUKxiwTL68Pp7KwiocxiI5znA0n4Kpp4jjBJH4DrMFvnG9TuWwn3GDpvte/FXwSOazd3m00c930JqcC8ZRqCZGWm/mtoIycgb1GPu9SFEzgVuMTQtLDYBslmTeVl9Mp1Zm3svj9Inba1+/5i9yDZaLqzRbKm8e3LQIlJ4gNTFEy61GtaghhxczMdoNDkk3wJ8B/BkUh3Kr3zMpULtFxLuBIKH1etl4g1MPBrXV/plyY49xg3KkDU8F8=
-  - secure: cKKLgm2vbEwXPyUYZ7apkPsAKYbCnyiQfFj1oJDLvzjqsEE+6j4OZY0KhecVM5+KS7rXi4xv9ihAcIuWCKOIaJseEEMlr/6bzBGF0keH5SW6dUO874xkxfY6ByUYP52z4nss180LRclIGdPk+TAPGCPeSgvqZ9bxMi72dRkJi8zF+F5e84itmNIWJUYAWpqSTagK/Jvy+6+qGEeGpinEdN3/EfZRf60ca0rpCntA1MGzhSYREvDJL6zoUIc8/wQwBD3TJBE+Ny13JmWM908V3KOH4FD+fdlYyK5zMmJ+UNqOBn0PHm183fetl66kCHKKFvO0ZLoWp3T7VwcVYM40kAoI53YLtnGTR8ZxBAAIiBSvIwd5n3nlqHj/YjbKeOcC+rUAPEunAo8Wy1Bl6Vfl7tNDtoniWSW/V4UjWALLtR+z7yG3Ge87VaSrnwYb5+EEg0XPMkoE0lfaWaC7TLuOxqT8YTlkt+/4t0avYTGQxoAObEJEVJJ15sUIpbFPHLDJYdpHQcPtigfkysP6+eFKc3i0NYf9avMbGhXc0asJcY1PHTEQoyUWnuDZVgIiU+V6+7/PzwQfPnPyaZZXQf7WQp5F3TEbtRuqwQ7B6BNma9JLUPhfmtuM1XCuTxalGdWmlJJ9eY+cWzafVsCQ9PLN91EIEcfeokbWXO9jbao1ZiE=
+    - secure: YTDCTQ3FxDyN+TGKTUNdkaUAYScalovvagjK41udlgwymZDAqH9jl20HN7202V5tPXlDwt44iJW0KtQIfyO7fnZd0xlOF3OFbk7Z+r3tpaXhz4oiKVn1GKkWjFqqsMUakOzGWyjoO0j5dKkxh+2nfoFXsqSr72y6AjrtXc4VeLmabJJDBl/bg82iA37QfGjWOm98zt/BynuGvb//5m/izYgVncrrC038cHdhtttpBOFX1pD67oIJBDWLr4SkBcpYlfa4qPoQ3cCY4joKqe3Cz+mStrSTlEzG8B0tjzjdHY7KyV7n915M9ERum8rewwsSQlyCgdLIGbNJSJqUEjwG40/LqninHGsFbdCiqxjZs03kvwVv9nyzt7aNgjTdDFQCGZeBh6t6JJnGsASWRjAjChurc09V1Ti+uoWnwSPyR/RirNmdwfXidUKxiwTL68Pp7KwiocxiI5znA0n4Kpp4jjBJH4DrMFvnG9TuWwn3GDpvte/FXwSOazd3m00c930JqcC8ZRqCZGWm/mtoIycgb1GPu9SFEzgVuMTQtLDYBslmTeVl9Mp1Zm3svj9Inba1+/5i9yDZaLqzRbKm8e3LQIlJ4gNTFEy61GtaghhxczMdoNDkk3wJ8B/BkUh3Kr3zMpULtFxLuBIKH1etl4g1MPBrXV/plyY49xg3KkDU8F8=
+    - secure: cKKLgm2vbEwXPyUYZ7apkPsAKYbCnyiQfFj1oJDLvzjqsEE+6j4OZY0KhecVM5+KS7rXi4xv9ihAcIuWCKOIaJseEEMlr/6bzBGF0keH5SW6dUO874xkxfY6ByUYP52z4nss180LRclIGdPk+TAPGCPeSgvqZ9bxMi72dRkJi8zF+F5e84itmNIWJUYAWpqSTagK/Jvy+6+qGEeGpinEdN3/EfZRf60ca0rpCntA1MGzhSYREvDJL6zoUIc8/wQwBD3TJBE+Ny13JmWM908V3KOH4FD+fdlYyK5zMmJ+UNqOBn0PHm183fetl66kCHKKFvO0ZLoWp3T7VwcVYM40kAoI53YLtnGTR8ZxBAAIiBSvIwd5n3nlqHj/YjbKeOcC+rUAPEunAo8Wy1Bl6Vfl7tNDtoniWSW/V4UjWALLtR+z7yG3Ge87VaSrnwYb5+EEg0XPMkoE0lfaWaC7TLuOxqT8YTlkt+/4t0avYTGQxoAObEJEVJJ15sUIpbFPHLDJYdpHQcPtigfkysP6+eFKc3i0NYf9avMbGhXc0asJcY1PHTEQoyUWnuDZVgIiU+V6+7/PzwQfPnPyaZZXQf7WQp5F3TEbtRuqwQ7B6BNma9JLUPhfmtuM1XCuTxalGdWmlJJ9eY+cWzafVsCQ9PLN91EIEcfeokbWXO9jbao1ZiE=

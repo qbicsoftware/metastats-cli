@@ -1,14 +1,12 @@
 package life.qbic.metastats
 
-import life.qbic.metastats.datamodel.MetaStatsExperiment
-import life.qbic.metastats.filter.ConditionParser
 
+import life.qbic.metastats.filter.ConditionParser
 import life.qbic.xml.manager.StudyXMLParser
 import life.qbic.xml.properties.Property
-
 import spock.lang.Specification
 
-class ConditionParserSpecification extends Specification{
+class ConditionParserSpecification extends Specification {
 
     String condition = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <qexperiment>
@@ -27,12 +25,12 @@ class ConditionParserSpecification extends Specification{
     """
 
 
-    def "xml parsing retrieves the right number of Conditions"(){
+    def "xml parsing retrieves the right number of Conditions"() {
         given:
         ConditionParser parser = new ConditionParser()
 
         HashMap props = new HashMap()
-        props.put("Q_EXPERIMENTAL_SETUP",condition)
+        props.put("Q_EXPERIMENTAL_SETUP", condition)
 
         //MetaStatsExperiment experiment = new MetaStatsExperiment("Q_PROJECT_INFO",[],props)
         StudyXMLParser pars = new StudyXMLParser()

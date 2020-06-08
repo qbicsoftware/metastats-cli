@@ -5,11 +5,11 @@ import life.qbic.metastats.datamodel.MetaStatsSample
 import life.qbic.metastats.filter.FilterExperimentData
 import life.qbic.metastats.request.ExperimentDataOutput
 
-class PrepareMetaData implements ExperimentDataOutput{
+class PrepareMetaData implements ExperimentDataOutput {
 
     FilterExperimentData filterExperimentDataInput
 
-    PrepareMetaData(FilterExperimentData filterDataInput){
+    PrepareMetaData(FilterExperimentData filterDataInput) {
         filterExperimentDataInput = filterDataInput
     }
 

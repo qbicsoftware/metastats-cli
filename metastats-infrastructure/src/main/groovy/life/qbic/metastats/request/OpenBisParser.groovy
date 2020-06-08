@@ -11,34 +11,33 @@ class OpenBisParser {
 
     private static final Logger LOG = LogManager.getLogger(OpenBisParser.class)
 
-    static def createMetaStatsExperiment(Experiment exp){
+    static def createMetaStatsExperiment(Experiment exp) {
         String type = exp.type.code
         List samples = []
 
-        exp.samples.each {sample ->
+        exp.samples.each { sample ->
             samples << sample.code
         }
 
-        return new MetaStatsExperiment(type,exp.properties,samples)
+        return new MetaStatsExperiment(type, exp.properties, samples)
     }
 
-    List<MetaStatsSample> getPreparationSamples(List<Sample> samples){
+    List<MetaStatsSample> getPreparationSamples(List<Sample> samples) {
         List<MetaStatsSample> allSamples = []
 
-        samples.each{sample ->
+        samples.each { sample ->
             //create sample object
             String type = sample.type.code
 
-            if(type == "Q_TEST_SAMPLE"){
+            if (type == "Q_TEST_SAMPLE") {
                 //get parent samples
                 List parents = getAllParents(sample)
                 //get children samples
                 List children = getAllChildren(sample)
 
                 //children+parents are relatives of preparations sample!
-                allSamples << createMetaStatsSample(parents+children, sample)
-            }
-            else{
+                allSamples << createMetaStatsSample(parents + children, sample)
+            } else {
                 //todo is this required?
                 allSamples += getPreparationSamples(sample.children)
             }
@@ -46,21 +45,21 @@ class OpenBisParser {
         return allSamples
     }
 
-    static def createMetaStatsSample(List<Sample> relatedSamples, Sample prepSample){
+    static def createMetaStatsSample(List<Sample> relatedSamples, Sample prepSample) {
         String code = prepSample.code
         String type = prepSample.type.code
 
         Map allProperties = prepSample.properties
         //add the code
-        allProperties.put("Q_TEST_SAMPLE_CODE",code)
+        allProperties.put("Q_TEST_SAMPLE_CODE", code)
 
-        relatedSamples.each {sample ->
-            sample.properties.each {prop,value ->
-                allProperties.put(sample.type.code+"_CODE",sample.code)
-                if(prop == "Q_SECONDARY_NAME"){
-                    allProperties.put("Q_SECONDARY_NAME_"+sample.type.code,value)
-                }else{
-                    allProperties.put(prop,value)
+        relatedSamples.each { sample ->
+            sample.properties.each { prop, value ->
+                allProperties.put(sample.type.code + "_CODE", sample.code)
+                if (prop == "Q_SECONDARY_NAME") {
+                    allProperties.put("Q_SECONDARY_NAME_" + sample.type.code, value)
+                } else {
+                    allProperties.put(prop, value)
                 }
             }
         }
@@ -74,14 +73,14 @@ class OpenBisParser {
         return sample
     }
 
-    List<Sample> getAllParents(Sample preparationSample){
+    List<Sample> getAllParents(Sample preparationSample) {
         List parents = []
 
-        preparationSample.parents.each {parent->
+        preparationSample.parents.each { parent ->
             //MetaStatsSample parentSample = new MetaStatsSample(parent.code, parent.type.code,parent.properties)
             parents.add(parent)
 
-            if(parent.parents != null){//parent.parents.size() > 0 && parent.parents.get(0) instanceof Sample){
+            if (parent.parents != null) {//parent.parents.size() > 0 && parent.parents.get(0) instanceof Sample){
                 parents += getAllParents(parent)
             }
         }
@@ -89,14 +88,14 @@ class OpenBisParser {
         return parents
     }
 
-    List<Sample> getAllChildren(Sample preparationSample){
+    List<Sample> getAllChildren(Sample preparationSample) {
         List children = []
 
-        preparationSample.children.each {child->
+        preparationSample.children.each { child ->
             //MetaStatsSample childSample = new MetaStatsSample(child.code, child.type.code,child.properties)
             children.add(child)
 
-            if(child.children != null){//child.children.size() > 0 && child.children.get(0) instanceof Sample){
+            if (child.children != null) {//child.children.size() > 0 && child.children.get(0) instanceof Sample){
                 children += getAllChildren(child)
             }
         }

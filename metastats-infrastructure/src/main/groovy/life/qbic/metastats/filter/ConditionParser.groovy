@@ -17,7 +17,7 @@ class ConditionParser {
     private static final Logger LOG = LogManager.getLogger(ConditionParser.class);
 
 
-    def parseProperties(Map designExperiment){
+    def parseProperties(Map designExperiment) {
 
         String xmlString = designExperiment.get("Q_EXPERIMENTAL_SETUP")
         try {
@@ -30,8 +30,8 @@ class ConditionParser {
         }
     }
 
-    List<Property> getSampleConditions(String sample){
-        studyParser.getFactorsAndPropertiesForSampleCode(expDesign,sample)
+    List<Property> getSampleConditions(String sample) {
+        studyParser.getFactorsAndPropertiesForSampleCode(expDesign, sample)
     }
 
 }

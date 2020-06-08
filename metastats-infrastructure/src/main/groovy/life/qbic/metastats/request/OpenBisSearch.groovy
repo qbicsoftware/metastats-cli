@@ -25,7 +25,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 
-class OpenBisSearch implements DatabaseGateway{
+class OpenBisSearch implements DatabaseGateway {
 
 
     Project project
@@ -39,7 +39,7 @@ class OpenBisSearch implements DatabaseGateway{
 
     private static final Logger LOG = LogManager.getLogger(OpenBisSearch.class);
 
-    OpenBisSearch(OpenBisSession session){
+    OpenBisSearch(OpenBisSession session) {
         this.session = session
         this.v3 = session.v3
         this.dss = session.dss
@@ -97,22 +97,23 @@ class OpenBisSearch implements DatabaseGateway{
         session.logout()
     }
 
-    List<MetaStatsSample> fetchBiologicalEntity(){
+    List<MetaStatsSample> fetchBiologicalEntity() {
         List prepSamples = []
         List<Experiment> experiments = project.experiments
         List<Sample> openBisSamples
 
-       experiments.each { exp ->
-           //only do it for the Experiment with Biological Samples since from here all other samples can be found
-           if (exp.code == project.code+"E2" && exp.getSamples() != null){ //todo manchmal gibts e2 2x --> only consider exp with samples
-               LOG.info "found $exp.type.code"
+        experiments.each { exp ->
+            //only do it for the Experiment with Biological Samples since from here all other samples can be found
+            if (exp.code == project.code + "E2" && exp.getSamples() != null) {
+                //todo manchmal gibts e2 2x --> only consider exp with samples
+                LOG.info "found $exp.type.code"
 
-               LOG.info "fetch all samples from experiment"
-               openBisSamples = exp.getSamples()
+                LOG.info "fetch all samples from experiment"
+                openBisSamples = exp.getSamples()
 
-               prepSamples += parser.getPreparationSamples(openBisSamples)
-           }
-       }
+                prepSamples += parser.getPreparationSamples(openBisSamples)
+            }
+        }
 
         //translate vocabularies to meaningfully
         translateSampleVocabulary(prepSamples)
@@ -122,49 +123,49 @@ class OpenBisSearch implements DatabaseGateway{
         return prepSamples
     }
 
-    def translateSampleVocabulary(List<MetaStatsSample> samples){
-        samples.each {sample ->
-            sample.properties.each {key, value ->
-                if(key == "Q_NCBI_ORGANISM" || key == "Q_PRIMARY_TISSUE"){
+    def translateSampleVocabulary(List<MetaStatsSample> samples) {
+        samples.each { sample ->
+            sample.properties.each { key, value ->
+                if (key == "Q_NCBI_ORGANISM" || key == "Q_PRIMARY_TISSUE") {
                     String vocabulary = fetchVocabulary(value)
                     //overwrite old key
-                    sample.properties.put(key,vocabulary)
+                    sample.properties.put(key, vocabulary)
                 }
             }
         }
     }
 
-    def translateExperimentVocabulary(List<MetaStatsExperiment> experiments){
-        experiments.each {experiment ->
-            experiment.properties.each {key, value ->
-                if(key == "Q_SEQUENCER_DEVICE"){
+    def translateExperimentVocabulary(List<MetaStatsExperiment> experiments) {
+        experiments.each { experiment ->
+            experiment.properties.each { key, value ->
+                if (key == "Q_SEQUENCER_DEVICE") {
                     String vocabulary = fetchVocabulary(value)
                     //overwrite old key
-                    experiment.properties.put(key,vocabulary)
+                    experiment.properties.put(key, vocabulary)
                 }
             }
         }
     }
 
-    def fetchVocabulary(String code){
+    def fetchVocabulary(String code) {
         VocabularyTermSearchCriteria vocabularyTermSearchCriteria = new VocabularyTermSearchCriteria()
         vocabularyTermSearchCriteria.withCode().thatEquals(code)
 
         SearchResult<VocabularyTerm> vocabularyTermSearchResult = v3.searchVocabularyTerms(sessionToken, vocabularyTermSearchCriteria, new VocabularyTermFetchOptions())
 
-        String term =  vocabularyTermSearchResult.objects.get(0).label
+        String term = vocabularyTermSearchResult.objects.get(0).label
 
         return term
     }
 
-    def addFile(List<MetaStatsSample> prepSamples){
-        prepSamples.each {sample ->
+    def addFile(List<MetaStatsSample> prepSamples) {
+        prepSamples.each { sample ->
             HashMap files = fetchDataSets(sample.code, "fastq")
             sample.properties << files
         }
     }
 
-    HashMap<String,String> fetchDataSets(String sampleCode, String fileType){
+    HashMap<String, String> fetchDataSets(String sampleCode, String fileType) {
         LOG.info "fetch DataSet for $sampleCode"
 
         HashMap allDataSets = new HashMap()
@@ -184,11 +185,11 @@ class OpenBisSearch implements DatabaseGateway{
                         && !file.getPermId().toString().contains(".sha256sum")
                         && !file.getPermId().toString().contains("origlabfilename")) {
                     String[] path = file.getPermId().toString().split("/")
-                    dataFiles << path[path.size() - 1]+", "
+                    dataFiles << path[path.size() - 1] + ", "
                 }
             }
             dataFiles.delete(dataFiles.length() - 2, dataFiles.length())
-            allDataSets.put(dataSet.type.code,dataFiles)
+            allDataSets.put(dataSet.type.code, dataFiles)
         }
         return allDataSets
     }

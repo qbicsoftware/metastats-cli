@@ -6,19 +6,19 @@ import life.qbic.metastats.filter.MSMetadataPackageOutput
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-class MetaStatsPresenter implements MSMetadataPackageOutput{
+class MetaStatsPresenter implements MSMetadataPackageOutput {
 
     FileOutput creator
     String fileName = "metastats-metadata-sheet"
     StringBuilder fileContent = new StringBuilder()
 
     String home = System.getProperty("user.home")
-    String path = home+"/Downloads/" + fileName + "."+creator.fileEnding
+    String path = home + "/Downloads/" + fileName + "." + creator.fileEnding
 
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsPresenter.class)
 
-    MetaStatsPresenter(FileOutput creator){
+    MetaStatsPresenter(FileOutput creator) {
         this.creator = creator
     }
 

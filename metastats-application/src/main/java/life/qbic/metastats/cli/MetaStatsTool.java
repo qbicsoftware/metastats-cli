@@ -2,7 +2,6 @@ package life.qbic.metastats.cli;
 
 import life.qbic.cli.QBiCTool;
 import life.qbic.metastats.MetaStatsController;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,8 +31,8 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
         // get the parsed command-line arguments
         final MetaStatsCommand command = super.getCommand();
 
-        MetaStatsController controller = new MetaStatsController(command.conf,command.projectCode);
-        controller.execute(schemaPath,sampleSchema,experimentSchema);
+        MetaStatsController controller = new MetaStatsController(command.conf, command.projectCode);
+        controller.execute(schemaPath, sampleSchema, experimentSchema);
 
     }
 }

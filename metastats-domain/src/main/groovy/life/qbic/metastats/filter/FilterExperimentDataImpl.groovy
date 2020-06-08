@@ -92,7 +92,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         String filename = (String) entryProps.get("filename")
         List<String> filenames = Arrays.asList(filename.split(","))
 
-        if(filenames == null || filenames.empty){
+        if (filenames == null || filenames.empty) {
             return false
         }
 
@@ -101,7 +101,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             def prepID = entryProps.get("samplePreparationId")
             //or the seqFacilityID
             def sampleName = entryProps.get("sampleName")
-            if (!file.contains(prepID.toString()) && !file.contains(sampleName.toString())){
+            if (!file.contains(prepID.toString()) && !file.contains(sampleName.toString())) {
                 LOG.warn "File of sample $prepID does not follow the naming conventions: $file"
                 valid = false
             }
