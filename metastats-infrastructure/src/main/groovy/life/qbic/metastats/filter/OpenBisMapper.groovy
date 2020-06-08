@@ -16,6 +16,10 @@ class OpenBisMapper implements PropertiesMapper {
     OpenBisMapper(Map experimentProps, Map sampleProps){
         experimentMappingProperties = experimentProps
         sampleMappingProperties = sampleProps
+
+        println "OpenBisMapper instant. has property maps:"
+        println experimentMappingProperties
+        println sampleMappingProperties
     }
 
     Map mapExperimentToSample(MetaStatsExperiment experiment, MetaStatsSample sample) {
@@ -79,6 +83,7 @@ class OpenBisMapper implements PropertiesMapper {
         //ENTITY LEVEL
         sampleMappingProperties.each { openBisTerm, metastatsTerm ->
             String value = containsProperty(openBisProperties, openBisTerm as String)
+            println value
             metaStatsProperties.put(metastatsTerm as String, value)
         }
         return metaStatsProperties
@@ -86,6 +91,10 @@ class OpenBisMapper implements PropertiesMapper {
 
 
     String containsProperty(Map openBisProperties, String openBisProperty) {
+        println openBisProperties.toString() +" "+ openBisProperty
+
+        println openBisProperties.containsKey(openBisProperty)
+
         if (openBisProperties.containsKey(openBisProperty)) {
             return openBisProperties.get(openBisProperty)
         }

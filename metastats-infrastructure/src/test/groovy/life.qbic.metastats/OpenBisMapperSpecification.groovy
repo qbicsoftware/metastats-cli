@@ -105,7 +105,7 @@ class OpenBisMapperSpecification extends Specification{
                 "</qexperiment>"
         properties.put("Q_EXPERIMENTAL_SETUP", condition)
 
-        MetaStatsExperiment experiment = new MetaStatsExperiment("Q_PROJECT_DETAILS", properties)
+        MetaStatsExperiment experiment = new MetaStatsExperiment("Q_PROJECT_DETAILS", properties,[])
 
         //MetaStatsExperiment experiment = new MetaStatsExperiment("Q_PROJECT_INFO", properties)
         MetaStatsSample sample1 = new MetaStatsSample("QXXXXXX", "Q_TEST_SAMPLE", new HashMap<String, String>())
@@ -133,8 +133,8 @@ class OpenBisMapperSpecification extends Specification{
         MetaStatsSample sample1 = new MetaStatsSample("QXXXXXX","Q_TEST_SAMPLE",props)
         sample1.addRelatives("QFSVIENTITY-1")
 
-        MetaStatsExperiment experiment = new MetaStatsExperiment("Q_OTHER",props)
-        experiment.addSamples(["QXXXXXX"])
+        MetaStatsExperiment experiment = new MetaStatsExperiment("Q_OTHER",props,[])
+        experiment.setSamples(["QXXXXXX"])
 
         when:
         def res = obm.mapExperimentToSample(experiment,sample1)

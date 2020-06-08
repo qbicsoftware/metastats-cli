@@ -1,6 +1,6 @@
 package life.qbic.metastats
 
-import life.qbic.metastats.fileCreator.TSVFileOutput
+import life.qbic.metastats.fileCreator.TsvFileOutput
 import life.qbic.metastats.filter.FilterExperimentData
 import life.qbic.metastats.filter.FilterExperimentDataImpl
 import life.qbic.metastats.filter.JsonValidator
@@ -22,7 +22,7 @@ class MetaStatsController {
     private String configFile
     private String projectCode
     private ProjectSpecification spec
-    private FilterExperimentData filter
+    private FilterExperimentData filterExperimentData
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsController.class)
 
@@ -45,15 +45,15 @@ class MetaStatsController {
         JsonValidator validator = new JsonValidator(schemaPath)
 
         //define output classes
-        MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter(new TSVFileOutput())
+        MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter(new TsvFileOutput())
 
-        Map expMappingInfo = getMapFromJson(experimentSchema)
+        Map experimentalMappingInfo = getMapFromJson(experimentSchema)
         Map sampleMappingInfo = getMapFromJson(sampleSchema)
 
-        PropertiesMapper mapper = new OpenBisMapper(expMappingInfo, sampleMappingInfo)
+        PropertiesMapper mapper = new OpenBisMapper(experimentalMappingInfo, sampleMappingInfo)
 
         //define use case
-        filter = new FilterExperimentDataImpl(metaStatsPresenter, mapper, validator)
+        filterExperimentData = new FilterExperimentDataImpl(metaStatsPresenter, mapper, validator)
 
         //define db classes
         setupDB(credentials)
@@ -74,14 +74,12 @@ class MetaStatsController {
         return null
     }
 
-    def setupDB(Map credentials){
-        OpenBisSession session = new OpenBisSession((String) credentials.get("user"),
-                (String) credentials.get("password"),
-                (String) credentials.get("server_url"))
+    def setupDB(Map<String,String> credentials){
+        OpenBisSession session = new OpenBisSession(credentials.get("user"), credentials.get("password"), credentials.get("server_url"))
 
         DatabaseGateway db = new OpenBisSearch(session)
         //define input for connector class
-        ExperimentDataOutput experimentData = new PrepareMetaData(filter)
+        ExperimentDataOutput experimentData = new PrepareMetaData(filterExperimentData)
         //define use case
         spec = new RequestExperimentData(db, experimentData)
     }

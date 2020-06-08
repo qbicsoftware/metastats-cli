@@ -2,8 +2,8 @@ package life.qbic.metastats.datamodel
 
 class MetaStatsSample {
 
-    String type
-    String code
+    final String type
+    final String code
     List<String> relatives = []
     Map<String,String> properties
 

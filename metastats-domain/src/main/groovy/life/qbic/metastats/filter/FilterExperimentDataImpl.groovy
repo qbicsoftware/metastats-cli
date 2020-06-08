@@ -60,7 +60,6 @@ class FilterExperimentDataImpl implements FilterExperimentData {
 
         samples.each { sample ->
             String sampleName = sample.properties.get("samplePreparationId")
-
             HashMap props = sample.properties as HashMap
 
             MetaStatsPackageEntry entry = new MetaStatsPackageEntry(sampleName, props)

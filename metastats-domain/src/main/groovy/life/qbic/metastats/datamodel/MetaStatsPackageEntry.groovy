@@ -1,7 +1,8 @@
 package life.qbic.metastats.datamodel
 
 class MetaStatsPackageEntry {
-    String entryId
+
+    final String entryId
     HashMap properties
 
     MetaStatsPackageEntry(String entryId, HashMap properties){
