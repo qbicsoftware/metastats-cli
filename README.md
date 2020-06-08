@@ -13,9 +13,7 @@ MetaStats is a tool to collect the metadata from an existing openBis project. Th
 to the users download folder. This file can then be used for statistical analysis of the project.
 
 ## How to Install
-Execute 
-```mvn clean package```
-in the terminal to create the jar.
+Execute ```mvn clean package``` in the terminal to create the jar.
 
 ## How to run
 MetaStats-CLI is runt with the command:
