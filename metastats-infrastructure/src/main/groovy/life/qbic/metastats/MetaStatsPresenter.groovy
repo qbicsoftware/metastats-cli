@@ -27,14 +27,13 @@ class MetaStatsPresenter implements MSMetadataPackageOutput {
         fileContent = creator.createFileContent(entries)
     }
 
-    //todo create the name based on the project name
     @Override
     def downloadMetadataPackage() {
 
         File file = new File(path)
         file.write(fileContent.toString())
 
-        LOG.info "Downloaded the metadata sheet of project XXX to:" + path
+        LOG.info "Downloaded the metadata sheet of project $creator.projectCode to:" + path
 
     }
 }
