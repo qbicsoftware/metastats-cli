@@ -25,10 +25,10 @@ class FilterExperimentDataImplSpecification extends Specification {
     def "correctly transform metastats samples to package entries"() {
         given:
         Map props = new HashMap()
-        props.put("samplePreparationId", "QXXXXXX")
-        props.put("species", "value")
-        props.put("sequencingDevice", "value")
-        props.put("fileName", ["file2", "file1", "file3"])
+        props.put("QBiC.Code", "QXXXXXX")
+        props.put("Species", "value")
+        props.put("SequencingDevice", "value")
+        props.put("FileName", ["file2", "file1", "file3"])
 
         MetaStatsSample sample1 = new MetaStatsSample("QXXXXXX", "Q_TEST_SAMPLE", props)
         sample1.addRelatives("QFSVIENTITY-1")
@@ -38,13 +38,13 @@ class FilterExperimentDataImplSpecification extends Specification {
 
         then:
         res.get(0).entryId == "QXXXXXX"
-        assert res.get(0).properties.get("fileName") == ["file2", "file1", "file3"]
+        assert res.get(0).properties.get("FileName") == ["file2", "file1", "file3"]
 
     }
 
-    def "filename must reflect either sampleName name or sequencingFacilityID"() {
+    def "filename must reflect either QBiC.Code name or SequencingFacilityID"() {
         given:
-        HashMap sampleProperties = ["samplePreparationId": "QXXX", "sampleName": "IR1234", "otherProp": "value", "filename": "QXXXIR1234_1.fastq, QXXX.fastq, IR1234_3.fastq"]
+        HashMap sampleProperties = ["QBiC.Code": "QXXX", "SequencingFacilityId": "IR1234", "otherProp": "value", "Filename": "QXXXIR1234_1.fastq, QXXX.fastq, IR1234_3.fastq"]
         when:
         boolean res = FilterExperimentDataImpl.validFilenames(sampleProperties)
         then:
@@ -53,7 +53,7 @@ class FilterExperimentDataImplSpecification extends Specification {
 
     def "invalid filenames are detected"() {
         given:
-        HashMap sampleProperties = ["samplePreparationId": "QXXX", "sampleName": "IR1234", "otherProp": "value", "filename": "234_1.fastq, Q2.fastq, _3.fastq"]
+        HashMap sampleProperties = ["QBiC.Code": "QXXX", "SequencingFacilityId": "IR1234", "otherProp": "value", "Filename": "234_1.fastq, Q2.fastq, _3.fastq"]
         when:
         boolean res = FilterExperimentDataImpl.validFilenames(sampleProperties)
         then:
@@ -62,7 +62,7 @@ class FilterExperimentDataImplSpecification extends Specification {
 
     def "missing files are detected"() {
         given:
-        HashMap sampleProperties = ["samplePreparationId": "QXXX", "sampleName": "IR1234", "otherProp": "value", "filename": ""]
+        HashMap sampleProperties = ["QBiC.Code": "QXXX", "SequencingFacilityId": "IR1234", "otherProp": "value", "Filename": ""]
         when:
         boolean res = FilterExperimentDataImpl.validFilenames(sampleProperties)
         then:

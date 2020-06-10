@@ -10,9 +10,9 @@ class JsonValidatorSpecification extends Specification {
         given:
         JsonValidator validator = new JsonValidator("/model.schema.json")
 
-        Map valueMap = ["samplePreparationId": "QFSVI123A1", "sequencingFacilityId": "facilityID", "sampleName": "testName", "individual": "QTESTENTITY-1", "species": "Homo sapiens",
-                        "extractCode"        : "QTEST001AS", "sex": "", "tissue": "Vomit", "analyte": "RNA", "integrityNumber": 1, "conditions": [["label": "tumor", "value": "tumor"], ["label": "tumor", "value": "tumor"]],
-                        "fileName"           : "thisIsAFile.txt, thisisAnotherFile.txt", "sequencingDevice": "Illumina MiSeq at MPIDB"]
+        Map valueMap = ["SamplePreparationId": "QFSVI123A1", "SequencingFacilityId": "facilityID", "SampleName": "testName", "Individual": "QTESTENTITY-1", "Species": "Homo sapiens",
+                        "ExtractCode"        : "QTEST001AS", "Sex": "", "Tissue": "Vomit", "Analyte": "RNA", "IntegrityNumber": 1, "Condition": [["label": "tumor", "value": "tumor"], ["label": "tumor", "value": "tumor"]],
+                        "FileName"           : "thisIsAFile.txt, thisisAnotherFile.txt", "SequencingDevice": "Illumina MiSeq at MPIDB"]
 
         when:
         def res = validator.validateMetaStatsMetadataPackage(valueMap)
@@ -25,9 +25,10 @@ class JsonValidatorSpecification extends Specification {
         given:
         JsonValidator validator = new JsonValidator("/model.schema.json")
 
-        Map valueMap = ["samplePreparationId": "QFSVI123A1", "sequencingFacilityId": "facilityID", "sampleName": "testName", "individual": "QTESTENTITY-1",
-                        "extractCode"        : "QTEST001AS", "sex": "", "tissue": "Vomit", "analyte": "RNA", "integrityNumber": 1, "conditions": [["label": "tumor", "value": "tumor"], ["label": "tumor", "value": "tumor"]],
-                        "fileName"           : "thisIsAFile.txt, thisisAnotherFile.txt", "sequencingDevice": "Illumina MiSeq at MPIDB"]
+        //species missing
+        Map valueMap = ["SamplePreparationId": "QFSVI123A1", "SequencingFacilityId": "facilityID", "SampleName": "testName", "Individual": "QTESTENTITY-1",
+                        "ExtractCode"        : "QTEST001AS", "Sex": "", "Tissue": "Vomit", "Analyte": "RNA", "integrityNumber": 1, "Condition": [["label": "tumor", "value": "tumor"], ["label": "tumor", "value": "tumor"]],
+                        "FileName"           : "thisIsAFile.txt, thisisAnotherFile.txt", "SequencingDevice": "Illumina MiSeq at MPIDB"]
 
         when:
         def res = validator.validateMetaStatsMetadataPackage(valueMap)

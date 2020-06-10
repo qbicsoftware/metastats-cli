@@ -22,25 +22,25 @@
   },
   "type": "object",
   "properties": {
-    "samplePreparationId": {
+    "QBiC.Code": {
       "description": "QBiC internal identifier for preparation samples",
       "type": "string",
       "pattern": "Q[A-X0-9]{4}[0-9]{3}[A-X0-9]{2}"
     },
-    "sequencingFacilityId": {
+    "SequencingFacilityId": {
       "description": "Name of sample given by the Sequencing Facility",
       "type": "string"
     },
-    "sampleName": {
+    "SampleName": {
       "description": "Name of the sample written on the tube (given by the customer)",
       "type": "string"
     },
-    "individual": {
+    "Individual": {
       "description": "Individual living organism or cell line",
       "type": "string",
       "pattern": "Q[A-X0-9]{4}ENTITY-[1-9][0-9]*"
     },
-    "species": {
+    "Species": {
       "description": "Scientific name of organism(s) from which the biological material was derived (vocabulary)",
       "type": "string",
       "enum": [
@@ -267,17 +267,17 @@
         "Achillea millefolium"
       ]
     },
-    "extractCode": {
+    "ExtractCode": {
       "description": "QBiC internal identifier for extract samples",
       "type": "string",
       "pattern": "Q[A-X0-9]{4}[0-9]{3}[A-X0-9]{2}"
     },
-    "sex": {
+    "Sex": {
       "description": "Sex of the species of the biological material (if available)",
       "type": "string",
       "pattern": "MALE|FEMALE|male|female|^$"
     },
-    "tissue": {
+    "Tissue": {
       "description": "Biological material of the sample like muscle or leaf",
       "type": "string",
       "enum": [
@@ -455,7 +455,7 @@
         "Abdomen"
       ]
     },
-    "analyte": {
+    "Analyte": {
       "description": "Type of molecule extracted from biological material",
       "type": "string",
       "enum": [
@@ -477,23 +477,23 @@
         "Carbohydrates"
       ]
     },
-    "integrityNumber": {
+    "IntegrityNumber": {
       "description": "RIN or DIN of the biological material",
       "type": "integer",
       "pattern": "[1-9]|10"
     },
-    "condition": {
+    "Condition": {
       "description": "Sample group characteristic",
       "type": "array",
       "items": {
         "$ref": "#/definitions/condition"
       }
     },
-    "fileName": {
+    "FileName": {
       "description": "Name of the data files for the sample",
       "type": "string"
     },
-    "sequencingDevice": {
+    "SequencingDevice": {
       "description": "Name of the sequencer device",
       "type": "string",
       "enum": [
@@ -507,9 +507,14 @@
         "Illumina HiSeq 2000 at unspecified lab",
         "Illumina HiSeq 2000 at MPIDB"
       ]
+    },
+    "SequencingMode": {
+      "description": "Mode of sequencing which is either single or paired-end",
+      "type": "string",
+      "enum": ["single-end","paired-end"]
     }
   },
   "required": [
-    "species"
+    "Species","SampleName"
   ]
 }

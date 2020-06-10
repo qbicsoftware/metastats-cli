@@ -59,7 +59,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         List packageEntries = []
 
         samples.each { sample ->
-            String sampleName = sample.properties.get("samplePreparationId")
+            String sampleName = sample.properties.get("QBiC.Code")
             HashMap props = sample.properties as HashMap
 
             MetaStatsPackageEntry entry = new MetaStatsPackageEntry(sampleName, props)
@@ -89,7 +89,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
     static boolean validFilenames(HashMap entryProps) {
         boolean valid = true
 
-        String filename = (String) entryProps.get("filename")
+        String filename = (String) entryProps.get("Filename")
         List<String> filenames = Arrays.asList(filename.split(","))
 
         if (filenames == null || filenames.empty) {
@@ -98,9 +98,9 @@ class FilterExperimentDataImpl implements FilterExperimentData {
 
         filenames.each { file ->
             //a valid filename either contains the sample preparation qbic code
-            def prepID = entryProps.get("samplePreparationId")
+            def prepID = entryProps.get("QBiC.Code")
             //or the seqFacilityID
-            def sampleName = entryProps.get("sampleName")
+            def sampleName = entryProps.get("SequencingFacilityId")
             if (!file.contains(prepID.toString()) && !file.contains(sampleName.toString())) {
                 LOG.warn "File of sample $prepID does not follow the naming conventions: $file"
                 valid = false

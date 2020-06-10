@@ -16,16 +16,12 @@ class OpenBisMapper implements PropertiesMapper {
     OpenBisMapper(Map experimentProps, Map sampleProps) {
         experimentMappingProperties = experimentProps
         sampleMappingProperties = sampleProps
-
-        println "OpenBisMapper instant. has property maps:"
-        println experimentMappingProperties
-        println sampleMappingProperties
     }
 
     Map mapExperimentToSample(MetaStatsExperiment experiment, MetaStatsSample sample) {
         Map metaStatsProperties = new HashMap<>()
 
-        if (experimentMappingProperties.get(experiment.type) == "condition") {
+        if (experimentMappingProperties.get(experiment.type) == "Condition") {
             ConditionParser parser = new ConditionParser()
             parser.parseProperties(experiment.properties)
 
@@ -39,13 +35,13 @@ class OpenBisMapper implements PropertiesMapper {
                         String label = sampleProp.label
                         //LOG.debug sample.properties
                         //todo this should be done in file writing
-                        if (metaStatsProperties.containsKey("condition")) {
-                            List conditions = metaStatsProperties.get("condition") as List
+                        if (metaStatsProperties.containsKey("Condition")) {
+                            List conditions = metaStatsProperties.get("Condition") as List
                             conditions.add(new Condition(label, value))
 
-                            metaStatsProperties.put("condition", conditions)
+                            metaStatsProperties.put("Condition", conditions)
                         } else {
-                            metaStatsProperties.put("condition", [new Condition(label, value)])
+                            metaStatsProperties.put("Condition", [new Condition(label, value)])
                         }
                         //metaStatsProperties.put("condition: " + label, value)
                     }
