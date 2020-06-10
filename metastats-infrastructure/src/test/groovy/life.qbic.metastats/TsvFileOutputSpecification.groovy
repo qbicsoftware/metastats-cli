@@ -33,9 +33,9 @@ class TsvFileOutputSpecification extends Specification {
         def headerRow = output[0].split("\t")
 
         then:
-        headerRow[-1].contains("Condition:")
         headerRow[-2].contains("Condition:")
-        !headerRow[-3].contains("Condition:")
+        headerRow[-3].contains("Condition:")
+        !headerRow[-4].contains("Condition:")
         assert res != null
     }
 }

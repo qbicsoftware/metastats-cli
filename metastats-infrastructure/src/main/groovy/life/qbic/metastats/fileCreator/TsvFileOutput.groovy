@@ -16,7 +16,8 @@ class TsvFileOutput implements FileOutput {
         StringBuilder fileContent = new StringBuilder()
 
         //add different conditions
-        order.addAll(getConditions(entries))
+        int pos = order.size()-1
+        order.addAll(pos, getConditions(entries))
         order.each { header ->
             fileContent << header + "\t"
         }
