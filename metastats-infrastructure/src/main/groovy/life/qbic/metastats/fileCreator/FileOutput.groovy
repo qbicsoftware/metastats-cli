@@ -2,9 +2,15 @@ package life.qbic.metastats.fileCreator
 
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 
-interface FileOutput {
+abstract class FileOutput {
 
-    StringBuilder createFileContent(List<MetaStatsPackageEntry> entries)
+    String fileEnding
+    String projectCode
 
-    String getFileEnding()
+    FileOutput(String fileEnding, String projectCode){
+        this.fileEnding = fileEnding
+        this.projectCode = projectCode
+    }
+
+    abstract StringBuilder createFileContent(List<MetaStatsPackageEntry> entries)
 }

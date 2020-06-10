@@ -13,7 +13,7 @@ class MetaStatsPresenter implements MSMetadataPackageOutput {
     StringBuilder fileContent = new StringBuilder()
 
     String home = System.getProperty("user.home")
-    String path = home + "/Downloads/" + fileName + "." + creator.fileEnding
+    String path = home + "/Downloads/" + creator.projectCode + "_" + fileName + "." + creator.fileEnding
 
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsPresenter.class)

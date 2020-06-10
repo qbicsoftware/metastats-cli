@@ -35,7 +35,7 @@ class MetaStatsController {
         JsonValidator validator = new JsonValidator(schemaPath)
 
         //define output classes
-        MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter(new TsvFileOutput())
+        MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter(new TsvFileOutput(projectCode))
 
         Map experimentalMappingInfo = getMapFromJson(experimentSchema)
         Map sampleMappingInfo = getMapFromJson(sampleSchema)

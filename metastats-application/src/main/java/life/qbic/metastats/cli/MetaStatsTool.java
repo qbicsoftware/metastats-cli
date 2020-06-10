@@ -33,6 +33,5 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
 
         MetaStatsController controller = new MetaStatsController(command.conf, command.projectCode);
         controller.execute(schemaPath, sampleSchema, experimentSchema);
-
     }
 }

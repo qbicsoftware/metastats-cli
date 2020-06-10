@@ -3,13 +3,17 @@ package life.qbic.metastats.fileCreator
 import life.qbic.metastats.datamodel.Condition
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 
-class TsvFileOutput implements FileOutput {
+class TsvFileOutput extends FileOutput {
 
-    private String missingValues = "NA"
-    private String fileEnding = "tsv"
+    private static String missingValues = "NA"
+    private static String fileEnding = "tsv"
     private ArrayList<String> order = ["QBiC.Code","SampleName", "SequencingFacilityId", "SequencingDevice",
                                        "Individual", "Species", "ExtractCode", "Sex", "Tissue",
                                        "Analyte", "IntegrityNumber", "Filename"]
+
+    TsvFileOutput(String projectCode){
+        super(fileEnding,projectCode)
+    }
 
     @Override
     StringBuilder createFileContent(List<MetaStatsPackageEntry> entries) {
@@ -65,8 +69,4 @@ class TsvFileOutput implements FileOutput {
         return conditionTypes
     }
 
-    @Override
-    String getFileEnding() {
-        return fileEnding
-    }
 }
