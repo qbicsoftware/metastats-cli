@@ -5,7 +5,6 @@ class SequencingModeCalculator {
     static String calculateSequencingMode(String filename){
         String sequencingMode = ""
         String[] files = filename.split(",")
-        //if(files == null) return sequencingMode
 
         boolean R1 = false
         boolean R2 = false

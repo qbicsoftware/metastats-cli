@@ -50,8 +50,21 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         List<MetaStatsPackageEntry> entries = createMetadataPackageEntries(samples)
         validateMetadataPackage(entries)
 
-        output.createMetaStatsMetadataPackage(entries)
+        output.createMetaStatsMetadataPackage(sortEntries(entries))
         output.downloadMetadataPackage()
+    }
+
+    static ArrayList sortEntries(List<MetaStatsPackageEntry> samples){
+        //sort Filenames
+        samples.each {sample ->
+            String fileName = sample.properties.get("Filename")
+            String sortedFiles = fileName.split(", ").sort().join(", ")
+            sample.properties.put("Filename",sortedFiles)
+        }
+        //sort order of QBiC.Codes
+        ArrayList sortedSamples = samples.sort{it.entryId}
+
+        return sortedSamples
     }
 
     static List<MetaStatsPackageEntry> createMetadataPackageEntries(List<MetaStatsSample> samples) {
