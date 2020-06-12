@@ -44,10 +44,9 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             }
         }
 
-        LOG.info "finished filtering of metadata package"
+        createSequencingModeEntry(samples)
+
         LOG.info "create metadata package entries"
-
-
         List<MetaStatsPackageEntry> entries = createMetadataPackageEntries(samples)
         validateMetadataPackage(entries)
 
@@ -67,6 +66,21 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         }
 
         return packageEntries
+    }
+
+    def createSequencingModeEntry(List<MetaStatsSample> samples){
+        samples.each {sample ->
+            String filename = sample.properties.get("Filename")
+            String sequencingMode
+            try{
+                sequencingMode = SequencingModeCalculator.calculateSequencingMode(filename)
+
+            }catch(IllegalFileType ift){
+                LOG.warn ift.message
+                sequencingMode = ""
+            }
+            sample.properties.put("SequencingMode",sequencingMode)
+        }
     }
 
     def validateMetadataPackage(List<MetaStatsPackageEntry> metadataPackage) {

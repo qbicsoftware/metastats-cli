@@ -7,7 +7,7 @@ class TsvFileOutput extends FileOutput {
 
     private static String missingValues = "NA"
     private static String fileEnding = "tsv"
-    private ArrayList<String> order = ["QBiC.Code","SampleName", "SequencingFacilityId", "SequencingDevice",
+    private ArrayList<String> order = ["QBiC.Code","SampleName", "SequencingFacilityId", "SequencingDevice", "SequencingMode",
                                        "Individual", "Species", "ExtractCode", "Sex", "Tissue",
                                        "Analyte", "IntegrityNumber", "Filename"]
 
