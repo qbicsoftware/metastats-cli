@@ -10,7 +10,6 @@ class FilterExperimentDataImpl implements FilterExperimentData {
 
     MSMetadataPackageOutput output
     PropertiesMapper mapper
-    List<MetaStatsSample> prepSamples
     SchemaValidator validator
 
     private static final Logger LOG = LogManager.getLogger(FilterExperimentDataImpl.class)
@@ -24,8 +23,6 @@ class FilterExperimentDataImpl implements FilterExperimentData {
 
     @Override
     def filterProjectMetaData(List<MetaStatsSample> samples, List<MetaStatsExperiment> experiments) {
-
-        prepSamples = samples
 
         LOG.info "filter metadata from samples ..."
         samples.each { prep ->
@@ -41,6 +38,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             samples.each { sample ->
                 //only add the properties, do not overwrite!
                 sample.properties << mapper.mapExperimentToSample(experiment, sample)
+                if(experiment.type == "Q_PROJECT_DETAILS") sample.properties << mapper.mapConditionToSample(experiment.properties,sample)
             }
         }
 

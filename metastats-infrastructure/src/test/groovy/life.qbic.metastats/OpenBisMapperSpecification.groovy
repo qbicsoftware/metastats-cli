@@ -115,8 +115,8 @@ class OpenBisMapperSpecification extends Specification {
         sample2.addRelatives("QFSVI016A5")
 
         when:
-        Map res1 = obm.mapExperimentToSample(experiment, sample1)
-        Map res2 = obm.mapExperimentToSample(experiment, sample2)
+        Map res1 = obm.mapConditionToSample(experiment.properties, sample1)
+        Map res2 = obm.mapConditionToSample(experiment.properties, sample2)
 
 
         then:
