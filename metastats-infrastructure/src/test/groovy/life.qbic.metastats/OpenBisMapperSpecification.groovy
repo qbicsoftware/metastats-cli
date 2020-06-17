@@ -143,5 +143,5 @@ class OpenBisMapperSpecification extends Specification {
         res.sort() == ["Condition": "", "SequencingDevice": "value"].sort()
 
     }
-    //Q_SEQUENCER_DEVIC
+
 }

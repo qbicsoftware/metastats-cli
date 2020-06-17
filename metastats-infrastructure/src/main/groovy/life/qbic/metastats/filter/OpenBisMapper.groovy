@@ -29,21 +29,20 @@ class OpenBisMapper implements PropertiesMapper {
             //add field "condition:$label" : "$value" -> add to samples properties
             sample.relatives.each { relative ->
                 def res = parser.getSampleConditions(relative)
+
                 if (res != null) {
                     res.each { sampleProp ->
                         String value = sampleProp.value
                         String label = sampleProp.label
-                        //LOG.debug sample.properties
-                        //todo this should be done in file writing
+
                         if (metaStatsProperties.containsKey("Condition")) {
                             List conditions = metaStatsProperties.get("Condition") as List
-                            conditions.add(new Condition(label, value))
 
+                            conditions.add(new Condition(label, value, sample.type))
                             metaStatsProperties.put("Condition", conditions)
                         } else {
-                            metaStatsProperties.put("Condition", [new Condition(label, value)])
+                            metaStatsProperties.put("Condition", [new Condition(label, value, sample.type)])
                         }
-                        //metaStatsProperties.put("condition: " + label, value)
                     }
                 } else {
                     LOG.info "no experiment conditions where found, check your openbis project"
@@ -57,6 +56,7 @@ class OpenBisMapper implements PropertiesMapper {
         }
         return metaStatsProperties
     }
+
 
     boolean isSampleOfExperiment(List<String> experimentSamples, MetaStatsSample sample) {
         boolean contained = false
@@ -83,13 +83,11 @@ class OpenBisMapper implements PropertiesMapper {
         return metaStatsProperties
     }
 
-
-    String containsProperty(Map openBisProperties, String openBisProperty) {
+    static String containsProperty(Map openBisProperties, String openBisProperty) {
         if (openBisProperties.containsKey(openBisProperty)) {
             return openBisProperties.get(openBisProperty)
         }
         return ""
     }
-
 
 }

@@ -114,13 +114,13 @@ class FilterExperimentDataImpl implements FilterExperimentData {
     }
 
     static boolean validFilenames(HashMap entryProps) {
-        boolean valid = true
+        boolean valid = false
 
         String filename = (String) entryProps.get("Filename")
         List<String> filenames = Arrays.asList(filename.split(","))
 
         if (filenames == null || filenames.empty) {
-            return false
+            return valid
         }
 
         filenames.each { file ->
@@ -128,12 +128,12 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             def prepID = entryProps.get("QBiC.Code")
             //or the seqFacilityID
             def sampleName = entryProps.get("SequencingFacilityId")
-            if (!file.contains(prepID.toString()) && !file.contains(sampleName.toString())) {
-                LOG.warn "File of sample $prepID does not follow the naming conventions: $file"
-                valid = false
+            if (file.contains(prepID.toString()) || file.contains(sampleName.toString())) {
+                valid = true
             }
-        }
+            LOG.warn "File of sample $prepID does not follow the naming conventions: $file"
 
+        }
         return valid
     }
 

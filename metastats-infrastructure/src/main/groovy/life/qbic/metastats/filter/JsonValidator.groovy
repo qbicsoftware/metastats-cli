@@ -34,9 +34,7 @@ class JsonValidator implements SchemaValidator {
         report = jsonSchema.validate(node, true)
 
         if (!report.isSuccess()) {
-            LOG.info "Json validation report start "
             LOG.info report
-            LOG.info "Json validation report end "
         }
 
         return report.isSuccess()

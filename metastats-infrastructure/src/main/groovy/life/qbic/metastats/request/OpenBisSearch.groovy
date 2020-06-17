@@ -37,7 +37,7 @@ class OpenBisSearch implements DatabaseGateway {
     OpenBisParser parser = new OpenBisParser()
 
 
-    private static final Logger LOG = LogManager.getLogger(OpenBisSearch.class);
+    private static final Logger LOG = LogManager.getLogger(OpenBisSearch.class)
 
     OpenBisSearch(OpenBisSession session) {
         this.session = session
@@ -104,7 +104,7 @@ class OpenBisSearch implements DatabaseGateway {
 
         experiments.each { exp ->
             //only do it for the Experiment with Biological Samples since from here all other samples can be found
-            if (exp.code == project.code + "E2" && exp.getSamples() != null) {
+            if (exp.type.code == "Q_EXPERIMENTAL_DESIGN" && exp.getSamples() != null) {
                 //todo manchmal gibts e2 2x --> only consider exp with samples
                 LOG.info "found $exp.type.code"
 
@@ -177,19 +177,22 @@ class OpenBisSearch implements DatabaseGateway {
 
             SearchResult<DataSetFile> result = dss.searchFiles(sessionToken, criteria, new DataSetFileFetchOptions())
             List<DataSetFile> files = result.getObjects()
-
-            StringBuilder dataFiles = new StringBuilder()
+            StringBuilder dataFiles = new StringBuilder("")
 
             for (DataSetFile file : files) {
                 if (file.getPermId().toString().contains("." + fileType)
                         && !file.getPermId().toString().contains(".sha256sum")
-                        && !file.getPermId().toString().contains("origlabfilename")) {
+                        && !file.getPermId().toString().contains("origlabfilename")
+                        && !file.getPermId().toString().contains(".csv")
+                        && !file.getPermId().toString().contains(".txt")) {
                     String[] path = file.getPermId().toString().split("/")
                     dataFiles << path[path.size() - 1] + ", "
                 }
             }
-            dataFiles.delete(dataFiles.length() - 2, dataFiles.length())
-            allDataSets.put(dataSet.type.code, dataFiles)
+            if(dataFiles.toString() != ""){
+                dataFiles.delete(dataFiles.length() - 2, dataFiles.length())
+                allDataSets.put(dataSet.type.code, dataFiles)
+            }
         }
         return allDataSets
     }

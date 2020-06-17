@@ -21,11 +21,10 @@ class ConditionParser {
 
         String xmlString = designExperiment.get("Q_EXPERIMENTAL_SETUP")
         try {
-            LOG.info "parsing experiment conditions"
             expDesign = studyParser.parseXMLString(xmlString)
         }
         catch (JAXBException e) {
-            LOG.info "could not create new experimental design xml from experiment."
+            LOG.error "could not create new experimental design xml from experiment."
             e.printStackTrace()
         }
     }
