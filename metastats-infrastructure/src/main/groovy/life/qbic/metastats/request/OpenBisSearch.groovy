@@ -186,7 +186,7 @@ class OpenBisSearch implements DatabaseGateway {
                         && !file.getPermId().toString().contains(".csv")
                         && !file.getPermId().toString().contains(".txt")) {
                     String[] path = file.getPermId().toString().split("/")
-                    dataFiles << path[path.size() - 1] + ", "
+                    if(!dataFiles.contains(path[path.size() - 1]))dataFiles << path[path.size() - 1] + ", "
                 }
             }
             if(dataFiles.toString() != ""){
