@@ -23,7 +23,6 @@ class RequestExperimentData implements ProjectSpecification {
             LOG.error "The project code was not valid!"
             return
         }
-
         LOG.info "searching for the openbis project ..."
         search.getProject(projectCode)
 

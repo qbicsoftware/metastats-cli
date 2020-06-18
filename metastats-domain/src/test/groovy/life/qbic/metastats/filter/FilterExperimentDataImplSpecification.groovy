@@ -27,7 +27,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         Map props = new HashMap()
         props.put("QBiC.Code", "QXXXXXX")
         props.put("Species", "value")
-        props.put("SequencingDevice", "value")
+        props.put("IntegrityNumber", "1.0")
         props.put("FileName", ["file2", "file1", "file3"])
 
         MetaStatsSample sample1 = new MetaStatsSample("QXXXXXX", "Q_TEST_SAMPLE", props)
@@ -39,7 +39,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         then:
         res.get(0).entryId == "QXXXXXX"
         assert res.get(0).properties.get("FileName") == ["file2", "file1", "file3"]
-
+        assert res.get(0).properties.get("IntegrityNumber") instanceof Double
     }
 
     def "filename must reflect either QBiC.Code name or SequencingFacilityID"() {

@@ -73,6 +73,9 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             String sampleName = sample.properties.get("QBiC.Code")
             HashMap props = sample.properties as HashMap
 
+            String res = props.get("IntegrityNumber")
+            if(res != "") props.put("IntegrityNumber",Double.parseDouble(res))
+
             MetaStatsPackageEntry entry = new MetaStatsPackageEntry(sampleName, props)
             packageEntries.add(entry)
         }

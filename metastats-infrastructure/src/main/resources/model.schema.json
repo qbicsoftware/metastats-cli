@@ -479,7 +479,7 @@
     },
     "IntegrityNumber": {
       "description": "RIN or DIN of the biological material",
-      "type": "integer",
+      "type": "number",
       "pattern": "[1-9]|10"
     },
     "Condition": {

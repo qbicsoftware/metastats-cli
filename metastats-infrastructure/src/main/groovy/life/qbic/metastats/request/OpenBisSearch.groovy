@@ -69,6 +69,12 @@ class OpenBisSearch implements DatabaseGateway {
         fetchOptions.withExperimentsUsing(experiment)
 
         SearchResult<Project> resProject = v3.searchProjects(sessionToken, criteria, fetchOptions)
+
+        if(resProject.getObjects().size() == 0){
+            LOG.warn "Project $projectCode not found"
+            System.exit(-1)
+        }
+
         project = resProject.getObjects().get(0)
     }
 
