@@ -42,7 +42,7 @@ class TsvFileOutput extends FileOutput {
                         if (cond.label == conditionLabel) cellValue = cond.value
                     }
                 }
-                if (cellValue == null || cellValue == "") cellValue = missingValues
+                if (cellValue == "null" || cellValue == "") cellValue = missingValues
 
                 fileContent << cellValue + "\t"
             }

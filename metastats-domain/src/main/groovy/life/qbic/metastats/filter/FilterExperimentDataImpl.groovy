@@ -35,6 +35,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         experiments.each { experiment ->
             //mapper.mapExperimentProperties(experiment, prepSamples)
             //map to samples
+            println experiment.type
             samples.each { sample ->
                 //only add the properties, do not overwrite!
                 if(experiment.type == "Q_NGS_MEASUREMENT") sample.properties << mapper.mapExperimentToSample(experiment, sample)
