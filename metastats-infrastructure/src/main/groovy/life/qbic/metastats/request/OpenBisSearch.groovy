@@ -176,6 +176,9 @@ class OpenBisSearch implements DatabaseGateway {
 
         HashMap allDataSets = new HashMap()
 
+        StringBuilder dataFiles = new StringBuilder("")
+        String datasetType = ""
+
         findAllDatasetsRecursive(sampleCode).each { dataSet ->
             DataSetFileSearchCriteria criteria = new DataSetFileSearchCriteria()
             criteria.withDataSet().withPermId().thatEquals(dataSet.permId.permId)
@@ -183,7 +186,6 @@ class OpenBisSearch implements DatabaseGateway {
 
             SearchResult<DataSetFile> result = dss.searchFiles(sessionToken, criteria, new DataSetFileFetchOptions())
             List<DataSetFile> files = result.getObjects()
-            StringBuilder dataFiles = new StringBuilder("")
 
             for (DataSetFile file : files) {
                 if (file.getPermId().toString().contains("." + fileType)
@@ -193,13 +195,16 @@ class OpenBisSearch implements DatabaseGateway {
                         && !file.getPermId().toString().contains(".txt")) {
                     String[] path = file.getPermId().toString().split("/")
                     if(!dataFiles.contains(path[path.size() - 1]))dataFiles << path[path.size() - 1] + ", "
+                    datasetType = dataSet.type.code
                 }
             }
-            if(dataFiles.toString() != ""){
-                dataFiles.delete(dataFiles.length() - 2, dataFiles.length())
-                allDataSets.put(dataSet.type.code, dataFiles)
-            }
         }
+
+        if(dataFiles.toString() != ""){
+            dataFiles.delete(dataFiles.length() - 2, dataFiles.length())
+            allDataSets.put(datasetType, dataFiles)
+        }
+
         return allDataSets
     }
 
