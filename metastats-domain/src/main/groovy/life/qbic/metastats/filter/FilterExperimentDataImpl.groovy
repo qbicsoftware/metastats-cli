@@ -129,9 +129,9 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             def sampleName = entryProps.get("SequencingFacilityId")
             if (file.contains(prepID.toString()) || file.contains(sampleName.toString())) {
                 valid = true
+            }else{
+                LOG.warn "File of sample $prepID does not follow the naming conventions: $file"
             }
-            LOG.warn "File of sample $prepID does not follow the naming conventions: $file"
-
         }
         return valid
     }
