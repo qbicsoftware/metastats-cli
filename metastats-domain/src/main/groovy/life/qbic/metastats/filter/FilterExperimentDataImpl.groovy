@@ -37,9 +37,10 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             //map to samples
             samples.each { sample ->
                 //only add the properties, do not overwrite!
-                sample.properties << mapper.mapExperimentToSample(experiment, sample)
+                if(experiment.type == "Q_NGS_MEASUREMENT") sample.properties << mapper.mapExperimentToSample(experiment, sample)
                 if(experiment.type == "Q_PROJECT_DETAILS") sample.properties << mapper.mapConditionToSample(experiment.properties,sample)
             }
+
         }
 
         createSequencingModeEntry(samples)

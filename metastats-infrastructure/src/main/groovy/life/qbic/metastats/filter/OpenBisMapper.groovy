@@ -27,6 +27,7 @@ class OpenBisMapper implements PropertiesMapper {
                 metaStatsProperties.put(metastatsTerm as String, value)
             }
         }
+
         return metaStatsProperties
     }
 
