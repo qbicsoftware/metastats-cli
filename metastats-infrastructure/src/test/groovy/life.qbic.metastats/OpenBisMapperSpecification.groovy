@@ -134,7 +134,7 @@ class OpenBisMapperSpecification extends Specification {
         sample1.addRelatives("QFSVIENTITY-1")
 
         MetaStatsExperiment experiment = new MetaStatsExperiment("Q_OTHER", props, [])
-        experiment.setSamples(["QXXXXXX"])
+        experiment.setRelatedSampleCodes(["QXXXXXX"])
 
         when:
         def res = obm.mapExperimentToSample(experiment, sample1)

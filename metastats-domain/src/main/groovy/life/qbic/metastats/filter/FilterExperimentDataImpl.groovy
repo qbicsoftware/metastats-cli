@@ -14,7 +14,13 @@ class FilterExperimentDataImpl implements FilterExperimentData {
 
     private static final Logger LOG = LogManager.getLogger(FilterExperimentDataImpl.class)
 
-
+    /**
+     * Creates the FilterExperiment use case has access to a schema validator, a metadata term mapper and an interface to
+     * transfer the data out of the use case
+     * @param output interface that defines how data is transferred out of the class
+     * @param mapper defines how the data is translated from an external language e.g. openbis into the metastats metadata language
+     * @param validator that is used to validate the created MetadataPackageEntry
+     */
     FilterExperimentDataImpl(MSMetadataPackageOutput output, PropertiesMapper mapper, SchemaValidator validator) {
         this.output = output
         this.mapper = mapper
@@ -22,11 +28,11 @@ class FilterExperimentDataImpl implements FilterExperimentData {
     }
 
     @Override
-    def filterProjectMetaData(List<MetaStatsSample> samples, List<MetaStatsExperiment> experiments) {
+    void filterProjectMetaData(List<MetaStatsSample> testSamples, List<MetaStatsExperiment> experiments) {
 
         LOG.info "filter metadata from samples ..."
-        samples.each { prep ->
-            if (prep.type != "Q_TEST_SAMPLE") LOG.debug "the metastats sample is not a Q_TEST_SAMPLE but $prep.type"
+        testSamples.each { prep ->
+            if (prep.sampleType != "Q_TEST_SAMPLE") LOG.debug "the metastats sample is not a Q_TEST_SAMPLE but $prep.sampleType"
             //map the metadata terms first (otherwise duplicate names make problems later)
             prep.properties = mapper.mapSampleProperties(prep.properties)
         }
@@ -35,24 +41,29 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         experiments.each { experiment ->
             //mapper.mapExperimentProperties(experiment, prepSamples)
             //map to samples
-            samples.each { sample ->
+            testSamples.each { sample ->
                 //only add the properties, do not overwrite!
-                if(experiment.type == "Q_NGS_MEASUREMENT") sample.properties << mapper.mapExperimentToSample(experiment, sample)
-                if(experiment.type == "Q_PROJECT_DETAILS") sample.properties << mapper.mapConditionToSample(experiment.properties,sample)
+                if(experiment.experimentType == "Q_NGS_MEASUREMENT") sample.properties << mapper.mapExperimentToSample(experiment, sample)
+                if(experiment.experimentType == "Q_PROJECT_DETAILS") sample.properties << mapper.mapConditionToSample(experiment.properties,sample)
             }
 
         }
 
-        createSequencingModeEntry(samples)
+        createSequencingModeEntry(testSamples)
 
         LOG.info "create metadata package entries"
-        List<MetaStatsPackageEntry> entries = createMetadataPackageEntries(samples)
+        List<MetaStatsPackageEntry> entries = createMetadataPackageEntries(testSamples)
         validateMetadataPackage(entries)
 
         output.createMetaStatsMetadataPackage(sortEntries(entries))
         output.downloadMetadataPackage()
     }
 
+    /**
+     * Method to sort the MetaStatsPackageEntries
+     * @param samples
+     * @return
+     */
     static ArrayList sortEntries(List<MetaStatsPackageEntry> samples){
         //sort Filenames
         samples.each {sample ->
@@ -61,11 +72,16 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             sample.properties.put("Filename",sortedFiles)
         }
         //sort order of QBiC.Codes
-        ArrayList sortedSamples = samples.sort{it.entryId}
+        ArrayList sortedSamples = samples.sort{it.preparationSampleId}
 
         return sortedSamples
     }
 
+    /**
+     * Creates MetaStatsPackageEntries from MetaStatsSamples
+     * @param samples of type Q_TEST_SAMPLE
+     * @return created MetaStatsPackageEntries
+     */
     static List<MetaStatsPackageEntry> createMetadataPackageEntries(List<MetaStatsSample> samples) {
         List packageEntries = []
 
@@ -83,6 +99,11 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         return packageEntries
     }
 
+    /**
+     * Method to calculate the sequencing mode of samples based on the filenames
+     * @param samples
+     * @return
+     */
     def createSequencingModeEntry(List<MetaStatsSample> samples){
         samples.each {sample ->
             String filename = sample.properties.get("Filename")
@@ -98,6 +119,10 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         }
     }
 
+    /**
+     * Validates the MetaStatsPackageEntries for valid filenames and if the follow the schema
+     * @param metadataPackage in form of a list
+     */
     def validateMetadataPackage(List<MetaStatsPackageEntry> metadataPackage) {
         LOG.info "validate metastats-object-model-schema ..."
 
@@ -107,14 +132,17 @@ class FilterExperimentDataImpl implements FilterExperimentData {
 
             //2. metadata need to follow schema
             if (!(validator.validateMetaStatsMetadataPackage(entry.properties))) {
-                LOG.info "Sample " + entry.entryId + " does not follow the schema"
+                LOG.info "Sample " + entry.preparationSampleId + " does not follow the schema"
             }
-            //4. more files found than prepSamples?
-            //todo
         }
 
     }
 
+    /**
+     * Validation of the filenames which must contain either the QBiC.Code or the SeqencingFacilityId
+     * @param entryProps which contains all properties along with the filenames
+     * @return validation status as boolean
+     */
     static boolean validFilenames(HashMap entryProps) {
         boolean valid = false
 
@@ -139,9 +167,16 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         return valid
     }
 
-    static def add(Map target, Map values) {
-        values.each { key, value ->
+    /**
+     * Fuses to maps into the first parameter map
+     * @param target map which is extended
+     * @param source map which is fused into the target map
+     * @return the map with all values
+     */
+    static def fuseMaps(Map target, Map source) {
+        source.each { key, value ->
             target.put(key, value)
         }
+        return target
     }
 }

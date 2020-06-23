@@ -9,7 +9,7 @@ class TsvFileOutputSpecification extends Specification {
 
     def "create correct header from metastats entries"() {
         given:
-        List<Condition> conditions = [new Condition("genotype", "mutant","type"), new Condition("treatment", "non","type")]
+        List<Condition> conditions = [new Condition("genotype", "mutant"), new Condition("treatment", "non")]
         MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["Condition": conditions, "SampleName": "name"] as HashMap)
         TsvFileOutput creator = new TsvFileOutput()
 
@@ -22,7 +22,7 @@ class TsvFileOutputSpecification extends Specification {
 
     def "associate condition header correctly with sample value"() {
         given:
-        List<Condition> conditions = [new Condition("genotype", "mutant","type"), new Condition("treatment", "non","type")]
+        List<Condition> conditions = [new Condition("genotype", "mutant"), new Condition("treatment", "non")]
         MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["Condition": conditions, "SampleName": "name"] as HashMap)
         TsvFileOutput creator = new TsvFileOutput()
 

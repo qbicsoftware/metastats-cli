@@ -2,11 +2,16 @@ package life.qbic.metastats.datamodel
 
 class MetaStatsPackageEntry {
 
-    final String entryId
+    final String preparationSampleId
     HashMap properties
 
-    MetaStatsPackageEntry(String entryId, HashMap properties) {
-        this.entryId = entryId
+    /**
+     * Creates a MetaStatsPackageEntry with an ID and the corresponding properties
+     * @param preparationSampleId specifies which sample is described
+     * @param properties describe all fields specified in the model.schema.json that need to be part of the MetaStats output
+     */
+    MetaStatsPackageEntry(String preparationSampleId, HashMap properties) {
+        this.preparationSampleId = preparationSampleId
         this.properties = properties
     }
 }

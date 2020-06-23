@@ -166,7 +166,7 @@ class OpenBisSearch implements DatabaseGateway {
 
     def addFile(List<MetaStatsSample> prepSamples) {
         prepSamples.each { sample ->
-            HashMap files = fetchDataSets(sample.code, "fastq")
+            HashMap files = fetchDataSets(sample.sampleCode, "fastq")
             sample.properties << files
         }
     }

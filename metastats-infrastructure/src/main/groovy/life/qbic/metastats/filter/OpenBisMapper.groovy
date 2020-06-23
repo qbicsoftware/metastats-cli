@@ -21,7 +21,7 @@ class OpenBisMapper implements PropertiesMapper {
 
     Map mapExperimentToSample(MetaStatsExperiment experiment, MetaStatsSample sample) {
         Map metaStatsProperties = new HashMap<>()
-        if (isSampleOfExperiment(experiment.samples, sample)) {
+        if (isSampleOfExperiment(experiment.relatedSampleCodes, sample)) {
             experimentMappingProperties.each { openBisTerm, metastatsTerm ->
                 String value = containsProperty(experiment.properties, openBisTerm as String)
                 metaStatsProperties.put(metastatsTerm as String, value)
@@ -38,12 +38,12 @@ class OpenBisMapper implements PropertiesMapper {
         parser.parseProperties(experimentConditions)
 
         //check all children of prep sample to find the samples condition
-        sample.relatives.each { relative ->
+        sample.relatedSamples.each { relative ->
             assignSampleConditions(sample, metaStatsProperties, relative)
         }
 
         //also read conditions on level of preparation sample/current sample
-        assignSampleConditions(sample, metaStatsProperties, sample.code)
+        assignSampleConditions(sample, metaStatsProperties, sample.sampleCode)
 
         return metaStatsProperties
     }
@@ -59,11 +59,11 @@ class OpenBisMapper implements PropertiesMapper {
                 if (metaStatsProperties.containsKey("Condition")) {
                     List conditions = metaStatsProperties.get("Condition") as List
 
-                    conditions.add(new Condition(label, value, sample.type))
+                    conditions.add(new Condition(label, value))
                     //overwrites condition if already contained
                     metaStatsProperties.put("Condition", conditions)
                 } else {
-                    metaStatsProperties.put("Condition", [new Condition(label, value, sample.type)])
+                    metaStatsProperties.put("Condition", [new Condition(label, value)])
                 }
             }
         } else {
@@ -77,9 +77,9 @@ class OpenBisMapper implements PropertiesMapper {
         //check if experiment is conducted for sample
         experimentSamples.each { expSampleCode ->
             //check prepSample code
-            if (sample.code == expSampleCode) contained = true
+            if (sample.sampleCode == expSampleCode) contained = true
             //check relatives
-            sample.relatives.each { relativeCode ->
+            sample.relatedSamples.each { relativeCode ->
                 if (relativeCode == expSampleCode) contained = true
             }
         }

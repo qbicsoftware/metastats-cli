@@ -16,7 +16,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         props.put("Q_Test", "value")
 
         when:
-        FilterExperimentDataImpl.add(meta, props)
+        FilterExperimentDataImpl.fuseMaps(meta, props)
 
         then:
         meta == ["Q_Test": "value", "haha": "hihi"]
@@ -37,7 +37,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         List<MetaStatsPackageEntry> res = FilterExperimentDataImpl.createMetadataPackageEntries([sample1])
 
         then:
-        res.get(0).entryId == "QXXXXXX"
+        res.get(0).preparationSampleId == "QXXXXXX"
         assert res.get(0).properties.get("FileName") == ["file2", "file1", "file3"]
         assert res.get(0).properties.get("IntegrityNumber") instanceof Double
     }
