@@ -16,6 +16,10 @@ class JsonValidator implements SchemaValidator {
 
     private static final Logger LOG = LogManager.getLogger(JsonValidator.class)
 
+    /**
+     * Creates a JsonSchema object based on a given schema
+     * @param schema describing how the MetaStats output should look like
+     */
     JsonValidator(String schema) {
 
         JsonNode node = JsonLoader.fromResource(schema)

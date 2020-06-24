@@ -11,6 +11,10 @@ class TsvFileOutput extends FileOutput {
                                        "Individual", "Species", "ExtractCode", "Sex", "Tissue",
                                        "Analyte", "IntegrityNumber", "Filename"]
 
+    /**
+     * Creates the output for a given project code
+     * @param projectCode
+     */
     TsvFileOutput(String projectCode){
         super(fileEnding,projectCode)
     }
@@ -29,7 +33,6 @@ class TsvFileOutput extends FileOutput {
         fileContent.deleteCharAt(fileContent.length() - 1)
         fileContent << "\n"
 
-        //todo sort the properties for the respective samples
         //create header with keywords and search for values in the samples
         entries.each { entry ->
             //fileContent << entry.entryId
@@ -52,6 +55,11 @@ class TsvFileOutput extends FileOutput {
         return fileContent
     }
 
+    /**
+     * Returns all condition labels to use for the header
+     * @param entries all entries containing the condition information as properties
+     * @return a list of all conditions labels
+     */
     List<String> getConditions(List<MetaStatsPackageEntry> entries) {
         List conditionTypes = []
 

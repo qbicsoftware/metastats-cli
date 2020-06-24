@@ -18,6 +18,10 @@ class MetaStatsPresenter implements MSMetadataPackageOutput {
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsPresenter.class)
 
+    /**
+     * Presents the output of metastats
+     * @param creator
+     */
     MetaStatsPresenter(FileOutput creator) {
         this.creator = creator
     }

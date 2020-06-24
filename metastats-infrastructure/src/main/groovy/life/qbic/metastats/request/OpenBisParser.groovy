@@ -12,9 +12,9 @@ class OpenBisParser {
     private static final Logger LOG = LogManager.getLogger(OpenBisParser.class)
 
     /**
-     *
-     * @param exp
-     * @return
+     * Creates a metastats experiment from an openbis experiment
+     * @param exp from the openbis api
+     * @return metastats experiment object
      */
     static def createMetaStatsExperiment(Experiment exp) {
         String type = exp.type.code
@@ -27,6 +27,12 @@ class OpenBisParser {
         return new MetaStatsExperiment(type, exp.properties, samples)
     }
 
+    /**
+     * Retrieves metatstats preparation samples from a list of openbis samples by
+     * iterating over all related samples of the given sample list
+     * @param samples of openbis
+     * @return list of metastats samples on level of preparation samples
+     */
     List<MetaStatsSample> getPreparationSamples(List<Sample> samples) {
         List<MetaStatsSample> allSamples = []
 
@@ -50,7 +56,13 @@ class OpenBisParser {
         return allSamples
     }
 
-    static def createMetaStatsSample(List<Sample> relatedSamples, Sample prepSample) {
+    /**
+     * Creates MetaStatsSamples from openbis samples of the preparation level sample and all related samples
+     * @param relatedSamples are samples that are in the openbis hierarchy below or above the given preparation samples
+     * @param prepSample as an openbis sample
+     * @return a MetaStatsSample created from the given sample information
+     */
+    static MetaStatsSample createMetaStatsSample(List<Sample> relatedSamples, Sample prepSample) {
         String code = prepSample.code
         String type = prepSample.type.code
 
@@ -78,6 +90,11 @@ class OpenBisParser {
         return sample
     }
 
+    /**
+     * Retrieves all parent samples of a given preparation sample
+     * @param preparationSample from openbis
+     * @return a list of openbis samples that are hierarchically above the preparation sample
+     */
     List<Sample> getAllParents(Sample preparationSample) {
         List parents = []
 
@@ -93,6 +110,11 @@ class OpenBisParser {
         return parents
     }
 
+    /**
+     * Retrieves all child samples of a given preparation sample
+     * @param preparationSample from openbis
+     * @return a list of openbis samples that are hierarchically below the preparation sample
+     */
     List<Sample> getAllChildren(Sample preparationSample) {
         List children = []
 

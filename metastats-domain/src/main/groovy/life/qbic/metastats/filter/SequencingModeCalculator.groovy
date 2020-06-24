@@ -2,6 +2,12 @@ package life.qbic.metastats.filter
 
 class SequencingModeCalculator {
 
+    /**
+     * Calculates the sequencing mode based on all filenames of a sample.
+     * If the files contain R1 and R2 then the mode is paired end. Else it is single end.
+     * @param filename a string containing all filenames of a sample comma separated
+     * @return
+     */
     static String calculateSequencingMode(String filename){
         String sequencingMode = ""
         String[] files = filename.split(",")

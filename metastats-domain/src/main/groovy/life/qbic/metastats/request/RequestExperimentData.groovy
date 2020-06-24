@@ -10,7 +10,11 @@ class RequestExperimentData implements ProjectSpecification {
 
     private static final Logger LOG = LogManager.getLogger(RequestExperimentData.class);
 
-
+    /**
+     * Creates the Request use case which obtains the database connection and a class to delegate the fetched data to
+     * @param search is the database for querying the project
+     * @param output class implementing the interface to delegate data out of the use case
+     */
     RequestExperimentData(DatabaseGateway search, ExperimentDataOutput output) {
         this.search = search
         this.output = output
@@ -31,6 +35,11 @@ class RequestExperimentData implements ProjectSpecification {
         search.logout()
     }
 
+    /**
+     * verifies the QBiC code base on a regex
+     * @param code
+     * @return
+     */
     static boolean verifyQbicCode(String code) {
         code ==~ "Q[A-X0-9]{4}"
     }
