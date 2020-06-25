@@ -16,13 +16,13 @@ class OpenBisSession {
      * @param password for the given user
      * @param baseURL of the openbis instance
      */
-    OpenBisSession(String user, String password, String baseURL) {
+    OpenBisSession(String user, String password, String baseURL, int timeout) {
         String as_url = baseURL + "/openbis/openbis" + IApplicationServerApi.SERVICE_URL
         String ds_url = baseURL + ":444" + "/datastore_server" + IDataStoreServerApi.SERVICE_URL
 
-        v3 = HttpInvokerUtils.createServiceStub(IApplicationServerApi.class, as_url, 10000)
+        v3 = HttpInvokerUtils.createServiceStub(IApplicationServerApi.class, as_url, timeout)
         dss = HttpInvokerUtils.createStreamSupportingServiceStub(IDataStoreServerApi.class,
-                ds_url, 10000)
+                ds_url, timeout)
 
         sessionToken = v3.login(user, password)
     }
