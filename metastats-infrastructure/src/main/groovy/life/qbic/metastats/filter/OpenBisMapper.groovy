@@ -71,7 +71,7 @@ class OpenBisMapper implements PropertiesMapper {
      * @param metaStatsProperties to which the conditions are written
      * @param sampleCode of the sample for which the conditions should be found
      */
-    void assignSampleConditions(HashMap metaStatsProperties, String sampleCode){
+    void assignSampleConditions(HashMap metaStatsProperties, String sampleCode) {
         def res = parser.getSampleConditions(sampleCode)
 
         if (res != null) {
@@ -116,7 +116,7 @@ class OpenBisMapper implements PropertiesMapper {
 
     /**
      * Maps sample properties to metastats properties
-     * @param openBisProperties, properties described with openbis terms
+     * @param openBisProperties , properties described with openbis terms
      * @return map of properties now described with metastats terms
      */
     Map<String, String> mapSampleProperties(Map<String, String> openBisProperties) {

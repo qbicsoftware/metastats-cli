@@ -16,7 +16,7 @@ class JsonParserSpecification extends Specification {
 
         then:
         res.size() == 14
-        assert req.sort() == ["Species","SampleName"].sort()
+        assert req.sort() == ["Species", "SampleName"].sort()
     }
 
     def "Right file path is parsed without error"() {
@@ -32,7 +32,7 @@ class JsonParserSpecification extends Specification {
 
         then:
         res.size() == 14
-        assert req.sort() == ["Species","SampleName"].sort()
+        assert req.sort() == ["Species", "SampleName"].sort()
     }
 
     def "Wrong file path throws error"() {
