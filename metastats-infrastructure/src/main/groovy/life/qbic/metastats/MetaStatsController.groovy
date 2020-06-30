@@ -88,7 +88,7 @@ class MetaStatsController {
      */
     def setupDB(Map<String, String> credentials) {
         int timeout = 30000
-        OpenBisSession session = new OpenBisSession(credentials.get("user"), credentials.get("password"), credentials.get("server_url"),timeout)
+        OpenBisSession session = new OpenBisSession(credentials.get("user"), credentials.get("password"), credentials.get("server_url"), timeout)
 
         DatabaseGateway db = new OpenBisSearch(session)
         //define input for connector class

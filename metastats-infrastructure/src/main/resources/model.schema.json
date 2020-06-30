@@ -511,10 +511,14 @@
     "SequencingMode": {
       "description": "Mode of sequencing which is either single or paired-end",
       "type": "string",
-      "enum": ["single-end","paired-end"]
+      "enum": [
+        "single-end",
+        "paired-end"
+      ]
     }
   },
   "required": [
-    "Species","SampleName"
+    "Species",
+    "SampleName"
   ]
 }

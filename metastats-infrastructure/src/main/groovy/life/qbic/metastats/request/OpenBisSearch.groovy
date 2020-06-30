@@ -73,7 +73,7 @@ class OpenBisSearch implements DatabaseGateway {
 
         SearchResult<Project> resProject = v3.searchProjects(sessionToken, criteria, fetchOptions)
 
-        if(resProject.getObjects().size() == 0){
+        if (resProject.getObjects().size() == 0) {
             LOG.warn "Project $projectCode not found"
             System.exit(-1)
         }
@@ -224,13 +224,13 @@ class OpenBisSearch implements DatabaseGateway {
                         && !file.getPermId().toString().contains(".csv")
                         && !file.getPermId().toString().contains(".txt")) {
                     String[] path = file.getPermId().toString().split("/")
-                    if(!dataFiles.contains(path[path.size() - 1]))dataFiles << path[path.size() - 1] + ", "
+                    if (!dataFiles.contains(path[path.size() - 1])) dataFiles << path[path.size() - 1] + ", "
                     datasetType = dataSet.type.code
                 }
             }
         }
 
-        if(dataFiles.toString() != ""){
+        if (dataFiles.toString() != "") {
             dataFiles.delete(dataFiles.length() - 2, dataFiles.length())
             allDataSets.put(datasetType, dataFiles)
         }

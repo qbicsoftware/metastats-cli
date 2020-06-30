@@ -7,7 +7,7 @@ class TsvFileOutput extends FileOutput {
 
     private static String missingValues = "NA"
     private static String fileEnding = "tsv"
-    private ArrayList<String> order = ["QBiC.Code","SampleName", "SequencingFacilityId", "SequencingDevice", "SequencingMode",
+    private ArrayList<String> order = ["QBiC.Code", "SampleName", "SequencingFacilityId", "SequencingDevice", "SequencingMode",
                                        "Individual", "Species", "ExtractCode", "Sex", "Tissue",
                                        "Analyte", "IntegrityNumber", "Filename"]
 
@@ -15,8 +15,8 @@ class TsvFileOutput extends FileOutput {
      * Creates the output for a given project code
      * @param projectCode
      */
-    TsvFileOutput(String projectCode){
-        super(fileEnding,projectCode)
+    TsvFileOutput(String projectCode) {
+        super(fileEnding, projectCode)
     }
 
     @Override
@@ -24,7 +24,7 @@ class TsvFileOutput extends FileOutput {
         StringBuilder fileContent = new StringBuilder()
 
         //add different conditions
-        int pos = order.size()-1
+        int pos = order.size() - 1
         order.addAll(pos, getConditions(entries))
         order.each { header ->
             fileContent << header + "\t"

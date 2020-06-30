@@ -12,7 +12,7 @@ abstract class FileOutput {
      * @param fileEnding
      * @param projectCode
      */
-    FileOutput(String fileEnding, String projectCode){
+    FileOutput(String fileEnding, String projectCode) {
         this.fileEnding = fileEnding
         this.projectCode = projectCode
     }

@@ -75,27 +75,27 @@ class FilterExperimentDataImplSpecification extends Specification {
         //todo
     }
 
-    def "Sort samples by QBiC.Code alphanumerically"(){
+    def "Sort samples by QBiC.Code alphanumerically"() {
         given:
-        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("QFSVI009AM",["Filename":""])
-        MetaStatsPackageEntry entry2 = new MetaStatsPackageEntry("QFSVI010AP",["Filename":""])
-        MetaStatsPackageEntry entry3 = new MetaStatsPackageEntry("QFSVI012A7",["Filename":""])
-        MetaStatsPackageEntry entry4 = new MetaStatsPackageEntry("QFSVI016A5",["Filename":""])
+        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("QFSVI009AM", ["Filename": ""])
+        MetaStatsPackageEntry entry2 = new MetaStatsPackageEntry("QFSVI010AP", ["Filename": ""])
+        MetaStatsPackageEntry entry3 = new MetaStatsPackageEntry("QFSVI012A7", ["Filename": ""])
+        MetaStatsPackageEntry entry4 = new MetaStatsPackageEntry("QFSVI016A5", ["Filename": ""])
 
         when:
-        def res =FilterExperimentDataImpl.sortEntries([entry3,entry2,entry,entry4])
+        def res = FilterExperimentDataImpl.sortEntries([entry3, entry2, entry, entry4])
 
         then:
-        res == [entry,entry2,entry3,entry4]
+        res == [entry, entry2, entry3, entry4]
     }
 
-    def "Sort filenames alphanumerically"(){
+    def "Sort filenames alphanumerically"() {
         given:
-        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("QFSVI009AM",["Filename":"I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L003_R1_001.fastq.gz, I16R019a02_01_S3_L004_R1_001.fastq.gz, I16R019a02_01_S3_L002_R1_001.fastq.gz"])
-        MetaStatsPackageEntry entry2 = new MetaStatsPackageEntry("QFSVI010AP",["Filename":"I16R019b02_01_S5_L004_R1_001.fastq.gz, I16R019b02_01_S5_L003_R1_001.fastq.gz, I16R019b02_01_S5_L001_R1_001.fastq.gz, I16R019b02_01_S5_L002_R1_001.fastq.gz"])
+        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("QFSVI009AM", ["Filename": "I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L003_R1_001.fastq.gz, I16R019a02_01_S3_L004_R1_001.fastq.gz, I16R019a02_01_S3_L002_R1_001.fastq.gz"])
+        MetaStatsPackageEntry entry2 = new MetaStatsPackageEntry("QFSVI010AP", ["Filename": "I16R019b02_01_S5_L004_R1_001.fastq.gz, I16R019b02_01_S5_L003_R1_001.fastq.gz, I16R019b02_01_S5_L001_R1_001.fastq.gz, I16R019b02_01_S5_L002_R1_001.fastq.gz"])
 
         when:
-        ArrayList<MetaStatsPackageEntry> res =FilterExperimentDataImpl.sortEntries([entry2,entry])
+        ArrayList<MetaStatsPackageEntry> res = FilterExperimentDataImpl.sortEntries([entry2, entry])
 
         then:
         res.get(0).properties.get("Filename") == "I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R1_001.fastq.gz, I16R019a02_01_S3_L003_R1_001.fastq.gz, I16R019a02_01_S3_L004_R1_001.fastq.gz"

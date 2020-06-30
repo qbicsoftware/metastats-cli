@@ -43,8 +43,8 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             //map to samples
             testSamples.each { sample ->
                 //only add the properties, do not overwrite!
-                if(experiment.experimentType == "Q_NGS_MEASUREMENT") sample.properties << mapper.mapExperimentToSample(experiment, sample)
-                if(experiment.experimentType == "Q_PROJECT_DETAILS") sample.properties << mapper.mapConditionToSample(experiment.properties,sample)
+                if (experiment.experimentType == "Q_NGS_MEASUREMENT") sample.properties << mapper.mapExperimentToSample(experiment, sample)
+                if (experiment.experimentType == "Q_PROJECT_DETAILS") sample.properties << mapper.mapConditionToSample(experiment.properties, sample)
             }
 
         }
@@ -64,15 +64,15 @@ class FilterExperimentDataImpl implements FilterExperimentData {
      * @param samples
      * @return
      */
-    static ArrayList sortEntries(List<MetaStatsPackageEntry> samples){
+    static ArrayList sortEntries(List<MetaStatsPackageEntry> samples) {
         //sort Filenames
-        samples.each {sample ->
+        samples.each { sample ->
             String fileName = sample.properties.get("Filename")
             String sortedFiles = fileName.split(", ").sort().join(", ")
-            sample.properties.put("Filename",sortedFiles)
+            sample.properties.put("Filename", sortedFiles)
         }
         //sort order of QBiC.Codes
-        ArrayList sortedSamples = samples.sort{it.preparationSampleId}
+        ArrayList sortedSamples = samples.sort { it.preparationSampleId }
 
         return sortedSamples
     }
@@ -90,7 +90,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             HashMap props = sample.properties as HashMap
 
             String res = props.get("IntegrityNumber")
-            if(res != "") props.put("IntegrityNumber",Double.parseDouble(res))
+            if (res != "") props.put("IntegrityNumber", Double.parseDouble(res))
 
             MetaStatsPackageEntry entry = new MetaStatsPackageEntry(sampleName, props)
             packageEntries.add(entry)
@@ -104,18 +104,18 @@ class FilterExperimentDataImpl implements FilterExperimentData {
      * @param samples
      * @return
      */
-    def createSequencingModeEntry(List<MetaStatsSample> samples){
-        samples.each {sample ->
+    def createSequencingModeEntry(List<MetaStatsSample> samples) {
+        samples.each { sample ->
             String filename = sample.properties.get("Filename")
             String sequencingMode
-            try{
+            try {
                 sequencingMode = SequencingModeCalculator.calculateSequencingMode(filename)
 
-            }catch(IllegalFileType ift){
+            } catch (IllegalFileType ift) {
                 LOG.warn ift.message
                 sequencingMode = ""
             }
-            sample.properties.put("SequencingMode",sequencingMode)
+            sample.properties.put("SequencingMode", sequencingMode)
         }
     }
 
@@ -160,7 +160,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             def sampleName = entryProps.get("SequencingFacilityId")
             if (file.contains(prepID.toString()) || file.contains(sampleName.toString())) {
                 valid = true
-            }else{
+            } else {
                 LOG.warn "File of sample $prepID does not follow the naming conventions: $file"
             }
         }

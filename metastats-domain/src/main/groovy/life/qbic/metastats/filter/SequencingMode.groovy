@@ -9,7 +9,7 @@ enum SequencingMode {
      * Creates an enum based on the sequencing mode
      * @param mode
      */
-    SequencingMode(String mode){
+    SequencingMode(String mode) {
         this.seqMode = mode
     }
 
@@ -17,7 +17,7 @@ enum SequencingMode {
      * returns the sequencing mode as string
      * @return
      */
-    String getSeqMode(){
+    String getSeqMode() {
         return seqMode
     }
 }
