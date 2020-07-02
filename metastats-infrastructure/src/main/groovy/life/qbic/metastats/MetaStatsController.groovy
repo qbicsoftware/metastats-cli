@@ -83,7 +83,6 @@ class MetaStatsController {
     /**
      * Sets up the database connection based on the credentials given from the data of config file
      * @param credentials from the config file
-     * @return
      */
     def setupDB(Map<String, String> credentials) {
         int timeout = 30000
