@@ -18,7 +18,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
     private static final Logger LOG = LogManager.getLogger(FilterExperimentData.class)
 
     /**
-     * Creates the FilterExperiment use case has access to a schema validator, a metadata term mapper and an interface to
+     * Creates the FilterExperiment use case, which has access to a schema validator, a metadata term mapper and an interface to
      * transfer the data out of the use case
      * @param output interface that defines how data is transferred out of the class
      * @param mapper defines how the data is translated from an external language e.g. openbis into the metastats metadata language
