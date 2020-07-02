@@ -40,6 +40,7 @@ class FilterExperimentDataSpecification extends Specification {
         res.get(0).preparationSampleId == "QXXXXXX"
         assert res.get(0).entryProperties.get("FileName") == ["file2", "file1", "file3"]
         assert res.get(0).entryProperties.get("IntegrityNumber") instanceof Double
+        assert res.get(0).entryProperties.get("IntegrityNumber") == 1.0
     }
 
     def "filename must reflect either QBiC.Code name or SequencingFacilityID"() {
@@ -67,12 +68,6 @@ class FilterExperimentDataSpecification extends Specification {
         boolean res = FilterExperimentData.validFilenames(sampleProperties)
         then:
         !res
-    }
-
-
-    def "More samples than files"() {
-        //validateMetadataPackage()
-        //todo
     }
 
     def "Sort samples by QBiC.Code alphanumerically"() {
