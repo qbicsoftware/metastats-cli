@@ -1,7 +1,7 @@
 # Project Structure
 
 The project structure of openBis as required from MetaStats is explained in the following diagram. The metadata fields stored
-with the respective objects are indicated to give an understanding of how the projected should look like.
+with the respective objects are indicated to give an understanding of how the project should look like.
 
 ![architecture](projectStructure.png)
 
