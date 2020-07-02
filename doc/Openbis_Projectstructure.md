@@ -25,7 +25,7 @@ Contains the samples of **Q_BIOLOGICAL_SAMPLE** and separates the extraction res
 Groups samples, which were prepared together in a lab. Contains the samples of **Q_TEST_SAMPLE**.
 
 ### Q_NGS_MEASUREMENT
-This experiment contains samples of one measurement of type **Q_NGS_RAW_DATA**.
+Groups samples of the measurement type **Q_NGS_RAW_DATA**.
 Relevant openBis fields:
 ```
 Q_SEQUENCER_DEVICE
