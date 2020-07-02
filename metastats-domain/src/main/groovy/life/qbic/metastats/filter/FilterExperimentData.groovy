@@ -114,19 +114,18 @@ class FilterExperimentData implements FilterExperimentDataInput {
     /**
      * Method to calculate the sequencing mode of samples based on the filenames
      * @param samples
-     * @return
      */
-    def createSequencingModeEntry(List<MetaStatsSample> samples) {
+    void createSequencingModeEntry(List<MetaStatsSample> samples) {
         samples.each { sample ->
             String filename = sample.sampleProperties.get("Filename")
 
-            String sequencingMode
+            String sequencingMode = ""
+
             try {
                 sequencingMode = SequencingModeCalculator.calculateSequencingMode(filename)
 
             } catch (IllegalFileType ift) {
                 LOG.warn ift.message
-                sequencingMode = ""
             }
             sample.sampleProperties.put("SequencingMode", sequencingMode)
 
@@ -134,10 +133,10 @@ class FilterExperimentData implements FilterExperimentDataInput {
     }
 
     /**
-     * Validates the MetaStatsPackageEntries for valid filenames and if the follow the schema
-     * @param metadataPackage in form of a list
+     * Checks and validates whether the MetaStatsPackageEntries Objects and filenames adhere to the schema
+     * @param metadataPackage list of MetaStatsPackageEntry Objects
      */
-    def validateMetadataPackage(List<MetaStatsPackageEntry> metadataPackage) {
+    void validateMetadataPackage(List<MetaStatsPackageEntry> metadataPackage) {
         LOG.info "validate metastats-object-model-schema ..."
 
         metadataPackage.each { entry ->
@@ -182,7 +181,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
     }
 
     /**
-     * Fuses to maps into the first parameter map
+     * Merges two maps into singular map
      * @param target map which is extended
      * @param source map which is fused into the target map
      * @return the map with all values
