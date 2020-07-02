@@ -1,6 +1,11 @@
 package life.qbic.metastats.filter
 
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
+
 class SequencingModeCalculator {
+
+    private static final Logger LOG = LogManager.getLogger(SequencingModeCalculator.class)
 
     /**
      * Calculates the sequencing mode based on all filenames of a sample.
@@ -25,6 +30,9 @@ class SequencingModeCalculator {
         if (!R2) sequencingMode = SequencingMode.SINGLE_END.seqMode
         //has R1 and R2
         if (R1 && R2) sequencingMode = SequencingMode.PAIRED_END.seqMode
+        //has not R2 and not R1
+        if(!R1 && !R2) LOG.warn "Whether R1 nor R2 are contained within the sequencing name. Check for file naming conventions."
+
 
         return sequencingMode
     }
