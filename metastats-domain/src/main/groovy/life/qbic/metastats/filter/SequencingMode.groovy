@@ -15,7 +15,7 @@ enum SequencingMode {
 
     /**
      * returns the sequencing mode as string
-     * @return
+     * @return string of sequencing mode 
      */
     String getSeqMode() {
         return seqMode
