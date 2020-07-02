@@ -36,7 +36,7 @@ Samples describe the same object on different levels starting from the organims 
 in the sequence of the taken sample.
 
 ### Q_BIOLOGICAL_ENTITY
-Describes entity from which the sample is taken.
+Specifies biological entity from which the sample was collected
 Relevant openBis fields:
 ```
 CODE
