@@ -14,7 +14,8 @@ class SequencingModeCalculatorSpecification extends Specification {
         res == "single-end"
     }
 
-    def "Single-End wich contains 'R2' experiment is detected"() {
+    def "Experiment which contains 'R2' in the filename is detected correctly as single-end"() {
+        //if R2 is part of the sequencingfacility ID it should not be detected as paired-end experiment because of the id
         given:
         String filenames = "I16R29a02_01_S3_L001_R1.fastq.gz, I16R29a02_01_S3_L002_R1.fastq.gz, I16R29a02_01_S3_L003_R1.fastq.gz, I16R2a02_01_S3_L004_R1.fastq.gz"
         when:
