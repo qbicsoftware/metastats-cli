@@ -4,7 +4,7 @@ class IllegalFileType extends IllegalArgumentException {
 
     /**
      * Creates an IlligalFileType exception with an error message
-     * @param error
+     * @param error Content of error message
      */
     IllegalFileType(String error) {
         super(error)
