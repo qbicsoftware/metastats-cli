@@ -52,7 +52,7 @@ Q_PRIMARY_TISSUE
 ```
 
 ### Q_TEST_SAMPLE
-Describes the sample in more detail e.g. the type of sequence,... .
+Specifies the sample details(e.g. sequence type)
 Relevant openBis fields:
 ```
 CODE
