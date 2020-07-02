@@ -8,7 +8,7 @@ class JsonValidatorSpecification extends Specification {
 
     def "valid metadata returns true"() {
         given:
-        JsonValidator validator = new JsonValidator("/model.schema.json")
+        JsonValidator validator = new JsonValidator("/testSchema.json")
 
         Map valueMap = ["SamplePreparationId": "QFSVI123A1", "SequencingFacilityId": "facilityID", "SampleName": "testName", "Individual": "QTESTENTITY-1", "Species": "Homo sapiens",
                         "ExtractCode"        : "QTEST001AS", "Sex": "", "Tissue": "Vomit", "Analyte": "RNA", "IntegrityNumber": 1, "Condition": [["label": "tumor", "value": "tumor"], ["label": "tumor", "value": "tumor"]],
@@ -23,7 +23,7 @@ class JsonValidatorSpecification extends Specification {
 
     def "wrong metadata returns false"() {
         given:
-        JsonValidator validator = new JsonValidator("/model.schema.json")
+        JsonValidator validator = new JsonValidator("/testSchema.json")
 
         //species missing
         Map valueMap = ["SamplePreparationId": "QFSVI123A1", "SequencingFacilityId": "facilityID", "SampleName": "testName", "Individual": "QTESTENTITY-1",

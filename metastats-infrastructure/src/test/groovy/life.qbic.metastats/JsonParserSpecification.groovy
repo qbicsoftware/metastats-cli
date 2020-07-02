@@ -7,7 +7,7 @@ class JsonParserSpecification extends Specification {
 
     def "Right resource path is parsed without error"() {
         given:
-        JsonParser parser = new JsonParser("model.schema.json")
+        JsonParser parser = new JsonParser("testSchema.json")
 
         when:
         Map modelSchema = parser.parseStream()
@@ -21,7 +21,7 @@ class JsonParserSpecification extends Specification {
 
     def "Right file path is parsed without error"() {
         given:
-        URL url = JsonParserSpecification.class.getClassLoader().getResource("model.schema.json")
+        URL url = JsonParserSpecification.class.getClassLoader().getResource("testSchema.json")
         assert url != null
         JsonParser parser = new JsonParser(url.getPath())
 
