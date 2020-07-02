@@ -37,11 +37,11 @@ class TsvFileOutput extends FileOutput {
         entries.each { entry ->
             //fileContent << entry.entryId
             order.each { header ->
-                String cellValue = entry.properties.get(header).toString()
+                String cellValue = entry.entryProperties.get(header).toString()
 
                 if (header.contains("Condition")) {
                     String conditionLabel = header.split(":")[1].trim()
-                    entry.properties.get("Condition").each { Condition cond ->
+                    entry.entryProperties.get("Condition").each { Condition cond ->
                         if (cond.label == conditionLabel) cellValue = cond.value
                     }
                 }
@@ -64,7 +64,7 @@ class TsvFileOutput extends FileOutput {
         List conditionTypes = []
 
         entries.each { entry ->
-            entry.properties.each { prop ->
+            entry.entryProperties.each { prop ->
                 if (prop.key == "Condition") {
                     prop.value.each { Condition condition ->
                         String headerValue = "Condition: " + condition.label

@@ -5,18 +5,18 @@ class MetaStatsSample {
     final String sampleType
     final String sampleCode
     List<String> relatedSamples = []
-    Map<String, String> properties
+    Map<String, String> sampleProperties
 
     /**
      * Creates a MetaStatsSample with a corresponding sampleCode, sample type and properties
      * @param sampleCode to identify the sample
      * @param type of the sample e.g Q_TEST_SAMPLE
-     * @param properties describe the samples characteristics
+     * @param sampleProperties describe the samples characteristics
      */
-    MetaStatsSample(String sampleCode, String type, Map<String, String> properties) {
+    MetaStatsSample(String sampleCode, String type, Map<String, String> sampleProperties) {
         this.sampleCode = sampleCode
         this.sampleType = type
-        this.properties = properties
+        this.sampleProperties = sampleProperties
     }
 
     /**

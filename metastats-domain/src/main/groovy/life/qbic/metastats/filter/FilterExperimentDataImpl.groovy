@@ -34,7 +34,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         testSamples.each { prep ->
             if (prep.sampleType != "Q_TEST_SAMPLE") LOG.debug "the metastats sample is not a Q_TEST_SAMPLE but $prep.sampleType"
             //map the metadata terms first (otherwise duplicate names make problems later)
-            prep.properties = mapper.mapSampleProperties(prep.properties)
+            prep.sampleProperties = mapper.mapSampleProperties(prep.sampleProperties)
         }
 
         LOG.info "filter metadata from experiment for samples ..."
@@ -43,8 +43,8 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             //map to samples
             testSamples.each { sample ->
                 //only add the properties, do not overwrite!
-                if (experiment.experimentType == "Q_NGS_MEASUREMENT") sample.properties << mapper.mapExperimentToSample(experiment, sample)
-                if (experiment.experimentType == "Q_PROJECT_DETAILS") sample.properties << mapper.mapConditionToSample(experiment.properties, sample)
+                if (experiment.experimentType == "Q_NGS_MEASUREMENT") sample.sampleProperties << mapper.mapExperimentToSample(experiment, sample)
+                if (experiment.experimentType == "Q_PROJECT_DETAILS") sample.sampleProperties << mapper.mapConditionToSample(experiment.experimentProperties, sample)
             }
 
         }
@@ -67,9 +67,9 @@ class FilterExperimentDataImpl implements FilterExperimentData {
     static ArrayList sortEntries(List<MetaStatsPackageEntry> samples) {
         //sort Filenames
         samples.each { sample ->
-            String fileName = sample.properties.get("Filename")
+            String fileName = sample.entryProperties.get("Filename")
             String sortedFiles = fileName.split(", ").sort().join(", ")
-            sample.properties.put("Filename", sortedFiles)
+            sample.entryProperties.put("Filename", sortedFiles)
         }
         //sort order of QBiC.Codes
         ArrayList sortedSamples = samples.sort { it.preparationSampleId }
@@ -86,8 +86,8 @@ class FilterExperimentDataImpl implements FilterExperimentData {
         List packageEntries = []
 
         samples.each { sample ->
-            String sampleName = sample.properties.get("QBiC.Code")
-            HashMap props = sample.properties as HashMap
+            String sampleName = sample.sampleProperties.get("QBiC.Code")
+            HashMap props = sample.sampleProperties as HashMap
 
             String res = props.get("IntegrityNumber")
             if (res != "") props.put("IntegrityNumber", Double.parseDouble(res))
@@ -106,7 +106,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
      */
     def createSequencingModeEntry(List<MetaStatsSample> samples) {
         samples.each { sample ->
-            String filename = sample.properties.get("Filename")
+            String filename = sample.sampleProperties.get("Filename")
             String sequencingMode
             try {
                 sequencingMode = SequencingModeCalculator.calculateSequencingMode(filename)
@@ -115,7 +115,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
                 LOG.warn ift.message
                 sequencingMode = ""
             }
-            sample.properties.put("SequencingMode", sequencingMode)
+            sample.sampleProperties.put("SequencingMode", sequencingMode)
         }
     }
 
@@ -128,10 +128,10 @@ class FilterExperimentDataImpl implements FilterExperimentData {
 
         metadataPackage.each { entry ->
             //validate filenaming and change format from list to string
-            validFilenames(entry.properties)
+            validFilenames(entry.entryProperties)
 
             //2. metadata need to follow schema
-            if (!(validator.validateMetaStatsMetadataPackage(entry.properties))) {
+            if (!(validator.validateMetaStatsMetadataPackage(entry.entryProperties))) {
                 LOG.info "Sample " + entry.preparationSampleId + " does not follow the schema"
             }
         }

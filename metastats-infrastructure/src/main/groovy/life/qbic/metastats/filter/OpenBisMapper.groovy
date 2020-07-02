@@ -34,7 +34,7 @@ class OpenBisMapper implements PropertiesMapper {
         Map metaStatsProperties = new HashMap<>()
         if (isSampleOfExperiment(experiment.relatedSampleCodes, sample)) {
             experimentMappingProperties.each { openBisTerm, metastatsTerm ->
-                String value = containsProperty(experiment.properties, openBisTerm as String)
+                String value = containsProperty(experiment.experimentProperties, openBisTerm as String)
                 metaStatsProperties.put(metastatsTerm as String, value)
             }
         }

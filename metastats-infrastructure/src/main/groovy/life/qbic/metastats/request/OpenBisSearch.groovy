@@ -142,11 +142,11 @@ class OpenBisSearch implements DatabaseGateway {
      */
     void translateSampleVocabulary(List<MetaStatsSample> samples) {
         samples.each { sample ->
-            sample.properties.each { key, value ->
+            sample.sampleProperties.each { key, value ->
                 if (key == "Q_NCBI_ORGANISM" || key == "Q_PRIMARY_TISSUE") {
                     String vocabulary = fetchVocabulary(value)
                     //overwrite old key
-                    sample.properties.put(key, vocabulary)
+                    sample.sampleProperties.put(key, vocabulary)
                 }
             }
         }
@@ -158,11 +158,11 @@ class OpenBisSearch implements DatabaseGateway {
      */
     void translateExperimentVocabulary(List<MetaStatsExperiment> experiments) {
         experiments.each { experiment ->
-            experiment.properties.each { key, value ->
+            experiment.experimentProperties.each { key, value ->
                 if (key == "Q_SEQUENCER_DEVICE") {
                     String vocabulary = fetchVocabulary(value)
                     //overwrite old key
-                    experiment.properties.put(key, vocabulary)
+                    experiment.experimentProperties.put(key, vocabulary)
                 }
             }
         }
@@ -191,7 +191,7 @@ class OpenBisSearch implements DatabaseGateway {
     void addFile(List<MetaStatsSample> prepSamples) {
         prepSamples.each { sample ->
             HashMap files = fetchDataSets(sample.sampleCode, "fastq")
-            sample.properties << files
+            sample.sampleProperties << files
         }
     }
 

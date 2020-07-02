@@ -38,8 +38,8 @@ class FilterExperimentDataImplSpecification extends Specification {
 
         then:
         res.get(0).preparationSampleId == "QXXXXXX"
-        assert res.get(0).properties.get("FileName") == ["file2", "file1", "file3"]
-        assert res.get(0).properties.get("IntegrityNumber") instanceof Double
+        assert res.get(0).entryProperties.get("FileName") == ["file2", "file1", "file3"]
+        assert res.get(0).entryProperties.get("IntegrityNumber") instanceof Double
     }
 
     def "filename must reflect either QBiC.Code name or SequencingFacilityID"() {
@@ -98,8 +98,8 @@ class FilterExperimentDataImplSpecification extends Specification {
         ArrayList<MetaStatsPackageEntry> res = FilterExperimentDataImpl.sortEntries([entry2, entry])
 
         then:
-        res.get(0).properties.get("Filename") == "I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R1_001.fastq.gz, I16R019a02_01_S3_L003_R1_001.fastq.gz, I16R019a02_01_S3_L004_R1_001.fastq.gz"
-        assert res.get(1).properties.get("Filename") == "I16R019b02_01_S5_L001_R1_001.fastq.gz, I16R019b02_01_S5_L002_R1_001.fastq.gz, I16R019b02_01_S5_L003_R1_001.fastq.gz, I16R019b02_01_S5_L004_R1_001.fastq.gz"
+        res.get(0).entryProperties.get("Filename") == "I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R1_001.fastq.gz, I16R019a02_01_S3_L003_R1_001.fastq.gz, I16R019a02_01_S3_L004_R1_001.fastq.gz"
+        assert res.get(1).entryProperties.get("Filename") == "I16R019b02_01_S5_L001_R1_001.fastq.gz, I16R019b02_01_S5_L002_R1_001.fastq.gz, I16R019b02_01_S5_L003_R1_001.fastq.gz, I16R019b02_01_S5_L004_R1_001.fastq.gz"
     }
 
 }
