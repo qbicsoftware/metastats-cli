@@ -20,7 +20,7 @@ class MetaStatsPresenter implements MSMetadataPackageOutput {
 
     /**
      * Presents the output of metastats
-     * @param creator
+     * @param creator interface that specifies ho the file output is created e.g file type
      */
     MetaStatsPresenter(FileOutput creator) {
         this.creator = creator
