@@ -45,6 +45,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
                 //only add the properties, do not overwrite!
                 if (experiment.experimentType == "Q_NGS_MEASUREMENT") sample.sampleProperties << mapper.mapExperimentToSample(experiment, sample)
                 if (experiment.experimentType == "Q_PROJECT_DETAILS") sample.sampleProperties << mapper.mapConditionToSample(experiment.experimentProperties, sample)
+
             }
 
         }
@@ -70,6 +71,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
             String fileName = sample.entryProperties.get("Filename")
             String sortedFiles = fileName.split(", ").sort().join(", ")
             sample.entryProperties.put("Filename", sortedFiles)
+
         }
         //sort order of QBiC.Codes
         ArrayList sortedSamples = samples.sort { it.preparationSampleId }
@@ -107,6 +109,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
     def createSequencingModeEntry(List<MetaStatsSample> samples) {
         samples.each { sample ->
             String filename = sample.sampleProperties.get("Filename")
+
             String sequencingMode
             try {
                 sequencingMode = SequencingModeCalculator.calculateSequencingMode(filename)
@@ -116,6 +119,7 @@ class FilterExperimentDataImpl implements FilterExperimentData {
                 sequencingMode = ""
             }
             sample.sampleProperties.put("SequencingMode", sequencingMode)
+
         }
     }
 
