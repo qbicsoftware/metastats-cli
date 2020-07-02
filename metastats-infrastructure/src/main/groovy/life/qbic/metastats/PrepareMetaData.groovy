@@ -11,7 +11,7 @@ class PrepareMetaData implements ExperimentDataOutput {
 
     /**
      * Guides how data given from ExperimentDataOutput is transferred towards the use case FilterExperiment data
-     * @param filterDataInput
+     * @param filterDataInput specifies how experiment data is filtered
      */
     PrepareMetaData(FilterExperimentDataInput filterDataInput) {
         filterExperimentDataInput = filterDataInput
