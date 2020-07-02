@@ -19,7 +19,7 @@ Q_EXPERIMENTAL_SETUP
 Contains the samples of **Q_BIOLOGICAL_ENTITY** and separates the different entities(e.g. organisms) from which the samples were collected.
 
 ### Q_SAMPLE_EXTRACTION
-Contains the samples of **Q_BIOLOGICAL_SAMPLE** and separates the different extraction types e.g different cells.
+Contains the samples of **Q_BIOLOGICAL_SAMPLE** and separates the extraction results(e.g a multitude of cells) into individual entries.
 
 ### Q_SAMPLE_PREPARATION
 Separates samples which were prepared separately in a lab. Contains the samples of **Q_TEST_SAMPLE**.
