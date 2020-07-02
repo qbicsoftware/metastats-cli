@@ -16,8 +16,8 @@ class OpenBisMapper implements PropertiesMapper {
 
     /**
      * Creates an OpenBisMapper based on the given maps for experiment and sample properties
-     * @param experimentProps containing the corresponding metastast terms for openbis experiment properties
-     * @param sampleProps containing the corresponding metastast terms for openbis sample properties
+     * @param experimentProps containing the corresponding metastats terms for openbis experiment properties
+     * @param sampleProps containing the corresponding metastats terms for openbis sample properties
      */
     OpenBisMapper(Map experimentProps, Map sampleProps) {
         experimentMappingProperties = experimentProps
