@@ -7,7 +7,7 @@ enum SequencingMode {
     private final String seqMode
     /**
      * Creates an enum based on the sequencing mode
-     * @param mode
+     * @param mode sequencing mode 
      */
     SequencingMode(String mode) {
         this.seqMode = mode
