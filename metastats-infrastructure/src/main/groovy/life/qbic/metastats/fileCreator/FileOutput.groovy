@@ -8,9 +8,9 @@ abstract class FileOutput {
     String projectCode
 
     /**
-     *
-     * @param fileEnding
-     * @param projectCode
+     * Creates a file for specific file format
+     * @param fileEnding specifies the file format ending
+     * @param projectCode specifies the code of the project
      */
     FileOutput(String fileEnding, String projectCode) {
         this.fileEnding = fileEnding
@@ -18,9 +18,9 @@ abstract class FileOutput {
     }
 
     /**
-     *
-     * @param entries
-     * @return
+     * Creates the file content based on the given entry list
+     * @param entries as list of the collected metadata
+     * @return StringBuilder with the file content
      */
     abstract StringBuilder createFileContent(List<MetaStatsPackageEntry> entries)
 }
