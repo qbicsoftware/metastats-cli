@@ -44,7 +44,7 @@ Q_NCBI_ORGANISM
 ```
 
 ### Q_BIOLOGICAL_SAMPLE
-Describes from what source the sample was taken.
+Specifies from which source of the biological entity the sample was collected
 Relevant openBis fields:
 ```
 CODE
