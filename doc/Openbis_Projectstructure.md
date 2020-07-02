@@ -22,7 +22,7 @@ Contains the samples of **Q_BIOLOGICAL_ENTITY** and separates the different enti
 Contains the samples of **Q_BIOLOGICAL_SAMPLE** and separates the extraction results(e.g a multitude of cells) into individual entries.
 
 ### Q_SAMPLE_PREPARATION
-Separates samples which were prepared separately in a lab. Contains the samples of **Q_TEST_SAMPLE**.
+Groups samples, which were prepared together in a lab. Contains the samples of **Q_TEST_SAMPLE**.
 
 ### Q_NGS_MEASUREMENT
 This experiment contains samples of one measurement of type **Q_NGS_RAW_DATA**.
