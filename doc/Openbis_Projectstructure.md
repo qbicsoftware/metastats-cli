@@ -16,7 +16,7 @@ Q_EXPERIMENTAL_SETUP
 ```
 
 ### Q_EXPERIMENTAL_DESIGN
-Contains the samples of **Q_BIOLOGICAL_ENTITY** and separates the different entities from which samples were taken e.g organisms.
+Contains the samples of **Q_BIOLOGICAL_ENTITY** and separates the different entities(e.g. organisms) from which the samples were collected.
 
 ### Q_SAMPLE_EXTRACTION
 Contains the samples of **Q_BIOLOGICAL_SAMPLE** and separates the different extraction types e.g different cells.
