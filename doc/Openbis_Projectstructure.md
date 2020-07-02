@@ -25,7 +25,7 @@ Contains the samples of **Q_BIOLOGICAL_SAMPLE** and separates the extraction res
 Groups samples, which were prepared together in a lab. Contains the samples of **Q_TEST_SAMPLE**.
 
 ### Q_NGS_MEASUREMENT
-This experiment contains samples of one measurement of type **Q_NGS_RAW_DATA**.
+Groups samples of the measurement type **Q_NGS_RAW_DATA**.
 Relevant openBis fields:
 ```
 Q_SEQUENCER_DEVICE
@@ -36,7 +36,7 @@ Samples describe the same object on different levels starting from the organims 
 in the sequence of the taken sample.
 
 ### Q_BIOLOGICAL_ENTITY
-Describes entity from which the sample is taken.
+Specifies biological entity from which the sample was collected
 Relevant openBis fields:
 ```
 CODE
@@ -44,7 +44,7 @@ Q_NCBI_ORGANISM
 ```
 
 ### Q_BIOLOGICAL_SAMPLE
-Describes from what source the sample was taken.
+Specifies from which source of the biological entity the sample was collected
 Relevant openBis fields:
 ```
 CODE
@@ -52,7 +52,7 @@ Q_PRIMARY_TISSUE
 ```
 
 ### Q_TEST_SAMPLE
-Describes the sample in more detail e.g. the type of sequence,... .
+Specifies the sample details(e.g. sequence type)
 Relevant openBis fields:
 ```
 CODE
