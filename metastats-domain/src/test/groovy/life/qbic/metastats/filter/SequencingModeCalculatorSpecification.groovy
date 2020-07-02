@@ -37,10 +37,17 @@ class SequencingModeCalculatorSpecification extends Specification {
     def "Paired-End experiment is detected"() {
         given:
         String filenames = "I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R2_001.fastq.gz, I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R2_001.fastq.gz"
+        String filenames2 = "I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R2_001.fastq.gz, I16R019a02_01_S3_L001_R1.fastq.gz, I16R019a02_01_S3_L002_R2.fastq.gz"
+
+
         when:
         def res = SequencingModeCalculator.calculateSequencingMode(filenames)
+        def res2 = SequencingModeCalculator.calculateSequencingMode(filenames2)
+
 
         then:
         res == "paired-end"
+        assert res2 == "paired-end"
     }
+
 }
