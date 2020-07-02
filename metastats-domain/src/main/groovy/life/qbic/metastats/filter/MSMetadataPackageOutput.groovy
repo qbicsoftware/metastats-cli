@@ -12,7 +12,7 @@ interface MSMetadataPackageOutput {
     def createMetaStatsMetadataPackage(List<MetaStatsPackageEntry> samples)
 
     /**
-     * Downloads the created metadata sheet to the users system
+     * Download the created metadata sheet to the user system
      * @return
      */
     def downloadMetadataPackage()
