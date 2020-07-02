@@ -36,6 +36,10 @@ class FilterExperimentData implements FilterExperimentDataInput {
         this.experiments = experiments
     }
 
+    /**
+     * This method handles the logic of this use case by filtering the obtained samples and experiments for the required
+     * metadata, mapping the terms and transferring it towards the output interface
+     */
     void filter(){
         LOG.info "filter metadata from samples ..."
         testSamples.each { prep ->

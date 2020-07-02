@@ -21,6 +21,7 @@ class PrepareMetaData implements ExperimentDataOutput {
     @Override
     def metaDataForProject(List<MetaStatsSample> sampleMetadata, List<MetaStatsExperiment> experimentMetadata) {
         filterExperimentDataInput.getProjectMetaData(sampleMetadata, experimentMetadata)
+        filterExperimentDataInput.filter()
     }
 
 }

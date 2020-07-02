@@ -13,5 +13,6 @@ interface FilterExperimentDataInput {
      * @param experiments that are part of the project
      */
     void getProjectMetaData(List<MetaStatsSample> testSamples, List<MetaStatsExperiment> experiments)
+    void filter()
 
 }
