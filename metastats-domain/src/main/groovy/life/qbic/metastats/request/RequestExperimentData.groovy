@@ -38,7 +38,7 @@ class RequestExperimentData implements ProjectSpecification {
     /**
      * verifies the QBiC code base on a regex
      * @param code
-     * @return
+     * @return boolean indicating if code could be verified
      */
     static boolean verifyQbicCode(String code) {
         code ==~ "Q[A-X0-9]{4}"
