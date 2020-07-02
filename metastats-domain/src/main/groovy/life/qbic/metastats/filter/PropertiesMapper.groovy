@@ -18,7 +18,7 @@ interface PropertiesMapper {
      * Experimental conditions get assigned to a MetaStatsSample
      * @param experimentConditions contains the experiment conditions encoded in XML
      * @param sample gets corresponding condition info
-     * @return
+     * @return Map that associates the Sample with the corresponding experiment
      */
     Map mapConditionToSample(Map experimentConditions, MetaStatsSample sample)
     /**
