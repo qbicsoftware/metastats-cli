@@ -24,7 +24,7 @@ interface PropertiesMapper {
     /**
      * Maps the openBis properties of a sample into MetaStats terms
      * @param openBisProperties
-     * @return
+     * @return Map that associates the sample with the corresponding experiment conditions
      */
     Map<String, String> mapSampleProperties(Map<String, String> openBisProperties)
 }
