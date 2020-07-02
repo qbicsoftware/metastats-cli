@@ -4,7 +4,7 @@ import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 import life.qbic.metastats.datamodel.MetaStatsSample
 import spock.lang.Specification
 
-class FilterExperimentDataImplSpecification extends Specification {
+class FilterExperimentDataSpecification extends Specification {
 
 
     def "add method extends map successfully"() {
@@ -16,7 +16,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         props.put("Q_Test", "value")
 
         when:
-        FilterExperimentDataImpl.fuseMaps(meta, props)
+        FilterExperimentData.fuseMaps(meta, props)
 
         then:
         meta == ["Q_Test": "value", "haha": "hihi"]
@@ -34,7 +34,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         sample1.addRelatives("QFSVIENTITY-1")
 
         when:
-        List<MetaStatsPackageEntry> res = FilterExperimentDataImpl.createMetadataPackageEntries([sample1])
+        List<MetaStatsPackageEntry> res = FilterExperimentData.createMetadataPackageEntries([sample1])
 
         then:
         res.get(0).preparationSampleId == "QXXXXXX"
@@ -46,7 +46,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         given:
         HashMap sampleProperties = ["QBiC.Code": "QXXX", "SequencingFacilityId": "IR1234", "otherProp": "value", "Filename": "QXXXIR1234_1.fastq, QXXX.fastq, IR1234_3.fastq"]
         when:
-        boolean res = FilterExperimentDataImpl.validFilenames(sampleProperties)
+        boolean res = FilterExperimentData.validFilenames(sampleProperties)
         then:
         res
     }
@@ -55,7 +55,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         given:
         HashMap sampleProperties = ["QBiC.Code": "QXXX", "SequencingFacilityId": "IR1234", "otherProp": "value", "Filename": "234_1.fastq, Q2.fastq, _3.fastq"]
         when:
-        boolean res = FilterExperimentDataImpl.validFilenames(sampleProperties)
+        boolean res = FilterExperimentData.validFilenames(sampleProperties)
         then:
         !res
     }
@@ -64,7 +64,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         given:
         HashMap sampleProperties = ["QBiC.Code": "QXXX", "SequencingFacilityId": "IR1234", "otherProp": "value", "Filename": ""]
         when:
-        boolean res = FilterExperimentDataImpl.validFilenames(sampleProperties)
+        boolean res = FilterExperimentData.validFilenames(sampleProperties)
         then:
         !res
     }
@@ -83,7 +83,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         MetaStatsPackageEntry entry4 = new MetaStatsPackageEntry("QFSVI016A5", ["Filename": ""])
 
         when:
-        def res = FilterExperimentDataImpl.sortEntries([entry3, entry2, entry, entry4])
+        def res = FilterExperimentData.sortEntries([entry3, entry2, entry, entry4])
 
         then:
         res == [entry, entry2, entry3, entry4]
@@ -95,7 +95,7 @@ class FilterExperimentDataImplSpecification extends Specification {
         MetaStatsPackageEntry entry2 = new MetaStatsPackageEntry("QFSVI010AP", ["Filename": "I16R019b02_01_S5_L004_R1_001.fastq.gz, I16R019b02_01_S5_L003_R1_001.fastq.gz, I16R019b02_01_S5_L001_R1_001.fastq.gz, I16R019b02_01_S5_L002_R1_001.fastq.gz"])
 
         when:
-        ArrayList<MetaStatsPackageEntry> res = FilterExperimentDataImpl.sortEntries([entry2, entry])
+        ArrayList<MetaStatsPackageEntry> res = FilterExperimentData.sortEntries([entry2, entry])
 
         then:
         res.get(0).entryProperties.get("Filename") == "I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R1_001.fastq.gz, I16R019a02_01_S3_L003_R1_001.fastq.gz, I16R019a02_01_S3_L004_R1_001.fastq.gz"

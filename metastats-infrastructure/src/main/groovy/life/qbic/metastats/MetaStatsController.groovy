@@ -12,7 +12,7 @@ class MetaStatsController {
     private String configFile
     private String projectCode
     private ProjectSpecification spec
-    private FilterExperimentData filterExperimentData
+    private FilterExperimentDataInput filterExperimentData
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsController.class)
 
@@ -55,7 +55,7 @@ class MetaStatsController {
         PropertiesMapper mapper = new OpenBisMapper(experimentalMappingInfo, sampleMappingInfo)
 
         //define use case
-        filterExperimentData = new FilterExperimentDataImpl(metaStatsPresenter, mapper, validator)
+        filterExperimentData = new FilterExperimentData(metaStatsPresenter, mapper, validator)
 
         //define db classes
         setupDB(credentials)
