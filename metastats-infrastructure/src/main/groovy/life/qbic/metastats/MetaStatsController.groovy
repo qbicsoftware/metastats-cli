@@ -31,7 +31,6 @@ class MetaStatsController {
      * @param schemaPath of metadata schema for validation
      * @param sampleSchema to define valid samples descriptions
      * @param experimentSchema to define valid experiment descriptions
-     * @return
      */
     def execute(String schemaPath, String sampleSchema, String experimentSchema) {
         // get properties
