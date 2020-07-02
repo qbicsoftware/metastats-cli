@@ -67,7 +67,7 @@ class OpenBisMapper implements PropertiesMapper {
     }
 
     /**
-     * Assigns the sample conditions the a sample based on its code
+     * Assigns the sample conditions to a sample based on its code
      * @param metaStatsProperties to which the conditions are written
      * @param sampleCode of the sample for which the conditions should be found
      */
