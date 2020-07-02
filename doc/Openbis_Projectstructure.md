@@ -6,7 +6,7 @@ with the respective objects are indicated to give an understanding of how the pr
 ![architecture](projectStructure.png)
 
 ## Experiment
-Different experiment types bundle samples created together in a specific manner.
+Samples are grouped into specific experiment types depending on their context.  
 
 ### Q_PROJECT_DETAILS
 Describes the experiment conditions of the samples with the openBis property.
