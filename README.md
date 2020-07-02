@@ -29,7 +29,7 @@ MetaStats-CLI is runt with the command:
 ### Exemplary Configuration File
 ```
 {
-   "url" : "https://example.url.de",
+   "server_url" : "https://example.url.de",
    "user": "name",
    "password": "pw"
 }

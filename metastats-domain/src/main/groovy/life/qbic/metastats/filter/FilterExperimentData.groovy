@@ -46,7 +46,6 @@ class FilterExperimentData implements FilterExperimentDataInput {
 
         LOG.info "filter metadata from experiment for samples ..."
         experiments.each { experiment ->
-            //mapper.mapExperimentProperties(experiment, prepSamples)
             //map to samples
             testSamples.each { sample ->
                 //only add the properties, do not overwrite!
@@ -70,7 +69,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
     /**
      * Method to sort the MetaStatsPackageEntries
      * @param samples
-     * @return
+     * @return ArrayList of sorted MetaStatsPackageEntries
      */
     static ArrayList sortEntries(List<MetaStatsPackageEntry> samples) {
         //sort Filenames
@@ -89,7 +88,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
     /**
      * Creates MetaStatsPackageEntries from MetaStatsSamples
      * @param samples of type Q_TEST_SAMPLE
-     * @return created MetaStatsPackageEntries
+     * @return List of created MetaStatsPackageEntries
      */
     static List<MetaStatsPackageEntry> createMetadataPackageEntries(List<MetaStatsSample> samples) {
         List packageEntries = []
@@ -100,6 +99,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
 
             String res = props.get("IntegrityNumber")
             if (res != "") props.put("IntegrityNumber", Double.parseDouble(res))
+            //else the number remains an empty string and is validated by the schema.
 
             MetaStatsPackageEntry entry = new MetaStatsPackageEntry(sampleName, props)
             packageEntries.add(entry)

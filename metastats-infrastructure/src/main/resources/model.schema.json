@@ -479,8 +479,16 @@
     },
     "IntegrityNumber": {
       "description": "RIN or DIN of the biological material",
-      "type": "number",
-      "pattern": "[1-9]|10"
+      "anyOf": [
+        {
+          "type": "number",
+          "pattern": "[1-9]|10"
+        },
+        {
+          "type": "string",
+          "pattern": ""
+        }
+      ]
     },
     "Condition": {
       "description": "Sample group characteristic",
