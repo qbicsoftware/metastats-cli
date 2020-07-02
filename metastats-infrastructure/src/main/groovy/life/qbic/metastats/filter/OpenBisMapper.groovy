@@ -133,7 +133,7 @@ class OpenBisMapper implements PropertiesMapper {
      * a metastats term exists
      * @param openBisProperties as a collection of terms that can be translated into openbis
      * @param openBisProperty as a property to define the property which is looked up
-     * @return
+     * @return String of contained openBisProperty or "" if there is no openBisProperty in openBisProperties 
      */
     static String containsProperty(Map openBisProperties, String openBisProperty) {
         if (openBisProperties.containsKey(openBisProperty)) {
