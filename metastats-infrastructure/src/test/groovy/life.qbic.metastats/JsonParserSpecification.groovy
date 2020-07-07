@@ -7,7 +7,7 @@ class JsonParserSpecification extends Specification {
 
     def "Right resource path is parsed without error"() {
         given:
-        JsonParser parser = new JsonParser("model.schema.json")
+        JsonParser parser = new JsonParser("testSchema.json")
 
         when:
         Map modelSchema = parser.parseStream()
@@ -15,13 +15,13 @@ class JsonParserSpecification extends Specification {
         List<String> req = modelSchema.get("required") as List<String>
 
         then:
-        res.size() == 13
-        assert req == ["species"]
+        res.size() == 14
+        assert req.sort() == ["Species", "SampleName"].sort()
     }
 
     def "Right file path is parsed without error"() {
         given:
-        URL url = JsonParserSpecification.class.getClassLoader().getResource("model.schema.json")
+        URL url = JsonParserSpecification.class.getClassLoader().getResource("testSchema.json")
         assert url != null
         JsonParser parser = new JsonParser(url.getPath())
 
@@ -31,8 +31,8 @@ class JsonParserSpecification extends Specification {
         List<String> req = modelSchema.get("required") as List<String>
 
         then:
-        res.size() == 13
-        assert req == ["species"]
+        res.size() == 14
+        assert req.sort() == ["Species", "SampleName"].sort()
     }
 
     def "Wrong file path throws error"() {
@@ -41,8 +41,8 @@ class JsonParserSpecification extends Specification {
 
         when:
         Map modelSchema = parser.parse()
-        String[] res = modelSchema.get("properties").keySet() as String[]
-        List<String> req = modelSchema.get("required") as List<String>
+        modelSchema.get("properties").keySet() as String[]
+        modelSchema.get("required") as List<String>
 
         then:
         thrown(FileNotFoundException)
@@ -54,8 +54,8 @@ class JsonParserSpecification extends Specification {
 
         when:
         Map modelSchema = parser.parseStream()
-        String[] res = modelSchema.get("properties").keySet() as String[]
-        List<String> req = modelSchema.get("required") as List<String>
+        modelSchema.get("properties").keySet() as String[]
+        modelSchema.get("required") as List<String>
 
         then:
         thrown(FileNotFoundException)

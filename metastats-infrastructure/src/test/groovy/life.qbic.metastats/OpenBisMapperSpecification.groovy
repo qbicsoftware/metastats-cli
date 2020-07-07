@@ -36,7 +36,7 @@ class OpenBisMapperSpecification extends Specification {
         def res = obm.mapSampleProperties(props)
 
         then:
-        res.sort() == ["extractCode": "", "sampleName": "", "filename": "", "individual": "", "integrityNumber": "", "species": "value", "samplePreparationId": "", "sex": "value", "analyte": "", "tissue": "", "sequencingFacilityId": ""].sort()
+        res.sort() == ["ExtractCode": "", "SampleName": "", "Filename": "", "Individual": "", "IntegrityNumber": "", "Species": "value", "QBiC.Code": "", "Sex": "value", "Analyte": "", "Tissue": "", "SequencingFacilityId": ""].sort()
     }
 
     def "mapping of biological sample properties is successful"() {
@@ -50,7 +50,7 @@ class OpenBisMapperSpecification extends Specification {
         def res = obm.mapSampleProperties(props)
 
         then:
-        res.sort() == ["extractCode": "", "sampleName": "", "filename": "", "individual": "", "integrityNumber": "", "species": "", "samplePreparationId": "", "sex": "value", "analyte": "", "tissue": "value", "sequencingFacilityId": ""].sort()
+        res.sort() == ["ExtractCode": "", "SampleName": "", "Filename": "", "Individual": "", "IntegrityNumber": "", "Species": "", "QBiC.Code": "", "Sex": "value", "Analyte": "", "Tissue": "value", "SequencingFacilityId": ""].sort()
     }
 
     def "mapping of test sample properties is successful"() {
@@ -58,19 +58,19 @@ class OpenBisMapperSpecification extends Specification {
         Map props = new HashMap<String, String>()
         props.put("Q_SAMPLE_TYPE", "value")
         props.put("Q_SECONDARY_NAME", "value")
-        props.put("Q_RIN", "value")
+        props.put("Q_RNA_INTEGRITY_NUMBER", "value")
 
         when:
         def res = obm.mapSampleProperties(props)
 
         then:
-        res.sort() == ["extractCode": "", "sampleName": "", "filename": "", "individual": "", "integrityNumber": "", "species": "", "samplePreparationId": "", "sex": "", "analyte": "value", "tissue": "", "sequencingFacilityId": "value"].sort()
+        res.sort() == ["ExtractCode": "", "SampleName": "value", "Filename": "", "Individual": "", "IntegrityNumber": "value", "Species": "", "QBiC.Code": "", "Sex": "", "Analyte": "value", "Tissue": "", "SequencingFacilityId": ""].sort()
     }
 
     def "mapping of sample runs properties is successful"() {
         given:
         Map props = new HashMap<String, String>()
-        props.put("Q_SECONDARY_NAME_Q_NGS_SINGLE_SAMPLE_RUN", "value")
+        props.put("Q_EXTERNALDB_ID", "value")
         props.put("SEX", "value")
         props.put("IgnoreThatKey", "value")
 
@@ -78,7 +78,7 @@ class OpenBisMapperSpecification extends Specification {
         def res = obm.mapSampleProperties(props)
 
         then:
-        res.sort() == ["extractCode": "", "sampleName": "value", "filename": "", "individual": "", "integrityNumber": "", "species": "", "samplePreparationId": "", "sex": "value", "analyte": "", "tissue": "", "sequencingFacilityId": ""].sort()
+        res.sort() == ["ExtractCode": "", "SampleName": "", "Filename": "", "Individual": "", "IntegrityNumber": "", "Species": "", "QBiC.Code": "", "Sex": "value", "Analyte": "", "Tissue": "", "SequencingFacilityId": "value"].sort()
     }
 
     def "condition for experiment is mapped to correct sample"() {
@@ -115,14 +115,14 @@ class OpenBisMapperSpecification extends Specification {
         sample2.addRelatives("QFSVI016A5")
 
         when:
-        Map res1 = obm.mapExperimentToSample(experiment, sample1)
-        Map res2 = obm.mapExperimentToSample(experiment, sample2)
+        Map res1 = obm.mapConditionToSample(experiment.experimentProperties, sample1)
+        Map res2 = obm.mapConditionToSample(experiment.experimentProperties, sample2)
 
 
         then:
-        res1.get("condition") instanceof List<Condition>
-        assert (res1.get("condition") as List).size() == 1
-        assert (res2.get("condition") as List).size() == 2
+        res1.get("Condition") instanceof List<Condition>
+        assert (res1.get("Condition") as List).size() == 1
+        assert (res2.get("Condition") as List).size() == 2
     }
 
     def "mapping experiment correctly"() {
@@ -134,14 +134,14 @@ class OpenBisMapperSpecification extends Specification {
         sample1.addRelatives("QFSVIENTITY-1")
 
         MetaStatsExperiment experiment = new MetaStatsExperiment("Q_OTHER", props, [])
-        experiment.setSamples(["QXXXXXX"])
+        experiment.setRelatedSampleCodes(["QXXXXXX"])
 
         when:
         def res = obm.mapExperimentToSample(experiment, sample1)
 
         then:
-        res.sort() == ["condition": "", "sequencingDevice": "value"].sort()
+        res.sort() == ["Condition": "", "SequencingDevice": "value"].sort()
 
     }
-    //Q_SEQUENCER_DEVIC
+
 }

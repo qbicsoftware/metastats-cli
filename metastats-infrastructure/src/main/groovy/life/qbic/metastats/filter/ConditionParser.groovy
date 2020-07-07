@@ -16,22 +16,29 @@ class ConditionParser {
 
     private static final Logger LOG = LogManager.getLogger(ConditionParser.class);
 
-
-    def parseProperties(Map designExperiment) {
+    /**
+     * Parses the experimental conditions from the experimental properties map
+     * @param designExperiment map describing experiments containing the experimental setup
+     */
+    void parseProperties(Map designExperiment) {
 
         String xmlString = designExperiment.get("Q_EXPERIMENTAL_SETUP")
         try {
-            LOG.info "parsing experiment conditions"
             expDesign = studyParser.parseXMLString(xmlString)
         }
         catch (JAXBException e) {
-            LOG.info "could not create new experimental design xml from experiment."
+            LOG.error "could not create new experimental design xml from experiment."
             e.printStackTrace()
         }
     }
 
-    List<Property> getSampleConditions(String sample) {
-        studyParser.getFactorsAndPropertiesForSampleCode(expDesign, sample)
+    /**
+     * Returns the conditions for a given sample from the experimental design
+     * @param sampleCode defiend by its code
+     * @return list of property conditions of the sample
+     */
+    List<Property> getSampleConditions(String sampleCode) {
+        studyParser.getFactorsAndPropertiesForSampleCode(expDesign, sampleCode)
     }
 
 }

@@ -10,95 +10,136 @@ class OpenBisMapper implements PropertiesMapper {
 
     private Map sampleMappingProperties
     private Map experimentMappingProperties
+    private ConditionParser parser
 
     private static final Logger LOG = LogManager.getLogger(OpenBisMapper.class)
 
+    /**
+     * Creates an OpenBisMapper based on the given maps for experiment and sample properties
+     * @param experimentProps containing the corresponding metastats terms for openbis experiment properties
+     * @param sampleProps containing the corresponding metastats terms for openbis sample properties
+     */
     OpenBisMapper(Map experimentProps, Map sampleProps) {
         experimentMappingProperties = experimentProps
         sampleMappingProperties = sampleProps
-
-        println "OpenBisMapper instant. has property maps:"
-        println experimentMappingProperties
-        println sampleMappingProperties
     }
 
+    /**
+     * Maps experiment to sample properties, if the experiment contains information about that sample
+     * @param experiment with database metadata information about samples
+     * @param sample with properties
+     * @return experimental properties based on metastats terms for the given sample
+     */
     Map mapExperimentToSample(MetaStatsExperiment experiment, MetaStatsSample sample) {
         Map metaStatsProperties = new HashMap<>()
-
-        if (experimentMappingProperties.get(experiment.type) == "condition") {
-            ConditionParser parser = new ConditionParser()
-            parser.parseProperties(experiment.properties)
-
-            //check all children of prep sample to find the samples condition
-            //add field "condition:$label" : "$value" -> add to samples properties
-            sample.relatives.each { relative ->
-                def res = parser.getSampleConditions(relative)
-                if (res != null) {
-                    res.each { sampleProp ->
-                        String value = sampleProp.value
-                        String label = sampleProp.label
-                        //LOG.debug sample.properties
-                        //todo this should be done in file writing
-                        if (metaStatsProperties.containsKey("condition")) {
-                            List conditions = metaStatsProperties.get("condition") as List
-                            conditions.add(new Condition(label, value))
-
-                            metaStatsProperties.put("condition", conditions)
-                        } else {
-                            metaStatsProperties.put("condition", [new Condition(label, value)])
-                        }
-                        //metaStatsProperties.put("condition: " + label, value)
-                    }
-                } else {
-                    LOG.info "no experiment conditions where found, check your openbis project"
-                }
-            }
-        } else if (isSampleOfExperiment(experiment.samples, sample)) {
+        if (isSampleOfExperiment(experiment.relatedSampleCodes, sample)) {
             experimentMappingProperties.each { openBisTerm, metastatsTerm ->
-                String value = containsProperty(experiment.properties, openBisTerm as String)
+                String value = containsProperty(experiment.experimentProperties, openBisTerm as String)
                 metaStatsProperties.put(metastatsTerm as String, value)
             }
         }
+
         return metaStatsProperties
     }
 
+    /**
+     * Maps the experimental conditions onto the preparation sample if one of its relatives or the sample itself has
+     * experimental conditions
+     * @param experimentConditions based on XML encoding
+     * @param sample for which experimental conditions are searched
+     * @return condition in form of properties for the given sample
+     */
+    Map mapConditionToSample(Map experimentConditions, MetaStatsSample sample) {
+        HashMap metaStatsProperties = new HashMap<>()
+
+        parser = new ConditionParser()
+        parser.parseProperties(experimentConditions)
+
+        //check all children of prep sample to find the samples condition
+        sample.relatedSamples.each { relative ->
+            assignSampleConditions(metaStatsProperties, relative)
+        }
+
+        //also read conditions on level of preparation sample/current sample
+        assignSampleConditions(metaStatsProperties, sample.sampleCode)
+
+        return metaStatsProperties
+    }
+
+    /**
+     * Assigns the sample conditions to a sample based on its code
+     * @param metaStatsProperties to which the conditions are written
+     * @param sampleCode of the sample for which the conditions should be found
+     */
+    void assignSampleConditions(HashMap metaStatsProperties, String sampleCode) {
+        def res = parser.getSampleConditions(sampleCode)
+
+        if (res != null) {
+            res.each { sampleProp ->
+                String value = sampleProp.value
+                String label = sampleProp.label
+
+                if (metaStatsProperties.containsKey("Condition")) {
+                    List conditions = metaStatsProperties.get("Condition") as List
+
+                    conditions.add(new Condition(label, value))
+                    //overwrites condition if already contained
+                    metaStatsProperties.put("Condition", conditions)
+                } else {
+                    metaStatsProperties.put("Condition", [new Condition(label, value)])
+                }
+            }
+        } else {
+            LOG.info "no experiment conditions where found, check your openbis project"
+        }
+    }
+
+    /**
+     * Determines if a sample is part of an experiment based on list of samples assigned to an experiment
+     * @param experimentSamples are samples of an experiment as codes
+     * @param sample with properties with related samples
+     * @return boolean to state if sample is contained in experiment
+     */
     boolean isSampleOfExperiment(List<String> experimentSamples, MetaStatsSample sample) {
         boolean contained = false
         //check if experiment is conducted for sample
         experimentSamples.each { expSampleCode ->
             //check prepSample code
-            if (sample.code == expSampleCode) contained = true
+            if (sample.sampleCode == expSampleCode) contained = true
             //check relatives
-            sample.relatives.each { relativeCode ->
+            sample.relatedSamples.each { relativeCode ->
                 if (relativeCode == expSampleCode) contained = true
             }
         }
         return contained
     }
 
+    /**
+     * Maps sample properties to metastats properties
+     * @param openBisProperties , properties described with openbis terms
+     * @return map of properties now described with metastats terms
+     */
     Map<String, String> mapSampleProperties(Map<String, String> openBisProperties) {
         Map<String, String> metaStatsProperties = new HashMap<>()
-        //todo use mapping info from mapping json
-        //ENTITY LEVEL
         sampleMappingProperties.each { openBisTerm, metastatsTerm ->
             String value = containsProperty(openBisProperties, openBisTerm as String)
-            println value
             metaStatsProperties.put(metastatsTerm as String, value)
         }
         return metaStatsProperties
     }
 
-
-    String containsProperty(Map openBisProperties, String openBisProperty) {
-        println openBisProperties.toString() + " " + openBisProperty
-
-        println openBisProperties.containsKey(openBisProperty)
-
+    /**
+     * Checks if a given openbis property is contained in the map of properties for which a translation into
+     * a metastats term exists
+     * @param openBisProperties as a collection of terms that can be translated into openbis
+     * @param openBisProperty as a property to define the property which is looked up
+     * @return String of contained openBisProperty or "" if there is no openBisProperty in openBisProperties 
+     */
+    static String containsProperty(Map openBisProperties, String openBisProperty) {
         if (openBisProperties.containsKey(openBisProperty)) {
             return openBisProperties.get(openBisProperty)
         }
         return ""
     }
-
 
 }

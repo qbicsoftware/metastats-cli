@@ -1,4 +1,4 @@
 {
-  "Q_SEQUENCER_DEVICE": "sequencingDevice",
-  "Q_PROJECT_DETAILS": "condition"
+  "Q_SEQUENCER_DEVICE": "SequencingDevice",
+  "Q_PROJECT_DETAILS": "Condition"
 }

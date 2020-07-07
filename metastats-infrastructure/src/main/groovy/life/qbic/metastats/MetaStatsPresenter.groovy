@@ -13,11 +13,15 @@ class MetaStatsPresenter implements MSMetadataPackageOutput {
     StringBuilder fileContent = new StringBuilder()
 
     String home = System.getProperty("user.home")
-    String path = home + "/Downloads/" + fileName + "." + creator.fileEnding
+    String path = home + "/Downloads/" + creator.projectCode + "_" + fileName + "." + creator.fileEnding
 
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsPresenter.class)
 
+    /**
+     * Presents the output of metastats
+     * @param creator interface that specifies how the file output is created e.g file type
+     */
     MetaStatsPresenter(FileOutput creator) {
         this.creator = creator
     }
@@ -27,14 +31,13 @@ class MetaStatsPresenter implements MSMetadataPackageOutput {
         fileContent = creator.createFileContent(entries)
     }
 
-    //todo create the name based on the project name
     @Override
     def downloadMetadataPackage() {
 
         File file = new File(path)
         file.write(fileContent.toString())
 
-        LOG.info "Downloaded the metadata sheet of project XXX to:" + path
+        LOG.info "Downloaded the metadata sheet of project $creator.projectCode to:" + path
 
     }
 }

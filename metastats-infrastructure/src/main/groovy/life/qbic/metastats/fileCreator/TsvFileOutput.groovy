@@ -3,20 +3,29 @@ package life.qbic.metastats.fileCreator
 import life.qbic.metastats.datamodel.Condition
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 
-class TsvFileOutput implements FileOutput {
+class TsvFileOutput extends FileOutput {
 
-    private String missingValues = "NA"
-    private String fileEnding = "tsv"
-    private ArrayList<String> order = ["samplePreparationId", "sequencingFacilityId", "sampleName",
-                                       "individual", "species", "extractCode", "sex", "tissue",
-                                       "analyte", "integrityNumber", "filename", "sequencingDevice"]
+    private static String missingValues = "NA"
+    private static String fileEnding = "tsv"
+    private ArrayList<String> order = ["QBiC.Code", "SampleName", "SequencingFacilityId", "SequencingDevice", "SequencingMode",
+                                       "Individual", "Species", "ExtractCode", "Sex", "Tissue",
+                                       "Analyte", "IntegrityNumber", "Filename"]
+
+    /**
+     * Creates the output for a given project code
+     * @param projectCode
+     */
+    TsvFileOutput(String projectCode) {
+        super(fileEnding, projectCode)
+    }
 
     @Override
     StringBuilder createFileContent(List<MetaStatsPackageEntry> entries) {
         StringBuilder fileContent = new StringBuilder()
 
         //add different conditions
-        order.addAll(getConditions(entries))
+        int pos = order.size() - 1
+        order.addAll(pos, getConditions(entries))
         order.each { header ->
             fileContent << header + "\t"
         }
@@ -24,20 +33,19 @@ class TsvFileOutput implements FileOutput {
         fileContent.deleteCharAt(fileContent.length() - 1)
         fileContent << "\n"
 
-        //todo sort the properties for the respective samples
         //create header with keywords and search for values in the samples
         entries.each { entry ->
             //fileContent << entry.entryId
             order.each { header ->
-                String cellValue = entry.properties.get(header).toString()
+                String cellValue = entry.entryProperties.get(header).toString()
 
-                if (header.contains("condition")) {
+                if (header.contains("Condition")) {
                     String conditionLabel = header.split(":")[1].trim()
-                    entry.properties.get("condition").each { Condition cond ->
+                    entry.entryProperties.get("Condition").each { Condition cond ->
                         if (cond.label == conditionLabel) cellValue = cond.value
                     }
                 }
-                if (cellValue == null || cellValue == "") cellValue = missingValues
+                if (cellValue == "null" || cellValue == "") cellValue = missingValues
 
                 fileContent << cellValue + "\t"
             }
@@ -47,14 +55,19 @@ class TsvFileOutput implements FileOutput {
         return fileContent
     }
 
+    /**
+     * Returns all condition labels to use for the header
+     * @param entries all entries containing the condition information as properties
+     * @return a list of all conditions labels
+     */
     List<String> getConditions(List<MetaStatsPackageEntry> entries) {
         List conditionTypes = []
 
         entries.each { entry ->
-            entry.properties.each { prop ->
-                if (prop.key == "condition") {
+            entry.entryProperties.each { prop ->
+                if (prop.key == "Condition") {
                     prop.value.each { Condition condition ->
-                        String headerValue = "condition: " + condition.label
+                        String headerValue = "Condition: " + condition.label
                         if (!conditionTypes.contains(headerValue)) conditionTypes << headerValue
                     }
                 }
@@ -64,22 +77,4 @@ class TsvFileOutput implements FileOutput {
         return conditionTypes
     }
 
-    static String createFileString(ArrayList files) {
-        StringBuilder filesString = new StringBuilder()
-
-        if (files != null && files.size() > 0) {
-            //1. are filenames valid
-            files.each { filename ->
-                filesString << filename + ", "
-            }
-            filesString.delete(filesString.length() - 2, filesString.length())
-        }
-
-        return filesString.toString()
-    }
-
-    @Override
-    String getFileEnding() {
-        return fileEnding
-    }
 }

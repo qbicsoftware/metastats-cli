@@ -10,20 +10,20 @@ class TsvFileOutputSpecification extends Specification {
     def "create correct header from metastats entries"() {
         given:
         List<Condition> conditions = [new Condition("genotype", "mutant"), new Condition("treatment", "non")]
-        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["condition": conditions, "sampleName": "name"] as HashMap)
+        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["Condition": conditions, "SampleName": "name"] as HashMap)
         TsvFileOutput creator = new TsvFileOutput()
 
         when:
         def res = creator.getConditions([entry, entry])
 
         then:
-        res.sort() == ["condition: genotype", "condition: treatment"].sort()
+        res.sort() == ["Condition: genotype", "Condition: treatment"].sort()
     }
 
     def "associate condition header correctly with sample value"() {
         given:
         List<Condition> conditions = [new Condition("genotype", "mutant"), new Condition("treatment", "non")]
-        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["condition": conditions, "sampleName": "name"] as HashMap)
+        MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["Condition": conditions, "SampleName": "name"] as HashMap)
         TsvFileOutput creator = new TsvFileOutput()
 
         when:
@@ -33,13 +33,9 @@ class TsvFileOutputSpecification extends Specification {
         def headerRow = output[0].split("\t")
 
         then:
-        headerRow[-1].contains("condition:")
-        headerRow[-2].contains("condition:")
-        !headerRow[-3].contains("condition:")
+        headerRow[-2].contains("Condition:")
+        headerRow[-3].contains("Condition:")
+        !headerRow[-4].contains("Condition:")
         assert res != null
-    }
-
-    def "filenames must separated with coma"() {
-
     }
 }
