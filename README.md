@@ -16,7 +16,7 @@ to the users download folder. This file can then be used for statistical analysi
 Execute ```mvn clean package``` in the terminal to create the jar.
 
 ## How to run
-MetaStats-CLI is runt with the command:
+MetaStats-CLI is run with the command:
 
 ``java -jar metastats-application/target/metastats-1.0.0-SNAPSHOT-jar-with-dependencies.jar -c path-to-conf -p projectCode``
 
