@@ -24,7 +24,7 @@ MetaStats-CLI is run with the command:
 | ------------------- | ------------------------------------------------------------ |
 | `-c`                | defines the path to the [*configuration file*](#exemplary-configuration-file) |
 | `-p`                | specifies the project code for which the description should be loaded |
-(note: information can only be loaded for projects the users has access to)
+(note: information can only be loaded for projects the user has access to)
 
 ### Exemplary Configuration File
 ```
