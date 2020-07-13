@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Entry point for the MetaStats-CLI application.
- * <p>
  * The purpose of this class is to act as a bridge between the command line and the <i>real</i> implementation of a tool by using a {@link ToolExecutor}.
  */
 public class MetaStatsEntryPoint {
