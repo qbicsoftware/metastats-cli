@@ -31,7 +31,7 @@ class SequencingModeCalculator {
         //has R1 and R2
         if (R1 && R2) sequencingMode = SequencingMode.PAIRED_END.seqMode
         //has not R2 and not R1
-        if(!R1 && !R2) LOG.warn "Whether R1 nor R2 are contained within the sequencing name. Check for file naming conventions."
+        if(!R1 && !R2) LOG.warn "Neither R1 nor R2 is contained within the sequencing name. Check for file naming conventions."
 
 
         return sequencingMode
