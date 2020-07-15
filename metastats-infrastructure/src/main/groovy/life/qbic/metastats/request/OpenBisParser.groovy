@@ -49,7 +49,6 @@ class OpenBisParser {
                 //children+parents are relatives of preparations sample!
                 allSamples << createMetaStatsSample(parents + children, sample)
             } else {
-                //todo is this required?
                 allSamples += getPreparationSamples(sample.children)
             }
         }
