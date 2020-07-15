@@ -1,5 +1,6 @@
 package life.qbic.metastats.cli;
 
+import io.micronaut.http.resource.$ResourceLoaderFactory$FileSystemResourceLoaderDefinitionClass;
 import life.qbic.cli.ToolExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

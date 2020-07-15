@@ -1,12 +1,5 @@
 package life.qbic.metastats
 
-import org.everit.json.schema.Schema
-import org.everit.json.schema.ValidationException
-import org.everit.json.schema.loader.SchemaClient
-import org.everit.json.schema.loader.SchemaLoader
-import org.json.JSONObject
-import org.json.JSONTokener
-
 import life.qbic.metastats.filter.JsonValidator
 import spock.lang.Specification
 
