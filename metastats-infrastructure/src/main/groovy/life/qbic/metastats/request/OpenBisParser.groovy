@@ -119,7 +119,7 @@ class OpenBisParser {
         preparationSample.children.each { child ->
             children.add(child)
 
-            if (child.children != null) {//child.children.size() > 0 && child.children.get(0) instanceof Sample){
+            if (child.children != null) {
                 children += getAllChildren(child)
             }
         }
