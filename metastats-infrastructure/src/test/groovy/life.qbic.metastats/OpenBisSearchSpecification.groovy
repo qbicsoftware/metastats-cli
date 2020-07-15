@@ -1,17 +1,22 @@
 package life.qbic.metastats
 
-
+import life.qbic.metastats.datamodel.MetaStatsExperiment
+import life.qbic.metastats.datamodel.MetaStatsSample
+import life.qbic.metastats.io.JsonParser
+import life.qbic.metastats.request.OpenBisSearch
+import life.qbic.metastats.request.OpenBisSession
 import spock.lang.Specification
 
 class OpenBisSearchSpecification extends Specification {
 
-    /*   OpenBisSession session
+      /* OpenBisSession session
 
        def setup(){
+
            def file = new File("/Users/jnnfr/private/credentials.json.properties")
            JsonParser props = new JsonParser(file.path)
            Map cred = (Map) props.parse()
-           session = new OpenBisSession((String) cred.get("user"), (String) cred.get("password"), (String) cred.get("server_url"))
+           session = new OpenBisSession((String) cred.get("user"), (String) cred.get("password"), (String) cred.get("server_url"),3000)
            println session
        }
 

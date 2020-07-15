@@ -7,9 +7,9 @@ class TsvFileOutput extends FileOutput {
 
     private static String missingValues = "NA"
     private static String fileEnding = "tsv"
-    private ArrayList<String> order = ["QBiC.Code", "SampleName", "SequencingFacilityId", "SequencingDevice", "SequencingMode",
-                                       "Individual", "Species", "ExtractCode", "Sex", "Tissue",
-                                       "Analyte", "IntegrityNumber", "Filename"]
+    private ArrayList<String> columnOrder = ["QBiC.Code", "SampleName", "SequencingFacilityId", "SequencingDevice", "SequencingMode",
+                                             "Individual", "Species", "ExtractCode", "Sex", "Tissue",
+                                             "Analyte", "IntegrityNumber", "Filename"]
 
     /**
      * Creates the output for a given project code
@@ -24,9 +24,9 @@ class TsvFileOutput extends FileOutput {
         StringBuilder fileContent = new StringBuilder()
 
         //add different conditions
-        int pos = order.size() - 1
-        order.addAll(pos, getConditions(entries))
-        order.each { header ->
+        int pos = columnOrder.size() - 1
+        columnOrder.addAll(pos, getConditions(entries))
+        columnOrder.each { header ->
             fileContent << header + "\t"
         }
 
@@ -36,7 +36,7 @@ class TsvFileOutput extends FileOutput {
         //create header with keywords and search for values in the samples
         entries.each { entry ->
             //fileContent << entry.entryId
-            order.each { header ->
+            columnOrder.each { header ->
                 String cellValue = entry.entryProperties.get(header).toString()
 
                 if (header.contains("Condition")) {
