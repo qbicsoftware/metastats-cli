@@ -101,7 +101,7 @@ class OpenBisParser {
             //MetaStatsSample parentSample = new MetaStatsSample(parent.code, parent.type.code,parent.properties)
             parents.add(parent)
 
-            if (parent.parents != null) {//parent.parents.size() > 0 && parent.parents.get(0) instanceof Sample){
+            if (parent.parents != null) {
                 parents += getAllParents(parent)
             }
         }
