@@ -13,7 +13,6 @@ class OpenBisMapperSpecification extends Specification {
 
     def setup() {
         URL sampleInput = OpenBisMapper.class.getClassLoader().getResource("openbisToMetastatsSample.json")
-        // OpenBisMapper.class.classLoader.getResourceAsStream()
         JsonParser props = new JsonParser(url.getPath())
         Map mappingInfo = props.parse()
 
