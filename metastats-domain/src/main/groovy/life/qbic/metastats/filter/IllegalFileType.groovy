@@ -3,7 +3,7 @@ package life.qbic.metastats.filter
 class IllegalFileType extends IllegalArgumentException {
 
     /**
-     * Creates an IlligalFileType exception with an error message
+     * Creates an IllegalFileType exception with an error message
      * @param error Content of error message
      */
     IllegalFileType(String error) {
