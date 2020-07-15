@@ -117,7 +117,6 @@ class OpenBisParser {
         List children = []
 
         preparationSample.children.each { child ->
-            //MetaStatsSample childSample = new MetaStatsSample(child.code, child.type.code,child.properties)
             children.add(child)
 
             if (child.children != null) {//child.children.size() > 0 && child.children.get(0) instanceof Sample){
