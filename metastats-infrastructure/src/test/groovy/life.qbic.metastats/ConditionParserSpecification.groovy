@@ -25,7 +25,7 @@ class ConditionParserSpecification extends Specification {
     """
 
 
-    def "xml parsing retrieves the right number of Conditions"() {
+    def "xml parsing retrieves correct conditions"() {
         given:
         ConditionParser parser = new ConditionParser()
 
