@@ -19,7 +19,7 @@ class JsonParserSpecification extends Specification {
         assert req.sort() == ["Species", "SampleName"].sort()
     }
 
-    def "Right file path is parsed without error"() {
+    def "Valid file path is parsed without error"() {
         given:
         URL url = JsonParserSpecification.class.getClassLoader().getResource("testSchema.json")
         assert url != null
