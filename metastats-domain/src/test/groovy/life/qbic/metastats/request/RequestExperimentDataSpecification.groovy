@@ -35,7 +35,7 @@ class RequestExperimentDataSpecification extends Specification {
         valid
     }
 
-    def "give a warning for wrong QBiC project codes"() {
+    def "invalid QBiC project codes results in warning"() {
         given:
         def projectCode = "XXXXX" //no leading Q
         def projectCode2 = "QXXXXX" //too long
