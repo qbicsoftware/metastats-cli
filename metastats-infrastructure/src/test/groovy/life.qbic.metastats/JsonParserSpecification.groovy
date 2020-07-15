@@ -5,7 +5,7 @@ import spock.lang.Specification
 
 class JsonParserSpecification extends Specification {
 
-    def "Right resource path is parsed without error"() {
+    def "Valid resource path is parsed without error"() {
         given:
         JsonParser parser = new JsonParser("testSchema.json")
 
