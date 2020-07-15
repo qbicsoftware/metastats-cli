@@ -24,7 +24,7 @@ class RequestExperimentDataSpecification extends Specification {
      then:
      noExceptionThrown()}*/
 
-    def "detect right QBiC project codes"() {
+    def "detect valid QBiC project codes"() {
         given:
         def projectCode = "QXXXX"
 
