@@ -20,7 +20,7 @@ class JsonValidatorSpecification extends Specification {
         res
     }
 
-    def "wrong metadata returns false"() {
+    def "Invalid metadata returns false"() {
         given:
         JsonValidator validator = new JsonValidator("/testSchema.json")
 
