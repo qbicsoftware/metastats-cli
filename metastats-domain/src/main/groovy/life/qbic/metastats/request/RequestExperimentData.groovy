@@ -21,7 +21,7 @@ class RequestExperimentData implements ProjectSpecification {
     }
 
     @Override
-    def requestProjectMetadata(String projectCode) {
+    void requestProjectMetadata(String projectCode) {
 
         if (!verifyQbicCode(projectCode)) {
             LOG.error "The project code was not valid!"

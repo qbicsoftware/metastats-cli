@@ -7,6 +7,6 @@ interface ProjectSpecification {
      * @param projectCode qbic code specifying the openbis project
      * @return
      */
-    def requestProjectMetadata(String projectCode)
+    void requestProjectMetadata(String projectCode)
 
 }
