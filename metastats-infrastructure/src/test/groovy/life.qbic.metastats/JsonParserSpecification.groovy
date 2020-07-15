@@ -48,7 +48,7 @@ class JsonParserSpecification extends Specification {
         thrown(FileNotFoundException)
     }
 
-    def "Wrong resource path throws error"() {
+    def "Invalid resource path throws error"() {
         given:
         JsonParser parser = new JsonParser("Modelschema.json")
 
