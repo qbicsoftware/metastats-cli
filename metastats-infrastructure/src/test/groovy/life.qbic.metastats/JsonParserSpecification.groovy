@@ -35,7 +35,7 @@ class JsonParserSpecification extends Specification {
         assert req.sort() == ["Species", "SampleName"].sort()
     }
 
-    def "Wrong file path throws error"() {
+    def "Invalid file path throws error"() {
         given:
         JsonParser parser = new JsonParser("Modelschema.json")
 
