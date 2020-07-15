@@ -105,7 +105,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
             if (res != "") props.put("IntegrityNumber", Double.parseDouble(res))
             //else the number remains an empty string and is validated by the schema.
             else{
-                LOG.warn "The integritit number is not stated for this sample"
+                LOG.warn "The integrity number is not stated for this sample"
             }
 
             MetaStatsPackageEntry entry = new MetaStatsPackageEntry(sampleName, props)
