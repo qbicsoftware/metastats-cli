@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "analyte.schema#",
+  "definitions": {
+    "analyte": {
+      "description": "Type of molecule extracted from biological material",
+      "type": "string",
+      "enum": [
+        "Small Molecules",
+        "Ribosomal RNA",
+        "RNA",
+        "Proteins",
+        "Phosphoproteins",
+        "Phosphopeptides",
+        "Phospholipids",
+        "Peptides",
+        "Messenger RNA",
+        "Lipids",
+        "Glycopeptides",
+        "Glycans",
+        "DNA",
+        "Circulating free DNA",
+        "Cell Lysate",
+        "Carbohydrates"
+      ]
+    }
+  }
+}

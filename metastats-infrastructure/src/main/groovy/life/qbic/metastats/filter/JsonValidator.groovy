@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger
 
 class JsonValidator implements SchemaValidator {
 
-    //TODO use model schema from https://github.com/qbicsoftware/metastats-object-model/blob/master/model.schema.json
+    //TODO use model schema from external resource like github
     final JsonSchema jsonSchema
 
     private static final Logger LOG = LogManager.getLogger(JsonValidator.class)
@@ -20,12 +20,14 @@ class JsonValidator implements SchemaValidator {
      * Creates a JsonSchema object based on a given schema
      * @param schema describing how the MetaStats output should look like
      */
-    JsonValidator(String schema) {
-
-        JsonNode node = JsonLoader.fromResource(schema)
+    JsonValidator(File schema) {
         final JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+        jsonSchema = factory.getJsonSchema("file:"+schema)
+    }
 
-        jsonSchema = factory.getJsonSchema(node)
+    JsonValidator(String resource) {
+        final JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+        jsonSchema = factory.getJsonSchema("resource:"+resource)
     }
 
     @Override

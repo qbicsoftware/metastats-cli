@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "id": "sequencingDevice.schema#",
+  "definitions": {
+    "sequencingDevice": {
+      "description": "Name of the sequencer device",
+      "type": "string",
+      "enum": [
+        "ThermoFisher Ion PGM System at Pathology (UKT)",
+        "Not specified sequencer instrument",
+        "Illumina MiSeq at MPIDB",
+        "Illumina MiSeq at IMGAG",
+        "Illumina HiSeq 2500 at unspecified lab",
+        "Illumina HiSeq 2500 at IMGAG",
+        "Illumina HiSeq 2500 at CeGaT",
+        "Illumina HiSeq 2000 at unspecified lab",
+        "Illumina HiSeq 2000 at MPIDB"
+      ]
+    }
+  }
+}

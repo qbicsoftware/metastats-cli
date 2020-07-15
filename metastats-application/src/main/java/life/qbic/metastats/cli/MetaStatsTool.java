@@ -12,7 +12,7 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsTool.class);
 
-    private static final String schemaPath = "/model.schema.json";
+    private static final String schemaPath = "/schema/model.schema.json";
     private static final String sampleSchema = "openbisToMetastatsSample.json";
     private static final String experimentSchema = "openbisToMetastatsExperiment.json";
 
