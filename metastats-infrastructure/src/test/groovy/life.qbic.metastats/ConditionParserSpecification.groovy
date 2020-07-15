@@ -32,7 +32,6 @@ class ConditionParserSpecification extends Specification {
         HashMap props = new HashMap()
         props.put("Q_EXPERIMENTAL_SETUP", condition)
 
-        //MetaStatsExperiment experiment = new MetaStatsExperiment("Q_PROJECT_INFO",[],props)
         StudyXMLParser pars = new StudyXMLParser()
         pars.validate(condition)
 
