@@ -13,15 +13,14 @@ class OpenBisMapperSpecification extends Specification {
 
     def setup() {
         URL sampleInput = OpenBisMapper.class.getClassLoader().getResource("openbisToMetastatsSample.json")
-        JsonParser props = new JsonParser(url.getPath())
-        Map mappingInfo = props.parse()
+        JsonParser sampleProperties = new JsonParser(sampleInput.getPath())
+        Map sampleMappingInfo = sampleProperties.parse()
 
-        URL url2 = OpenBisMapper.class.getClassLoader().getResource("openbisToMetastatsExperiment.json")
-        // OpenBisMapper.class.classLoader.getResourceAsStream()
-        JsonParser props2 = new JsonParser(url2.getPath())
-        Map mappingInfo2 = props2.parse()
+        URL experimentInput = OpenBisMapper.class.getClassLoader().getResource("openbisToMetastatsExperiment.json")
+        JsonParser experimentProperties = new JsonParser(experimentInput.getPath())
+        Map experimentMappingInfo = experimentProperties.parse()
 
-        obm = new OpenBisMapper(mappingInfo2, mappingInfo)
+        obm = new OpenBisMapper(experimentMappingInfo, sampleMappingInfo)
     }
 
     def "mapping of entity properties is successful"() {
