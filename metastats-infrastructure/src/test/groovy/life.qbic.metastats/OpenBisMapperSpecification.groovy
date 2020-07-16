@@ -105,7 +105,6 @@ class OpenBisMapperSpecification extends Specification {
 
         MetaStatsExperiment experiment = new MetaStatsExperiment("Q_PROJECT_DETAILS", properties, [])
 
-        //MetaStatsExperiment experiment = new MetaStatsExperiment("Q_PROJECT_INFO", properties)
         MetaStatsSample sample1 = new MetaStatsSample("QXXXXXX", "Q_TEST_SAMPLE", new HashMap<String, String>())
         sample1.addRelatives("QFSVIENTITY-1")
 
