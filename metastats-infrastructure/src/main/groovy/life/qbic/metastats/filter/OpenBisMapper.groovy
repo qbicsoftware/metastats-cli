@@ -1,71 +1,145 @@
 package life.qbic.metastats.filter
 
-import groovy.json.JsonSlurper
+import life.qbic.metastats.datamodel.Condition
+import life.qbic.metastats.datamodel.MetaStatsExperiment
+import life.qbic.metastats.datamodel.MetaStatsSample
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
-class OpenBisMapper implements PropertiesMapper{
+class OpenBisMapper implements PropertiesMapper {
 
-    //todo conditions, filename, sequencing device
+    private Map sampleMappingProperties
+    private Map experimentMappingProperties
+    private ConditionParser parser
 
-    Map<String,String> mapExperimentProperties(Map<String,String> openBisProperties){
-        Map<String,String> metaStatsProperties = new HashMap<>()
-        //Q_PROPERTIES
+    private static final Logger LOG = LogManager.getLogger(OpenBisMapper.class)
+
+    /**
+     * Creates an OpenBisMapper based on the given maps for experiment and sample properties
+     * @param experimentProps containing the corresponding metastats terms for openbis experiment properties
+     * @param sampleProps containing the corresponding metastats terms for openbis sample properties
+     */
+    OpenBisMapper(Map experimentProps, Map sampleProps) {
+        experimentMappingProperties = experimentProps
+        sampleMappingProperties = sampleProps
+    }
+
+    /**
+     * Maps experiment to sample properties, if the experiment contains information about that sample
+     * @param experiment with database metadata information about samples
+     * @param sample with properties
+     * @return experimental properties based on metastats terms for the given sample
+     */
+    Map mapExperimentToSample(MetaStatsExperiment experiment, MetaStatsSample sample) {
+        Map metaStatsProperties = new HashMap<>()
+        if (isSampleOfExperiment(experiment.relatedSampleCodes, sample)) {
+            experimentMappingProperties.each { openBisTerm, metastatsTerm ->
+                String value = containsProperty(experiment.experimentProperties, openBisTerm as String)
+                metaStatsProperties.put(metastatsTerm as String, value)
+            }
+        }
 
         return metaStatsProperties
     }
 
-    Map<String,String> mapEntityProperties(Map<String,String> openBisProperties){
-        Map<String,String> metaStatsProperties = new HashMap<>()
+    /**
+     * Maps the experimental conditions onto the preparation sample if one of its relatives or the sample itself has
+     * experimental conditions
+     * @param experimentConditions based on XML encoding
+     * @param sample for which experimental conditions are searched
+     * @return condition in form of properties for the given sample
+     */
+    Map mapConditionToSample(Map experimentConditions, MetaStatsSample sample) {
+        HashMap metaStatsProperties = new HashMap<>()
 
-        openBisProperties.each { type, prop ->
-            if (type == "Q_NCBI_ORGANISM") {
-                metaStatsProperties.put("species", prop)
+        parser = new ConditionParser()
+        parser.parseProperties(experimentConditions)
+
+        //check all children of prep sample to find the samples condition
+        sample.relatedSamples.each { relative ->
+            assignSampleConditions(metaStatsProperties, relative)
+        }
+
+        //also read conditions on level of preparation sample/current sample
+        assignSampleConditions(metaStatsProperties, sample.sampleCode)
+
+        return metaStatsProperties
+    }
+
+    /**
+     * Assigns the sample conditions to a sample based on its code
+     * @param metaStatsProperties to which the conditions are written
+     * @param sampleCode of the sample for which the conditions should be found
+     */
+    void assignSampleConditions(HashMap metaStatsProperties, String sampleCode) {
+        def res = parser.getSampleConditions(sampleCode)
+
+        if (res != null) {
+            res.each { sampleProp ->
+                String value = sampleProp.value
+                String label = sampleProp.label
+
+                if (metaStatsProperties.containsKey("Condition")) {
+                    List conditions = metaStatsProperties.get("Condition") as List
+
+                    conditions.add(new Condition(label, value))
+                    //overwrites condition if already contained
+                    metaStatsProperties.put("Condition", conditions)
+                } else {
+                    metaStatsProperties.put("Condition", [new Condition(label, value)])
+                }
             }
-            if (type == "SEX") {
-                metaStatsProperties.put("sex", prop)
+        } else {
+            LOG.info "no experiment conditions where found, check your openbis project"
+        }
+    }
+
+    /**
+     * Determines if a sample is part of an experiment based on list of samples assigned to an experiment
+     * @param experimentSamples are samples of an experiment as codes
+     * @param sample with properties with related samples
+     * @return boolean to state if sample is contained in experiment
+     */
+    boolean isSampleOfExperiment(List<String> experimentSamples, MetaStatsSample sample) {
+        boolean contained = false
+        //check if experiment is conducted for sample
+        experimentSamples.each { expSampleCode ->
+            //check prepSample code
+            if (sample.sampleCode == expSampleCode) contained = true
+            //check relatives
+            sample.relatedSamples.each { relativeCode ->
+                if (relativeCode == expSampleCode) contained = true
             }
+        }
+        return contained
+    }
+
+    /**
+     * Maps sample properties to metastats properties
+     * @param openBisProperties , properties described with openbis terms
+     * @return map of properties now described with metastats terms
+     */
+    Map<String, String> mapSampleProperties(Map<String, String> openBisProperties) {
+        Map<String, String> metaStatsProperties = new HashMap<>()
+        sampleMappingProperties.each { openBisTerm, metastatsTerm ->
+            String value = containsProperty(openBisProperties, openBisTerm as String)
+            metaStatsProperties.put(metastatsTerm as String, value)
         }
         return metaStatsProperties
     }
 
-    Map<String,String> mapBioSampleProperties(Map<String,String> openBisProperties){
-        Map<String,String> metaStatsProperties = new HashMap<>()
-
-        openBisProperties.each { type, prop ->
-            if (type == "Q_PRIMARY_TISSUE") {
-                metaStatsProperties.put("tissue", prop)
-            }
+    /**
+     * Checks if a given openbis property is contained in the map of properties for which a translation into
+     * a metastats term exists
+     * @param openBisProperties as a collection of terms that can be translated into openbis
+     * @param openBisProperty as a property to define the property which is looked up
+     * @return String of contained openBisProperty or "" if there is no openBisProperty in openBisProperties 
+     */
+    static String containsProperty(Map openBisProperties, String openBisProperty) {
+        if (openBisProperties.containsKey(openBisProperty)) {
+            return openBisProperties.get(openBisProperty)
         }
-        return metaStatsProperties
+        return ""
     }
-
-    Map<String,String> mapTestSampleProperties(Map<String,String> openBisProperties){
-        Map<String,String> metaStatsProperties = new HashMap<>()
-
-        openBisProperties.each {type, prop ->
-            if(type == "Q_SAMPLE_TYPE"){
-                metaStatsProperties.put("analyte",prop)
-            }
-            if(type == "Q_SECONDARY_NAME"){
-                metaStatsProperties.put("sequencingFacilityId",prop)
-            }
-            if(type == "Q_RIN"){
-                metaStatsProperties.put("integrityNumber",prop)
-            }
-        }
-        return metaStatsProperties
-    }
-
-    Map<String,String> mapRunProperties(Map<String,String> openBisProperties){
-        Map<String,String> metaStatsProperties = new HashMap<>()
-
-        openBisProperties.each { type, prop ->
-            if (type == "Q_SECONDARY_NAME") {
-                metaStatsProperties.put("sampleName", prop)
-            }
-        }
-        return metaStatsProperties
-    }
-
-
 
 }

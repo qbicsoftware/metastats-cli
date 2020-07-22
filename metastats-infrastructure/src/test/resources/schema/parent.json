@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schema/parent.json",
+  "title": "MetaStats Entry",
+  "description": "A MetaStats object representation for statistical analysis",
+  "type": "object",
+  "properties":{
+    "MyBool": {
+      "$ref" : "MyBoolean.json#/definitions/boolean"
+    }
+  }
+}

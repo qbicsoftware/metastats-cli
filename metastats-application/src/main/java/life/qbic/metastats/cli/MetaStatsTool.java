@@ -1,8 +1,7 @@
 package life.qbic.metastats.cli;
 
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi;
 import life.qbic.cli.QBiCTool;
-import life.qbic.metastats.request.*;
+import life.qbic.metastats.MetaStatsController;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,6 +11,11 @@ import org.apache.logging.log4j.Logger;
 public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsTool.class);
+
+    private static final String schemaPath = "/schema/model.schema.json";
+    private static final String sampleSchema = "openbisToMetastatsSample.json";
+    private static final String experimentSchema = "openbisToMetastatsExperiment.json";
+
 
     /**
      * Constructor.
@@ -26,13 +30,8 @@ public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
     public void execute() {
         // get the parsed command-line arguments
         final MetaStatsCommand command = super.getCommand();
-        /**OpenBisSession session =
-        DatabaseGateway db = new OpenBisSearch(IApplicationServerApi,"")
-        ProjectSpecification spec = new RequestExperimentData()
 
-        MetaStatsController msc = new MetaStatsController(command.conf,command.projectCode);*/
-
+        MetaStatsController controller = new MetaStatsController(command.conf, command.projectCode);
+        controller.execute(schemaPath, sampleSchema, experimentSchema);
     }
-
-    // TODO: override the shutdown() method if you are implementing a daemon and want to take advantage of a shutdown hook for clean-up tasks
 }

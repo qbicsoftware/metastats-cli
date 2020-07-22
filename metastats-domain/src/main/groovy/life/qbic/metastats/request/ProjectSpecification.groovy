@@ -2,6 +2,11 @@ package life.qbic.metastats.request
 
 interface ProjectSpecification {
 
-    def requestProjectMetadata(String projectCode)
+    /**
+     * Requests the project information based on the project code
+     * @param projectCode qbic code specifying the openbis project
+     * @return
+     */
+    void requestProjectMetadata(String projectCode)
 
 }

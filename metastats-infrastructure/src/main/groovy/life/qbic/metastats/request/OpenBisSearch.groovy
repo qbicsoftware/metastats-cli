@@ -2,6 +2,8 @@ package life.qbic.metastats.request
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.search.SearchResult
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.DataSet
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.dataset.fetchoptions.DataSetFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.fetchoptions.ExperimentFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project
@@ -9,21 +11,42 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetc
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.fetchoptions.SampleFetchOptions
-
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.search.SampleSearchCriteria
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.VocabularyTerm
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.fetchoptions.VocabularyTermFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.vocabulary.search.VocabularyTermSearchCriteria
+import ch.ethz.sis.openbis.generic.dssapi.v3.IDataStoreServerApi
+import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.DataSetFile
+import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.fetchoptions.DataSetFileFetchOptions
+import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.search.DataSetFileSearchCriteria
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 
-class OpenBisSearch implements DatabaseGateway{
-
+class OpenBisSearch implements DatabaseGateway {
 
     Project project
     IApplicationServerApi v3
+    IDataStoreServerApi dss
     String sessionToken
+    private OpenBisSession session
 
-    OpenBisSearch(IApplicationServerApi v3, String session){
-        this.v3 = v3
-        sessionToken = session
+    OpenBisParser parser = new OpenBisParser()
+
+
+    private static final Logger LOG = LogManager.getLogger(OpenBisSearch.class)
+
+    /**
+     * Creates an openbis search for a given session
+     * @param session used to query openbis
+     */
+    OpenBisSearch(OpenBisSession session) {
+        this.session = session
+        this.v3 = session.v3
+        this.dss = session.dss
+        sessionToken = session.sessionToken
     }
 
     @Override
@@ -49,179 +72,219 @@ class OpenBisSearch implements DatabaseGateway{
         fetchOptions.withExperimentsUsing(experiment)
 
         SearchResult<Project> resProject = v3.searchProjects(sessionToken, criteria, fetchOptions)
+
+        if (resProject.getObjects().size() == 0) {
+            LOG.warn "Project $projectCode not found"
+            System.exit(-1)
+        }
+
         project = resProject.getObjects().get(0)
     }
 
     @Override
-    List<MetaStatsExperiment> getExperimentsWithMetadata() {
+    List<MetaStatsExperiment> fetchExperimentsWithMetadata() {
         List<MetaStatsExperiment> experiments = []
 
         project.getExperiments().each { exp ->
-            String type = exp.type.code
-            List<String> samples = getSamplesForExperiment(exp)
-            Map<String,String> props = exp.properties
-
-            MetaStatsExperiment experiment = new MetaStatsExperiment(type,samples,props)
-
-            experiments.add(experiment)
+            experiments.add(parser.createMetaStatsExperiment(exp))
         }
+
+        translateExperimentVocabulary(experiments)
 
         return experiments
     }
 
-    List<String> getSamplesForExperiment(Experiment exp){
-        List<String> sampleCodes = []
-
-        exp.getSamples().each {
-           sampleCodes.add(it.code)
-        }
-        return sampleCodes
-    }
-
     @Override
-    List<MetaStatsSample> getSamplesWithMetadata() {
-        List<MetaStatsSample> samples = findBiologicalEntity()
-        //assignPreparationSample(entitySamples)
+    List<MetaStatsSample> fetchSamplesWithMetadata() {
+        List<MetaStatsSample> samples = fetchBiologicalEntity()
 
         return samples
     }
 
+    @Override
+    void logout() {
+        session.logout()
+    }
 
-    List<MetaStatsSample> findBiologicalEntity(){
+    /**
+     * Retrieves all samples on the level of biological entities (Q_BIOLOGICAL_ENTITY)
+     * @return a list of metastats samples
+     */
+    List<MetaStatsSample> fetchBiologicalEntity() {
         List prepSamples = []
         List<Experiment> experiments = project.experiments
         List<Sample> openBisSamples
 
-       experiments.each { exp ->
-           //only do it for the Experiment with Biological Samples since from here all other samples can be found
-           if (exp.code == project.code+"E2" && exp.getSamples() != null){ //todo manchmal gibts e2 2x --> only consider exp with samples
-               openBisSamples = exp.getSamples()
-               prepSamples += getPreparationSamples(openBisSamples)
-           }
-       }
+        experiments.each { exp ->
+            //only do it for the Experiment with Biological Samples since from here all other samples can be found
+            if (exp.type.code == "Q_EXPERIMENTAL_DESIGN" && exp.getSamples() != null) {
+                //todo manchmal gibts e2 2x --> only consider exp with samples
+                LOG.info "found $exp.type.code"
+
+                LOG.info "fetch all samples from experiment"
+                openBisSamples = exp.getSamples()
+
+                prepSamples += parser.getPreparationSamples(openBisSamples)
+            }
+        }
+
+        //translate vocabularies to meaningfully
+        translateSampleVocabulary(prepSamples)
+        //add filenames to sample
+        addFile(prepSamples)
+
         return prepSamples
     }
 
-
-    List<MetaStatsSample> getPreparationSamples(List<Sample> samples){
-        List<MetaStatsSample> allSamples = []
-
-        samples.each{sample ->
-            //create sample object
-            String code = sample.code
-            String type = sample.type.code
-
-            if(type == "Q_TEST_SAMPLE"){
-                //get parent samples
-                List parents = getAllParents(sample)
-                //get children samples
-                List children = getAllChildren(sample)
-
-                //concatenate list and put is as children list
-                MetaStatsSample mss = new MetaStatsSample(code, type, parents+children, sample.properties)
-                allSamples << mss
-            }
-            else{
-                allSamples += getPreparationSamples(sample.children)
+    /**
+     * Translates the vocabulary of a given list of samples
+     * @param samples containing properties that require translation e.g Q_NCBI_ORGANISM
+     */
+    void translateSampleVocabulary(List<MetaStatsSample> samples) {
+        samples.each { sample ->
+            sample.sampleProperties.each { key, value ->
+                if (key == "Q_NCBI_ORGANISM" || key == "Q_PRIMARY_TISSUE") {
+                    String vocabulary = fetchVocabulary(value)
+                    //overwrite old key
+                    sample.sampleProperties.put(key, vocabulary)
+                }
             }
         }
-        return allSamples
     }
-
-    List<MetaStatsSample> getAllParents(Sample preparationSample){
-        List parents = []
-
-        preparationSample.parents.each {parent->
-            MetaStatsSample parentSample = new MetaStatsSample(parent.code, parent.type.code,parent.properties)
-            parents.add(parentSample)
-
-            if(parent.parents != null){//parent.parents.size() > 0 && parent.parents.get(0) instanceof Sample){
-                parents += getAllParents(parent)
-            }
-        }
-
-        return parents
-    }
-
-    List<MetaStatsSample> getAllChildren(Sample preparationSample){
-        List children = []
-
-        preparationSample.children.each {child->
-            MetaStatsSample childSample = new MetaStatsSample(child.code, child.type.code,child.properties)
-            children.add(childSample)
-
-            if(child.children.size() > 0 && child.children.get(0) instanceof Sample){
-                children += getAllChildren(child)
-            }
-        }
-
-        return children
-    }
-
 
     /**
-     *    List<MetaStatsSample> findBiologicalEntity(){*         List samples = []
-     *
-     *         project.getExperiments().each { exp ->
-     *             //only do it for the Experiment with Biological Samples since from here all other samples can be found
-     *             if(exp.getCode() =~ "Q[A-X0-9]{4}E2"){*                 def openBisSamples = exp.getSamples()
-     *                 def exp_samples =  findAllSampleChildren(openBisSamples)
-     *                 samples = exp_samples
-     *}
-     *         }
-     *
-     *         resamples
-     *     }
-     * def assignPreparationSample(List<MetaStatsSample> samples){
-     setPreparationCodeForParent(samples)
-     samples.each { entity ->
-     entity.children.each { bioSample ->
-     bioSample.children.each { prepSample ->
-     setPreparationCodeForChildren(prepSample.code, prepSample.children)
-     }
-     }
-     }
-     }
+     * Translates the Experiment vocabulary
+     * @param experiments containing properties that require translation e.g Q_SEQUENCER_DEVICE
+     */
+    void translateExperimentVocabulary(List<MetaStatsExperiment> experiments) {
+        experiments.each { experiment ->
+            experiment.experimentProperties.each { key, value ->
+                if (key == "Q_SEQUENCER_DEVICE") {
+                    String vocabulary = fetchVocabulary(value)
+                    //overwrite old key
+                    experiment.experimentProperties.put(key, vocabulary)
+                }
+            }
+        }
+    }
 
-     def setPreparationCodeForParent(List<MetaStatsSample> samples){
-     samples.each { entity ->
-     entity.children.each { bioSample ->
-     bioSample.children.each { prepSample ->
-     entity.preparationSample << prepSample.code
-     }
-     }
-     }
-     }
+    /**
+     * Fetches the vocabulary that needs to be translated from openbis
+     * @param code
+     * @return translated term
+     */
+    String fetchVocabulary(String code) {
+        VocabularyTermSearchCriteria vocabularyTermSearchCriteria = new VocabularyTermSearchCriteria()
+        vocabularyTermSearchCriteria.withCode().thatEquals(code)
 
-     def setPreparationCodeForChildren(String prepCode, List<MetaStatsSample> samples){
+        SearchResult<VocabularyTerm> vocabularyTermSearchResult = v3.searchVocabularyTerms(sessionToken, vocabularyTermSearchCriteria, new VocabularyTermFetchOptions())
 
-     samples.each { child ->
-     child.preparationSample << prepCode
-     if(child.children != null){
-     setPreparationCodeForChildren(prepCode,child.children)
-     }
-     }
+        String term = vocabularyTermSearchResult.objects.get(0).label
 
-     List<MetaStatsSample> findAllSampleChildren(List<Sample> biologicalEntitySamples){
+        return term
+    }
 
-     List<MetaStatsSample> allSamples = []
+    /**
+     * Fetches and adds files to a given list of samples
+     * @param prepSamples to which corresponding files are added
+     */
+    void addFile(List<MetaStatsSample> prepSamples) {
+        prepSamples.each { sample ->
+            HashMap files = fetchDataSets(sample.sampleCode, "fastq")
+            sample.sampleProperties << files
+        }
+    }
 
-     biologicalEntitySamples.each{sample ->
-     //create sample object
-     String code = sample.code
-     String type = sample.type.code
-     println type+" is the sample type"
+    /**
+     * Fetches datasets of a given filetype for a sample specified by its code
+     * @param sampleCode specifying the sample for which the DS shall be fetched
+     * @param fileType specifying which files are searched
+     * @return a maps of found datasets with their openbis type
+     */
+    HashMap<String, String> fetchDataSets(String sampleCode, String fileType) {
+        LOG.info "fetch DataSet for $sampleCode"
 
+        HashMap allDataSets = new HashMap()
 
-     Map<String,String> properties = sample.getProperties()
+        StringBuilder dataFiles = new StringBuilder("")
+        String datasetType = ""
 
-     List<MetaStatsSample> children = findAllSampleChildren(sample.getChildren())
+        findAllDatasetsRecursive(sampleCode).each { dataSet ->
+            DataSetFileSearchCriteria criteria = new DataSetFileSearchCriteria()
+            criteria.withDataSet().withPermId().thatEquals(dataSet.permId.permId)
+            criteria.withDataSet().withType()
 
-     allSamples << new MetaStatsSample(code,type,children,properties)
-     }
-     return allSamples
-     }
-     }*/
+            SearchResult<DataSetFile> result = dss.searchFiles(sessionToken, criteria, new DataSetFileFetchOptions())
+            List<DataSetFile> files = result.getObjects()
+
+            for (DataSetFile file : files) {
+                if (file.getPermId().toString().contains("." + fileType)
+                        && !file.getPermId().toString().contains(".sha256sum")
+                        && !file.getPermId().toString().contains("origlabfilename")
+                        && !file.getPermId().toString().contains(".csv")
+                        && !file.getPermId().toString().contains(".txt")) {
+                    String[] path = file.getPermId().toString().split("/")
+                    if (!dataFiles.contains(path[path.size() - 1])) dataFiles << path[path.size() - 1] + ", "
+                    datasetType = dataSet.type.code
+                }
+            }
+        }
+
+        if (dataFiles.toString() != "") {
+            dataFiles.delete(dataFiles.length() - 2, dataFiles.length())
+            allDataSets.put(datasetType, dataFiles)
+        }
+
+        return allDataSets
+    }
+
+    /**
+     * Searches for all related datasets of a sample with a recursion
+     * @param sampleId specifying the sample for which DS are searched
+     * @return list of found datasets
+     */
+    List<DataSet> findAllDatasetsRecursive(final String sampleId) {
+        SampleSearchCriteria criteria = new SampleSearchCriteria()
+        criteria.withCode().thatEquals(sampleId)
+
+        // tell the API to fetch all descendants for each returned sample
+        SampleFetchOptions fetchOptions = new SampleFetchOptions()
+        DataSetFetchOptions dsFetchOptions = new DataSetFetchOptions()
+        dsFetchOptions.withType()
+        fetchOptions.withChildrenUsing(fetchOptions)
+        fetchOptions.withDataSetsUsing(dsFetchOptions)
+        SearchResult<Sample> result = v3.searchSamples(sessionToken, criteria, fetchOptions)
+
+        List<DataSet> foundDatasets = new ArrayList<>()
+
+        for (Sample sample : result.getObjects()) {
+            // add the datasets of the sample itself
+            foundDatasets.addAll(sample.getDataSets())
+
+            // fetch all datasets of the children
+            foundDatasets.addAll(fetchDescendantDatasets(sample))
+        }
+
+        return foundDatasets
+    }
+
+    /**
+     * Fetches descendant datstes of a sample
+     * @param sample
+     * @return list of descendant datasets
+     */
+    private static List<DataSet> fetchDescendantDatasets(final Sample sample) {
+        List<DataSet> foundSets = new ArrayList<>()
+
+        // fetch all datasets of the children recursively
+        for (Sample child : sample.getChildren()) {
+            final List<DataSet> foundChildrenDatasets = child.getDataSets()
+            foundSets.addAll(foundChildrenDatasets)
+            foundSets.addAll(fetchDescendantDatasets(child))
+        }
+
+        return foundSets
+    }
 
 
 }

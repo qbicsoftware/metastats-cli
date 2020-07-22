@@ -1,16 +1,30 @@
 package life.qbic.metastats.filter
 
+
+import life.qbic.metastats.datamodel.MetaStatsExperiment
+import life.qbic.metastats.datamodel.MetaStatsSample
+
 interface PropertiesMapper {
 
-    Map<String,String> mapExperimentProperties(Map<String,String> openBisProperties)
-
-    Map<String,String> mapEntityProperties(Map<String,String> openBisProperties)
-
-    Map<String,String> mapBioSampleProperties(Map<String,String> openBisProperties)
-
-    Map<String,String> mapTestSampleProperties(Map<String,String> openBisProperties)
-
-    Map<String,String> mapRunProperties(Map<String,String> openBisProperties)
-
-   // Map<String,String> mapDataSetProperties(Map<String,String> openBisProperties)
+    /**
+     * Maps the metadata terms from the experiment level onto the sample level and assigns experiment data
+     * to the correct preparation sample
+     * @param experiment with metadata terms
+     * @param sample obtaining the experiment information
+     * @return
+     */
+    Map mapExperimentToSample(MetaStatsExperiment experiment, MetaStatsSample sample)
+    /**
+     * Experimental conditions get assigned to a MetaStatsSample
+     * @param experimentConditions contains the experiment conditions encoded in XML
+     * @param sample gets corresponding condition info
+     * @return Map that associates the Sample with the corresponding experiment
+     */
+    Map mapConditionToSample(Map experimentConditions, MetaStatsSample sample)
+    /**
+     * Maps the openBis properties of a sample into MetaStats terms
+     * @param openBisProperties
+     * @return Map that associates the sample with the corresponding experiment conditions
+     */
+    Map<String, String> mapSampleProperties(Map<String, String> openBisProperties)
 }

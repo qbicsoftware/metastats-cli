@@ -2,23 +2,29 @@ package life.qbic.metastats.datamodel
 
 class MetaStatsSample {
 
-    String type
-    String code
-    List<MetaStatsSample> relatives = null //only collect relatives for preparation sample
-    Map<String,String> properties
-    //List<String> preparationSample = []
+    final String sampleType
+    final String sampleCode
+    List<String> relatedSamples = []
+    Map<String, String> sampleProperties
 
-    MetaStatsSample(String code, String type, List<MetaStatsSample> samples, Map<String,String> properties){
-        this.code = code
-        this.type = type
-        relatives = samples
-        this.properties = properties
+    /**
+     * Creates a MetaStatsSample with a corresponding sampleCode, sample type and properties
+     * @param sampleCode to identify the sample
+     * @param type of the sample e.g Q_TEST_SAMPLE
+     * @param sampleProperties describe the samples characteristics
+     */
+    MetaStatsSample(String sampleCode, String type, Map<String, String> sampleProperties) {
+        this.sampleCode = sampleCode
+        this.sampleType = type
+        this.sampleProperties = sampleProperties
     }
 
-    MetaStatsSample(String code, String type, Map<String,String> properties){
-        this.code = code
-        this.type = type
-        this.properties = properties
+    /**
+     * Method to add related samples of the current sample
+     * @param relative of the current sample specified by its sample code
+     */
+    def addRelatives(String relative) {
+        relatedSamples.add(relative)
     }
 
 }

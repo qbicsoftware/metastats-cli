@@ -1,0 +1,13 @@
+{
+  "Q_BIOLOGICAL_ENTITY_CODE": "Individual",
+  "Q_NCBI_ORGANISM": "Species",
+  "SEX": "Sex",
+  "Q_BIOLOGICAL_SAMPLE_CODE": "ExtractCode",
+  "Q_PRIMARY_TISSUE": "Tissue",
+  "Q_TEST_SAMPLE_CODE": "QBiC.Code",
+  "Q_SAMPLE_TYPE": "Analyte",
+  "Q_EXTERNALDB_ID": "SequencingFacilityId",
+  "Q_RNA_INTEGRITY_NUMBER": "IntegrityNumber",
+  "Q_SECONDARY_NAME": "SampleName",
+  "Q_NGS_RAW_DATA": "Filename"
+}

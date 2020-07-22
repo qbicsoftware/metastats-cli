@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "MyBoolean.json#",
+  "title": "MetaStats Entry",
+  "description": "A MetaStats object representation for statistical analysis",
+  "definitions": {
+    "boolean": {
+          "type": "string",
+          "enum": [ "true", "false"]
+    }
+  }
+}

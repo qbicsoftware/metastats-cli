@@ -5,7 +5,11 @@ import life.qbic.metastats.datamodel.MetaStatsSample
 
 interface ExperimentDataOutput {
 
-    def metaDataForSamples(List<MetaStatsSample> sampleMetadata)
-    def metaDataForExperiment(List<MetaStatsExperiment> experimentMetadata)
+    /**
+     * Accepts the metadata of the project based on samples and experiment information
+     * @param sampleMetadata
+     * @param experimentMetadata
+     */
+    void metaDataForProject(List<MetaStatsSample> sampleMetadata, List<MetaStatsExperiment> experimentMetadata)
 
 }
