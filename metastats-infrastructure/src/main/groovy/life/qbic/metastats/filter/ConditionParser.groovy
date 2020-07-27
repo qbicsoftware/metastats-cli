@@ -9,6 +9,15 @@ import org.apache.logging.log4j.Logger
 import javax.xml.bind.JAXBElement
 import javax.xml.bind.JAXBException
 
+/**
+ * Parses the OpenBis conditions
+ *
+ * This class extracts the conditions from an OpenBis experiment.
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class ConditionParser {
 
     StudyXMLParser studyParser = new StudyXMLParser()

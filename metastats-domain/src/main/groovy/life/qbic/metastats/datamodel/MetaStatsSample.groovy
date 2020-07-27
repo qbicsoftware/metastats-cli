@@ -1,5 +1,15 @@
 package life.qbic.metastats.datamodel
 
+/**
+ * Describes the characteristics of samples in the MetaStats
+ *
+ * This class is used as a data structure to represent samples. It should be used to translate external sample objects
+ * into an object which is interpretable for MetaStats
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class MetaStatsSample {
 
     final String sampleType

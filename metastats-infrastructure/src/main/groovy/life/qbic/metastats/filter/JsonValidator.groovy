@@ -9,6 +9,16 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+/**
+ * Handles the validation of JSON files
+ *
+ * Implements the SchemaValidator defined in the domain module. It handles how JSON schemas are loaded and JSON objects
+ * validated.
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class JsonValidator implements SchemaValidator {
 
     //TODO use model schema from external resource like github

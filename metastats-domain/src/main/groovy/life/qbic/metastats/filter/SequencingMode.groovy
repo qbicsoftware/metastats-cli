@@ -1,5 +1,15 @@
 package life.qbic.metastats.filter
 
+/**
+ * Describes different sequencing modes
+ *
+ * A sequencing mode is either paired- or single-end. A controlled vocabulary prevents from unwanted terms and provides
+ * a consistent naming.
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 enum SequencingMode {
     PAIRED_END("paired-end"),
     SINGLE_END("single-end")

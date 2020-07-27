@@ -7,6 +7,19 @@ import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+/**
+ * Handles how OpenBis data is parsed
+ *
+ * This class is responsible for creating MetaStatsExperiments and MetaStatsSamples from OpenBis experiments and samples.
+ * Based on OpenBis preparation samples it fetches the sample information of the parent and child samples. All this information
+ * is condensed in one MetaStatsSample. This sample will be contain all sample information required for the output.
+ * Non unique properties such as Q_SECONDARY_NAME are masked.
+ * This class should be used to create MetaStats objects from OpenBis experiments and samples.
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class OpenBisParser {
 
     private static final Logger LOG = LogManager.getLogger(OpenBisParser.class)

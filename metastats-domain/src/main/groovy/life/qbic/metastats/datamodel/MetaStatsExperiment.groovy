@@ -1,5 +1,15 @@
 package life.qbic.metastats.datamodel
 
+/**
+ * Describes the characteristics of experiments within MetaStats
+ *
+ * This class is used as a data structure to represent experiments. It should be used to translate external experiment objects
+ * into an object which is interpretable for MetaStats
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class MetaStatsExperiment {
 
     final String experimentType

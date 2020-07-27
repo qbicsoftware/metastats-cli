@@ -3,7 +3,17 @@ package life.qbic.metastats.fileCreator
 import life.qbic.metastats.datamodel.Condition
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 
-class TsvFileOutput extends FileOutput {
+/**
+ * Defines the TSV-file outputs
+ *
+ * This class is an implementation of the FileOutputCreator. It formats the file content of TSV files based on the given
+ * MetaStatsEntries
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
+class TsvFileOutputCreator extends FileOutputCreator {
 
     private static String missingValues = "NA"
     private static String fileEnding = "tsv"
@@ -15,7 +25,7 @@ class TsvFileOutput extends FileOutput {
      * Creates the output for a given project code
      * @param projectCode
      */
-    TsvFileOutput(String projectCode) {
+    TsvFileOutputCreator(String projectCode) {
         super(fileEnding, projectCode)
     }
 

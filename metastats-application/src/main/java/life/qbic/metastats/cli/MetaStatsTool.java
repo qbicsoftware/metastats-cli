@@ -7,6 +7,12 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Implementation of MetaStats-CLI. Its command-line arguments are contained in instances of {@link MetaStatsCommand}.
+ *
+ * Used to start the CLI
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
  */
 public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
 

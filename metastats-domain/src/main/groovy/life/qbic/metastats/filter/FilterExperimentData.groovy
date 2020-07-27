@@ -6,9 +6,19 @@ import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+/**
+ * Use case to handle filtering of the data loaded by the RequestExperimentData use case
+ *
+ * This class filters experiment and sample data for the required metadata of the output. The data is verified and forwarded
+ * to an output class {@link FilterExperimentDataFileOutput}
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class FilterExperimentData implements FilterExperimentDataInput {
 
-    MSMetadataPackageOutput output
+    FilterExperimentDataFileOutput output
     PropertiesMapper mapper
     SchemaValidator validator
 
@@ -24,7 +34,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
      * @param mapper defines how the data is translated from an external language e.g. openbis into the metastats metadata language
      * @param validator that is used to validate the created MetadataPackageEntry
      */
-    FilterExperimentData(MSMetadataPackageOutput output, PropertiesMapper mapper, SchemaValidator validator) {
+    FilterExperimentData(FilterExperimentDataFileOutput output, PropertiesMapper mapper, SchemaValidator validator) {
         this.output = output
         this.mapper = mapper
         this.validator = validator
@@ -66,8 +76,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
         List<MetaStatsPackageEntry> entries = createMetadataPackageEntries(testSamples)
         validateMetadataPackage(entries)
 
-        output.createMetaStatsMetadataPackage(sortEntries(entries))
-        output.downloadMetadataPackage()
+        output.write(sortEntries(entries))
     }
 
     /**

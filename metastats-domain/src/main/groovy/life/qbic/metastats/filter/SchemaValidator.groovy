@@ -1,5 +1,15 @@
 package life.qbic.metastats.filter
 
+/**
+ * The interface handles the validation of the MetaStats schema
+ *
+ * This interface enables the separation of the domain logic of MetaStats from an external library which is used
+ * for validation of a schema.
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 interface SchemaValidator {
 
     /**

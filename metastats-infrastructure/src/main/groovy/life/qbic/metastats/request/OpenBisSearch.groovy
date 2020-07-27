@@ -24,7 +24,18 @@ import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-
+/**
+ * Handles how OpenBis is searched for a project
+ *
+ * This class implements the DataBaseGateWay interface to inject the data from OpenBis into the domain module.
+ * It connects to OpenBis and retrieves all required project information. This class should be used to fetch an
+ * OpenBis project through an already established {@link OpenBisSession}.
+ *
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class OpenBisSearch implements DatabaseGateway {
 
     Project project

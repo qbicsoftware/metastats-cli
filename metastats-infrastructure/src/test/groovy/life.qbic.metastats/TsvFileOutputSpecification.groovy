@@ -2,7 +2,7 @@ package life.qbic.metastats
 
 import life.qbic.metastats.datamodel.Condition
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
-import life.qbic.metastats.fileCreator.TsvFileOutput
+import life.qbic.metastats.fileCreator.TsvFileOutputCreator
 import spock.lang.Specification
 
 class TsvFileOutputSpecification extends Specification {
@@ -11,7 +11,7 @@ class TsvFileOutputSpecification extends Specification {
         given:
         List<Condition> conditions = [new Condition("genotype", "mutant"), new Condition("treatment", "non")]
         MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["Condition": conditions, "SampleName": "name"] as HashMap)
-        TsvFileOutput creator = new TsvFileOutput()
+        TsvFileOutputCreator creator = new TsvFileOutputCreator()
 
         when:
         def res = creator.getConditions([entry, entry])
@@ -24,7 +24,7 @@ class TsvFileOutputSpecification extends Specification {
         given:
         List<Condition> conditions = [new Condition("genotype", "mutant"), new Condition("treatment", "non")]
         MetaStatsPackageEntry entry = new MetaStatsPackageEntry("this is an id", ["Condition": conditions, "SampleName": "name"] as HashMap)
-        TsvFileOutput creator = new TsvFileOutput()
+        TsvFileOutputCreator creator = new TsvFileOutputCreator()
 
         when:
         def res = creator.createFileContent([entry, entry, entry])

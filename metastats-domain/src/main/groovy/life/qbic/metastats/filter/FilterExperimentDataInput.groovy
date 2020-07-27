@@ -3,6 +3,15 @@ package life.qbic.metastats.filter
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
 
+/**
+ * The interface handles which data flows into the FilterExperimentData use case
+ *
+ * This interface acts as a contract to determine which data is allowed to flow into the use case
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 interface FilterExperimentDataInput {
 
     /**

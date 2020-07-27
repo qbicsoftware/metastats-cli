@@ -3,6 +3,15 @@ package life.qbic.metastats.filter
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+/**
+ * Determines the sequencing mode of a sample
+ *
+ * The mode of sequencing can be determined from the file name.
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class SequencingModeCalculator {
 
     private static final Logger LOG = LogManager.getLogger(SequencingModeCalculator.class)

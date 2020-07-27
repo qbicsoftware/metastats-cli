@@ -2,6 +2,15 @@ package life.qbic.metastats.io
 
 import groovy.json.JsonSlurper
 
+/**
+ * Handles how JSON files are parsed
+ *
+ * This class is responsible for reading in json files and returning them as a map
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class JsonParser {
 
     String path

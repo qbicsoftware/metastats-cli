@@ -6,6 +6,16 @@ import life.qbic.metastats.datamodel.MetaStatsSample
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+/**
+ * Defines how data from OpenBis is mapped to MetaStats
+ *
+ * This class uses maps to translate metadata terms from the OpenBis vocabulary to the MetaStats vocabulary.
+ * Furthermore it maps the OpenBis conditions objects into MetaStats objects and experiment properties onto sample properties
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class OpenBisMapper implements PropertiesMapper {
 
     private Map sampleMappingProperties

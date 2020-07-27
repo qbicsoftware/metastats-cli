@@ -1,11 +1,18 @@
 package life.qbic.metastats.cli;
 
 import life.qbic.cli.AbstractCommand;
+import life.qbic.cli.ToolExecutor;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 /**
  * Abstraction of command-line arguments that will be passed to {@link MetaStatsTool} at construction time.
+ *
+ * Defines the required and accepted commandline arguments
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
  */
 @Command(
         name = "MetaStats",

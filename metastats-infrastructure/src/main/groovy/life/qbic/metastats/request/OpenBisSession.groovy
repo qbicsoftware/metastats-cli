@@ -4,6 +4,16 @@ import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.dssapi.v3.IDataStoreServerApi
 import ch.systemsx.cisd.common.spring.HttpInvokerUtils
 
+/**
+ * Handles an OpenBis connection
+ *
+ * This class is responsible to connect to OpenBis and establish a connection to the database for a given user.
+ *
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class OpenBisSession {
 
     String sessionToken

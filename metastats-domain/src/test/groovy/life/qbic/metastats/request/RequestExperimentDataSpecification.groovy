@@ -5,7 +5,7 @@ import spock.lang.Specification
 class RequestExperimentDataSpecification extends Specification {
 
     def mockedDatabaseGateway = Mock(DatabaseGateway)
-    def mockedExperimentDataOutput = Mock(ExperimentDataOutput)
+    def mockedExperimentDataOutput = Mock(RequestExperimentDataOutput)
     def requestDataClass = new RequestExperimentData(mockedDatabaseGateway, mockedExperimentDataOutput)
 
     /** def "gives warning if there is no project (data) with given code"(){given:

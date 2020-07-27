@@ -3,10 +3,20 @@ package life.qbic.metastats.request
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-class RequestExperimentData implements ProjectSpecification {
+/**
+ * This use case handles how data flows into the tool
+ *
+ * The class requests the data for a given project code. This data is then forwarded to the output interface which transfers
+ * the data to the next use case by using {@link RequestExperimentDataOutput}
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
+class RequestExperimentData implements RequestExperimentDataInput {
 
     DatabaseGateway search
-    ExperimentDataOutput output
+    RequestExperimentDataOutput output
 
     private static final Logger LOG = LogManager.getLogger(RequestExperimentData.class);
 
@@ -15,7 +25,7 @@ class RequestExperimentData implements ProjectSpecification {
      * @param search is the database for querying the project
      * @param output class implementing the interface to delegate data out of the use case
      */
-    RequestExperimentData(DatabaseGateway search, ExperimentDataOutput output) {
+    RequestExperimentData(DatabaseGateway search, RequestExperimentDataOutput output) {
         this.search = search
         this.output = output
     }

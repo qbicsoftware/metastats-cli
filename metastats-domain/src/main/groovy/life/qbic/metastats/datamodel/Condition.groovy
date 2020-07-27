@@ -1,5 +1,14 @@
 package life.qbic.metastats.datamodel
 
+/**
+ * Describes condition objects
+ *
+ * This POJO enables to associate a condition label with a condition value
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class Condition {
     String label
     String value

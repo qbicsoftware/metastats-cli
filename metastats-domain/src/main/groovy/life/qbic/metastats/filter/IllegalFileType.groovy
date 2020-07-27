@@ -1,5 +1,14 @@
 package life.qbic.metastats.filter
 
+/**
+ * The class defines an exception for illegal file types
+ *
+ * If illegal file types are provided this exception should be thrown
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class IllegalFileType extends IllegalArgumentException {
 
     /**

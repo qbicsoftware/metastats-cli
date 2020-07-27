@@ -1,17 +1,27 @@
 package life.qbic.metastats
 
-import life.qbic.metastats.fileCreator.TsvFileOutput
+import life.qbic.metastats.fileCreator.TsvFileOutputCreator
 import life.qbic.metastats.filter.*
 import life.qbic.metastats.io.JsonParser
 import life.qbic.metastats.request.*
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+/**
+ * Controls how data flows into MetaStats
+ *
+ * This class creates instances of MetaStats classes and injects them as described in the architectural draft.
+ * It also handles how the input of the commandline flows into the classes.
+ *
+ * @since: 1.0
+ * @author: Jennifer Bödker
+ *
+ */
 class MetaStatsController {
 
     private String configFile
     private String projectCode
-    private ProjectSpecification spec
+    private RequestExperimentDataInput spec
     private FilterExperimentDataInput filterExperimentData
 
     private static final Logger LOG = LogManager.getLogger(MetaStatsController.class)
@@ -46,7 +56,7 @@ class MetaStatsController {
         JsonValidator validator = new JsonValidator(schemaPath)
 
         //define output classes
-        MSMetadataPackageOutput metaStatsPresenter = new MetaStatsPresenter(new TsvFileOutput(projectCode))
+        FilterExperimentDataFileOutput fileOutputCreator = new TsvFileOutputCreator(projectCode)
 
         Map experimentalMappingInfo = getMapFromJson(experimentSchema)
         Map sampleMappingInfo = getMapFromJson(sampleSchema)
@@ -54,7 +64,7 @@ class MetaStatsController {
         PropertiesMapper mapper = new OpenBisMapper(experimentalMappingInfo, sampleMappingInfo)
 
         //define use case
-        filterExperimentData = new FilterExperimentData(metaStatsPresenter, mapper, validator)
+        filterExperimentData = new FilterExperimentData(fileOutputCreator, mapper, validator)
 
         //define db classes
         setupDB(credentials)
@@ -90,7 +100,7 @@ class MetaStatsController {
 
         DatabaseGateway db = new OpenBisSearch(session)
         //define input for connector class
-        ExperimentDataOutput experimentData = new PrepareMetaData(filterExperimentData)
+        RequestExperimentDataOutput experimentData = new PrepareMetaDataConnector(filterExperimentData)
         //define use case
         spec = new RequestExperimentData(db, experimentData)
     }
