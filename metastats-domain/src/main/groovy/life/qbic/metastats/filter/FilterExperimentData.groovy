@@ -3,8 +3,8 @@ package life.qbic.metastats.filter
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 import life.qbic.metastats.datamodel.MetaStatsSample
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+
+import life.qbic.metastats.exceptions.InvalidProjectStructureException
 
 /**
  * Use case to handle filtering of the data loaded by the RequestExperimentData use case
@@ -19,13 +19,13 @@ import org.apache.logging.log4j.Logger
 class FilterExperimentData implements FilterExperimentDataInput {
 
     FilterExperimentDataFileOutput output
+    MessageOutputPort messageOutputPort
     PropertiesMapper mapper
     SchemaValidator validator
 
     List<MetaStatsSample> testSamples
     List<MetaStatsExperiment> experiments
 
-    private static final Logger LOG = LogManager.getLogger(FilterExperimentData.class)
 
     /**
      * Creates the FilterExperiment use case, which has access to a schema validator, a metadata term mapper and an interface to
@@ -34,8 +34,9 @@ class FilterExperimentData implements FilterExperimentDataInput {
      * @param mapper defines how the data is translated from an external language e.g. openbis into the metastats metadata language
      * @param validator that is used to validate the created MetadataPackageEntry
      */
-    FilterExperimentData(FilterExperimentDataFileOutput output, PropertiesMapper mapper, SchemaValidator validator) {
+    FilterExperimentData(FilterExperimentDataFileOutput output, PropertiesMapper mapper, SchemaValidator validator, MessageOutputPort messageOutputPort) {
         this.output = output
+        this.messageOutputPort = messageOutputPort
         this.mapper = mapper
         this.validator = validator
     }
@@ -50,15 +51,13 @@ class FilterExperimentData implements FilterExperimentDataInput {
      * This method handles the logic of this use case by filtering the obtained samples and experiments for the required
      * metadata, mapping the terms and transferring it towards the output interface
      */
-    void filter(){
-        LOG.info "filter metadata from samples ..."
+    void filter() {
         testSamples.each { prep ->
-            if (prep.sampleType != "Q_TEST_SAMPLE") LOG.debug "the metastats sample is not a Q_TEST_SAMPLE but $prep.sampleType"
+            if (prep.sampleType != "Q_TEST_SAMPLE") throw new InvalidProjectStructureException("The metastats sample is not a Q_TEST_SAMPLE but $prep.sampleType")
             //map the metadata terms first (otherwise duplicate names make problems later)
             prep.sampleProperties = mapper.mapSampleProperties(prep.sampleProperties)
         }
 
-        LOG.info "filter metadata from experiment for samples ..."
         experiments.each { experiment ->
             //map to samples
             testSamples.each { sample ->
@@ -72,7 +71,6 @@ class FilterExperimentData implements FilterExperimentDataInput {
 
         createSequencingModeEntry(testSamples)
 
-        LOG.info "create metadata package entries"
         List<MetaStatsPackageEntry> entries = createMetadataPackageEntries(testSamples)
         validateMetadataPackage(entries)
 
@@ -113,9 +111,6 @@ class FilterExperimentData implements FilterExperimentDataInput {
             String res = props.get("IntegrityNumber")
             if (res != "") props.put("IntegrityNumber", Double.parseDouble(res))
             //else the number remains an empty string and is validated by the schema.
-            else{
-                LOG.warn "The integrity number is not stated for this sample"
-            }
 
             MetaStatsPackageEntry entry = new MetaStatsPackageEntry(sampleName, props)
             packageEntries.add(entry)
@@ -128,20 +123,16 @@ class FilterExperimentData implements FilterExperimentDataInput {
      * Method to calculate the sequencing mode of samples based on the filenames
      * @param samples
      */
-    void createSequencingModeEntry(List<MetaStatsSample> samples) {
+    void createSequencingModeEntry(List<MetaStatsSample> samples){
         samples.each { sample ->
             String filename = sample.sampleProperties.get("Filename")
+            String sequencingMode = SequencingModeCalculator.calculateSequencingMode(filename)
 
-            String sequencingMode = ""
-
-            try {
-                sequencingMode = SequencingModeCalculator.calculateSequencingMode(filename)
-
-            } catch (IllegalFileType ift) {
-                LOG.warn ift.message
+            if("" == sequencingMode){
+                messageOutputPort.invokeOnError("The sequencing mode cannot be defined for $sample.sampleCode",FilterExperimentData.class)
             }
-            sample.sampleProperties.put("SequencingMode", sequencingMode)
 
+            sample.sampleProperties.put("SequencingMode", sequencingMode)
         }
     }
 
@@ -150,7 +141,6 @@ class FilterExperimentData implements FilterExperimentDataInput {
      * @param metadataPackage list of MetaStatsPackageEntry Objects
      */
     void validateMetadataPackage(List<MetaStatsPackageEntry> metadataPackage) {
-        LOG.info "validate metastats-object-model-schema ..."
 
         metadataPackage.each { entry ->
             //validate filenaming and change format from list to string
@@ -158,7 +148,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
 
             //2. metadata need to follow schema
             if (!(validator.validateMetaStatsMetadataPackage(entry.entryProperties))) {
-                LOG.info "Sample " + entry.preparationSampleId + " does not follow the schema"
+                messageOutputPort.invokeOnError("Sample " + entry.preparationSampleId + " does not follow the schema", FilterExperimentData.class)
             }
         }
 
@@ -169,7 +159,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
      * @param entryProps which contains all properties along with the filenames
      * @return validation status as boolean
      */
-    static boolean validFilenames(HashMap entryProps) {
+    boolean validFilenames(HashMap entryProps) {
         boolean valid = false
 
         String filename = (String) entryProps.get("Filename")
@@ -187,7 +177,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
             if (file.contains(prepID.toString()) || file.contains(sampleName.toString())) {
                 valid = true
             } else {
-                LOG.warn "File of sample $prepID does not follow the naming conventions: $file"
+                messageOutputPort.invokeOnError("File of sample $prepID does not follow the naming conventions: $file",FilterExperimentData.class)
             }
         }
         return valid

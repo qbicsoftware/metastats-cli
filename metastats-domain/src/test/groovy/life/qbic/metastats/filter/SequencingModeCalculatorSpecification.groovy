@@ -1,5 +1,6 @@
 package life.qbic.metastats.filter
 
+
 import spock.lang.Specification
 
 class SequencingModeCalculatorSpecification extends Specification {
@@ -29,9 +30,9 @@ class SequencingModeCalculatorSpecification extends Specification {
         given:
         String filenames = "I16R019a02_01_S3_L001_R1_001.sra.gz, I16R019a02_01_S3_L002_R1_001.sra.gz, I16R019a02_01_S3_L003_R1_001.sra.gz, I16R019a02_01_S3_L004_R1_001.sra.gz"
         when:
-        SequencingModeCalculator.calculateSequencingMode(filenames)
+        def res = SequencingModeCalculator.calculateSequencingMode(filenames)
         then:
-        thrown(IllegalFileType)
+        res == ""
     }
 
     def "Paired-End experiment is detected"() {

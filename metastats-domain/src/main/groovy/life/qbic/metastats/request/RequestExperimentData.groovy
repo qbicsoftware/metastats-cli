@@ -1,7 +1,6 @@
 package life.qbic.metastats.request
 
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import life.qbic.metastats.exceptions.InvalidProjectStructureException
 
 /**
  * This use case handles how data flows into the tool
@@ -18,7 +17,6 @@ class RequestExperimentData implements RequestExperimentDataInput {
     DatabaseGateway search
     RequestExperimentDataOutput output
 
-    private static final Logger LOG = LogManager.getLogger(RequestExperimentData.class);
 
     /**
      * Creates the Request use case which obtains the database connection and a class to delegate the fetched data to
@@ -34,13 +32,10 @@ class RequestExperimentData implements RequestExperimentDataInput {
     void requestProjectMetadata(String projectCode) {
 
         if (!verifyQbicCode(projectCode)) {
-            LOG.error "The project code was not valid!"
-            return
+            throw new InvalidProjectStructureException("The project code $projectCode was no valid QBiC code")
         }
-        LOG.info "searching for the openbis project ..."
         search.getProject(projectCode)
 
-        LOG.info "retrieved openbis project"
         output.metaDataForProject(search.fetchSamplesWithMetadata(), search.fetchExperimentsWithMetadata())
         search.logout()
     }

@@ -1,8 +1,7 @@
 package life.qbic.metastats.cli;
 
 import life.qbic.cli.ToolExecutor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import life.qbic.metastats.view.MetaStatsLogger;
 
 /**
  * Entry point for the MetaStats-CLI application.
@@ -15,7 +14,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class MetaStatsEntryPoint {
 
-    private static final Logger LOG = LogManager.getLogger(MetaStatsEntryPoint.class);
+    private static final MetaStatsLogger LOG = new MetaStatsLogger(MetaStatsEntryPoint.class);
 
     /**
      * Main method.

@@ -3,6 +3,7 @@ package life.qbic.metastats.filter
 import life.qbic.metastats.datamodel.Condition
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
+import life.qbic.metastats.view.MetaStatsLogger
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -22,7 +23,7 @@ class OpenBisMapper implements PropertiesMapper {
     private Map experimentMappingProperties
     private ConditionParser parser
 
-    private static final Logger LOG = LogManager.getLogger(OpenBisMapper.class)
+    private static final MetaStatsLogger LOG = new MetaStatsLogger(OpenBisMapper.class)
 
     /**
      * Creates an OpenBisMapper based on the given maps for experiment and sample properties

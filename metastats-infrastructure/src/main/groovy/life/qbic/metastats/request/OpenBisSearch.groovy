@@ -21,11 +21,10 @@ import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.fetchoptions.DataSe
 import ch.ethz.sis.openbis.generic.dssapi.v3.dto.datasetfile.search.DataSetFileSearchCriteria
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import life.qbic.metastats.view.MetaStatsLogger
 
 /**
- * Handles how OpenBis is searched for a project
+ * Class responsible for looking up the given projectcode in OpenBis
  *
  * This class implements the DataBaseGateWay interface to inject the data from OpenBis into the domain module.
  * It connects to OpenBis and retrieves all required project information. This class should be used to fetch an
@@ -47,7 +46,7 @@ class OpenBisSearch implements DatabaseGateway {
     OpenBisParser parser = new OpenBisParser()
 
 
-    private static final Logger LOG = LogManager.getLogger(OpenBisSearch.class)
+    private static final MetaStatsLogger LOG = new MetaStatsLogger(OpenBisSearch.class)
 
     /**
      * Creates an openbis search for a given session
@@ -85,7 +84,7 @@ class OpenBisSearch implements DatabaseGateway {
         SearchResult<Project> resProject = v3.searchProjects(sessionToken, criteria, fetchOptions)
 
         if (resProject.getObjects().size() == 0) {
-            LOG.warn "Project $projectCode not found"
+            LOG.error "Project $projectCode not found"
             System.exit(-1)
         }
 
@@ -130,9 +129,7 @@ class OpenBisSearch implements DatabaseGateway {
             //only do it for the Experiment with Biological Samples since from here all other samples can be found
             if (exp.type.code == "Q_EXPERIMENTAL_DESIGN" && exp.getSamples() != null) {
                 //todo manchmal gibts e2 2x --> only consider exp with samples
-                LOG.info "found $exp.type.code"
-
-                LOG.info "fetch all samples from experiment"
+                LOG.debug "found $exp.type.code"
                 openBisSamples = exp.getSamples()
 
                 prepSamples += parser.getPreparationSamples(openBisSamples)

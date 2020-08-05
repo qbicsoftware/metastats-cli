@@ -6,6 +6,7 @@ import com.github.fge.jackson.JsonLoader
 import com.github.fge.jsonschema.core.report.ProcessingReport
 import com.github.fge.jsonschema.main.JsonSchema
 import com.github.fge.jsonschema.main.JsonSchemaFactory
+import life.qbic.metastats.view.MetaStatsLogger
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -24,7 +25,7 @@ class JsonValidator implements SchemaValidator {
     //TODO use model schema from external resource like github
     final JsonSchema jsonSchema
 
-    private static final Logger LOG = LogManager.getLogger(JsonValidator.class)
+    private static final MetaStatsLogger LOG = new MetaStatsLogger(JsonValidator.class)
 
     /**
      * Creates a JsonSchema object based on a given schema
@@ -50,7 +51,8 @@ class JsonValidator implements SchemaValidator {
         report = jsonSchema.validate(node, true)
 
         if (!report.isSuccess()) {
-            LOG.info report
+            LOG.warning "Validation failure! Check the log file to see a detailed validation error."
+            LOG.info report as String
         }
 
         return report.isSuccess()

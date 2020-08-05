@@ -4,8 +4,7 @@ import life.qbic.metastats.fileCreator.TsvFileOutputCreator
 import life.qbic.metastats.filter.*
 import life.qbic.metastats.io.JsonParser
 import life.qbic.metastats.request.*
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import life.qbic.metastats.view.MetaStatsLogger
 
 /**
  * Controls how data flows into MetaStats
@@ -24,7 +23,7 @@ class MetaStatsController {
     private RequestExperimentDataInput spec
     private FilterExperimentDataInput filterExperimentData
 
-    private static final Logger LOG = LogManager.getLogger(MetaStatsController.class)
+    private static final MetaStatsLogger LOG = new MetaStatsLogger(MetaStatsController.class)
 
     /**
      * Sets up the use cases and infrastructure based on the specified configuration file and the given project code
@@ -64,7 +63,7 @@ class MetaStatsController {
         PropertiesMapper mapper = new OpenBisMapper(experimentalMappingInfo, sampleMappingInfo)
 
         //define use case
-        filterExperimentData = new FilterExperimentData(fileOutputCreator, mapper, validator)
+        filterExperimentData = new FilterExperimentData(fileOutputCreator, mapper, validator, new MetaStatsPresenter())
 
         //define db classes
         setupDB(credentials)

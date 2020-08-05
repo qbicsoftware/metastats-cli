@@ -2,6 +2,7 @@ package life.qbic.metastats.fileCreator
 
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 import life.qbic.metastats.filter.FilterExperimentDataFileOutput
+import life.qbic.metastats.view.MetaStatsLogger
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -27,7 +28,7 @@ abstract class FileOutputCreator implements FilterExperimentDataFileOutput{
     String home = System.getProperty("user.home")
     String path = home + "/Downloads/" + projectCode + "_" + fileName + "." + fileEnding
 
-    private static final Logger LOG = LogManager.getLogger(FileOutputCreator.class)
+    private static final MetaStatsLogger LOG = new MetaStatsLogger(FileOutputCreator.class)
 
     /**
      * Creates a file for specific file format

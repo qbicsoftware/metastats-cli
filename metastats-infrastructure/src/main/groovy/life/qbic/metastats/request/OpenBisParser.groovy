@@ -4,6 +4,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.Experiment
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.Sample
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
+import life.qbic.metastats.view.MetaStatsLogger
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -22,7 +23,7 @@ import org.apache.logging.log4j.Logger
  */
 class OpenBisParser {
 
-    private static final Logger LOG = LogManager.getLogger(OpenBisParser.class)
+    private static final MetaStatsLogger LOG = new MetaStatsLogger(OpenBisParser.class)
 
     /**
      * Creates a metastats experiment from an openbis experiment

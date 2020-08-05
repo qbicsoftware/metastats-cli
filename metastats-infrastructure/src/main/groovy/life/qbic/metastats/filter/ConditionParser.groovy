@@ -1,5 +1,6 @@
 package life.qbic.metastats.filter
 
+import life.qbic.metastats.view.MetaStatsLogger
 import life.qbic.xml.manager.StudyXMLParser
 import life.qbic.xml.properties.Property
 import life.qbic.xml.study.Qexperiment
@@ -23,7 +24,7 @@ class ConditionParser {
     StudyXMLParser studyParser = new StudyXMLParser()
     JAXBElement<Qexperiment> expDesign
 
-    private static final Logger LOG = LogManager.getLogger(ConditionParser.class);
+    private static final MetaStatsLogger LOG = new MetaStatsLogger(ConditionParser.class)
 
     /**
      * Parses the experimental conditions from the experimental properties map

@@ -2,8 +2,10 @@ package life.qbic.metastats
 
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsSample
+
 import life.qbic.metastats.filter.FilterExperimentDataInput
 import life.qbic.metastats.request.RequestExperimentDataOutput
+import life.qbic.metastats.view.MetaStatsLogger
 
 /**
  * Controls how data is transferred between use cases
@@ -20,8 +22,10 @@ class PrepareMetaDataConnector implements RequestExperimentDataOutput {
 
     FilterExperimentDataInput filterExperimentDataInput
 
+    MetaStatsLogger LOG = new MetaStatsLogger(PrepareMetaDataConnector.class)
+
     /**
-     * Guides how data given from ExperimentDataOutput is transferred towards the use case FilterExperiment data
+     * Guides how data given from ExperimentDataOutput is transferred towards the use case {@link life.qbic.metastats.filter.FilterExperimentData}
      * @param filterDataInput specifies how experiment data is filtered
      */
     PrepareMetaDataConnector(FilterExperimentDataInput filterDataInput) {

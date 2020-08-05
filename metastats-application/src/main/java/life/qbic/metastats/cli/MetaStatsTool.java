@@ -2,8 +2,7 @@ package life.qbic.metastats.cli;
 
 import life.qbic.cli.QBiCTool;
 import life.qbic.metastats.MetaStatsController;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import life.qbic.metastats.view.MetaStatsLogger;
 
 /**
  * Implementation of MetaStats-CLI. Its command-line arguments are contained in instances of {@link MetaStatsCommand}.
@@ -16,7 +15,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class MetaStatsTool extends QBiCTool<MetaStatsCommand> {
 
-    private static final Logger LOG = LogManager.getLogger(MetaStatsTool.class);
+    private static final MetaStatsLogger LOG = new MetaStatsLogger(MetaStatsTool.class);
 
     private static final String schemaPath = "/schema/model.schema.json";
     private static final String sampleSchema = "openbisToMetastatsSample.json";
