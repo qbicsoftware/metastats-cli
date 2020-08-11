@@ -7,38 +7,38 @@ class SequencingModeCalculatorSpecification extends Specification {
 
     def "Single-End experiment is detected"() {
         given:
-        String filenames = "I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R1_001.fastq.gz, I16R019a02_01_S3_L003_R1_001.fastq.gz, I16R019a02_01_S3_L004_R1_001.fastq.gz"
+        List filenames = ["I16R019a02_01_S3_L001_R1_001.fastq.gz", "I16R019a02_01_S3_L002_R1_001.fastq.gz", "I16R019a02_01_S3_L003_R1_001.fastq.gz", "I16R019a02_01_S3_L004_R1_001.fastq.gz"]
         when:
         def res = SequencingModeCalculator.calculateSequencingMode(filenames)
 
         then:
-        res == "single-end"
+        res.seqMode == "single-end"
     }
 
     def "Experiment which contains 'R2' in the filename is detected correctly as single-end"() {
         //if R2 is part of the sequencingfacility ID it should not be detected as paired-end experiment because of the id
         given:
-        String filenames = "I16R29a02_01_S3_L001_R1.fastq.gz, I16R29a02_01_S3_L002_R1.fastq.gz, I16R29a02_01_S3_L003_R1.fastq.gz, I16R2a02_01_S3_L004_R1.fastq.gz"
+        List filenames = ["I16R29a02_01_S3_L001_R1.fastq.gz", "I16R29a02_01_S3_L002_R1.fastq.gz", "I16R29a02_01_S3_L003_R1.fastq.gz", "I16R2a02_01_S3_L004_R1.fastq.gz"]
         when:
         def res = SequencingModeCalculator.calculateSequencingMode(filenames)
 
         then:
-        res == "single-end"
+        res.seqMode == "single-end"
     }
 
     def "Invalid file type throws error"() {
         given:
-        String filenames = "I16R019a02_01_S3_L001_R1_001.sra.gz, I16R019a02_01_S3_L002_R1_001.sra.gz, I16R019a02_01_S3_L003_R1_001.sra.gz, I16R019a02_01_S3_L004_R1_001.sra.gz"
+        List filenames = ["I16R019a02_01_S3_L001_R1_001.sra.gz", "I16R019a02_01_S3_L002_R1_001.sra.gz", "I16R019a02_01_S3_L003_R1_001.sra.gz", "I16R019a02_01_S3_L004_R1_001.sra.gz"]
         when:
         def res = SequencingModeCalculator.calculateSequencingMode(filenames)
         then:
-        res == ""
+        res.seqMode == ""
     }
 
     def "Paired-End experiment is detected"() {
         given:
-        String filenames = "I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R2_001.fastq.gz, I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R2_001.fastq.gz"
-        String filenames2 = "I16R019a02_01_S3_L001_R1_001.fastq.gz, I16R019a02_01_S3_L002_R2_001.fastq.gz, I16R019a02_01_S3_L001_R1.fastq.gz, I16R019a02_01_S3_L002_R2.fastq.gz"
+        List filenames = ["I16R019a02_01_S3_L001_R1_001.fastq.gz", "I16R019a02_01_S3_L002_R2_001.fastq.gz", "I16R019a02_01_S3_L001_R1_001.fastq.gz", "I16R019a02_01_S3_L002_R2_001.fastq.gz"]
+        List filenames2 = ["I16R019a02_01_S3_L001_R1_001.fastq.gz", "I16R019a02_01_S3_L002_R2_001.fastq.gz", "I16R019a02_01_S3_L001_R1.fastq.gz", "I16R019a02_01_S3_L002_R2.fastq.gz"]
 
 
         when:
@@ -47,8 +47,7 @@ class SequencingModeCalculatorSpecification extends Specification {
 
 
         then:
-        res == "paired-end"
-        assert res2 == "paired-end"
+        res.seqMode == "paired-end" && res2.seqMode == "paired-end"
     }
 
 }

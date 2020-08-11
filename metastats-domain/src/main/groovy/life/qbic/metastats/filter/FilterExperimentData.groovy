@@ -3,7 +3,7 @@ package life.qbic.metastats.filter
 import life.qbic.metastats.datamodel.MetaStatsExperiment
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 import life.qbic.metastats.datamodel.MetaStatsSample
-
+import life.qbic.metastats.exceptions.InvalidFileNameException
 import life.qbic.metastats.exceptions.InvalidProjectStructureException
 
 /**
@@ -18,13 +18,13 @@ import life.qbic.metastats.exceptions.InvalidProjectStructureException
  */
 class FilterExperimentData implements FilterExperimentDataInput {
 
-    FilterExperimentDataFileOutput output
-    MessageOutputPort messageOutputPort
-    PropertiesMapper mapper
-    SchemaValidator validator
+    private FilterExperimentDataFileOutput output
+    private MessageOutputPort messageOutputPort
+    private PropertiesMapper mapper
+    private SchemaValidator validator
 
-    List<MetaStatsSample> testSamples
-    List<MetaStatsExperiment> experiments
+    private List<MetaStatsSample> testSamples
+    private List<MetaStatsExperiment> experiments
 
 
     /**
@@ -64,9 +64,7 @@ class FilterExperimentData implements FilterExperimentDataInput {
                 //only add the properties, do not overwrite!
                 if (experiment.experimentType == "Q_NGS_MEASUREMENT") sample.sampleProperties << mapper.mapExperimentToSample(experiment, sample)
                 if (experiment.experimentType == "Q_PROJECT_DETAILS") sample.sampleProperties << mapper.mapConditionToSample(experiment.experimentProperties, sample)
-
             }
-
         }
 
         createSequencingModeEntry(testSamples)
@@ -125,14 +123,15 @@ class FilterExperimentData implements FilterExperimentDataInput {
      */
     void createSequencingModeEntry(List<MetaStatsSample> samples){
         samples.each { sample ->
-            String filename = sample.sampleProperties.get("Filename")
-            String sequencingMode = SequencingModeCalculator.calculateSequencingMode(filename)
+            String filesPerSample = sample.sampleProperties.get("Filename")
+            List<String> sampleFiles = filesPerSample.split(",")
+            SequencingMode sequencingMode = SequencingModeCalculator.calculateSequencingMode(sampleFiles)
 
-            if("" == sequencingMode){
+            if(sequencingMode == SequencingMode.NA){
                 messageOutputPort.invokeOnError("The sequencing mode cannot be defined for $sample.sampleCode",FilterExperimentData.class)
             }
 
-            sample.sampleProperties.put("SequencingMode", sequencingMode)
+            sample.sampleProperties.put("SequencingMode", sequencingMode.seqMode)
         }
     }
 
@@ -144,7 +143,11 @@ class FilterExperimentData implements FilterExperimentDataInput {
 
         metadataPackage.each { entry ->
             //validate filenaming and change format from list to string
-            validFilenames(entry.entryProperties)
+            try{
+                validateFilenames(entry.entryProperties)
+            }catch(InvalidFileNameException invalidFileNameException){
+                messageOutputPort.invokeOnError(invalidFileNameException.message, FilterExperimentData.class)
+            }
 
             //2. metadata need to follow schema
             if (!(validator.validateMetaStatsMetadataPackage(entry.entryProperties))) {
@@ -157,30 +160,38 @@ class FilterExperimentData implements FilterExperimentDataInput {
     /**
      * Validation of the filenames which must contain either the QBiC.Code or the SeqencingFacilityId
      * @param entryProps which contains all properties along with the filenames
-     * @return validation status as boolean
      */
-    boolean validFilenames(HashMap entryProps) {
-        boolean valid = false
+    protected void validateFilenames(HashMap entryProps) {
 
         String filename = (String) entryProps.get("Filename")
-        List<String> filenames = Arrays.asList(filename.split(","))
+        String sampleCode = entryProps.get("QBiC.Code") as String
+        String sequencingFacilityId = entryProps.get("SequencingFacilityId") as String
 
-        if (filenames == null || filenames.empty) {
-            return valid
+        if (!filename) {
+            throw new InvalidFileNameException("There are no files given for your sample with the QBiC.Code $sampleCode")
         }
 
-        filenames.each { file ->
-            //a valid filename either contains the sample preparation qbic code
-            def prepID = entryProps.get("QBiC.Code")
-            //or the seqFacilityID
-            def sampleName = entryProps.get("SequencingFacilityId")
-            if (file.contains(prepID.toString()) || file.contains(sampleName.toString())) {
-                valid = true
-            } else {
-                messageOutputPort.invokeOnError("File of sample $prepID does not follow the naming conventions: $file",FilterExperimentData.class)
+        List<String> filesPerSample = Arrays.asList(filename.split(","))
+
+        filesPerSample.each { file ->
+            try{
+                checkFileName(file, sampleCode, sequencingFacilityId)
+            }catch(InvalidFileNameException e){
+                throw new InvalidFileNameException(e.message)
             }
         }
-        return valid
+    }
+
+    /**
+     * A valid filename either contains the sample preparation qbic code or the seqFacilityID
+     * @param filename of a sequencing file of a sample
+     * @param prepID of the sample based on the QBiC.Code
+     * @param sequencingFacilityId of the sample based on the sample name given by the sequencing facility
+     */
+    private void checkFileName(String filename, String prepID, String sequencingFacilityId){
+        if (!filename.contains(prepID.toString()) && !filename.contains(sequencingFacilityId.toString())) {
+            throw new InvalidFileNameException("File of sample $prepID does not follow the naming conventions: $filename")
+        }
     }
 
     /**

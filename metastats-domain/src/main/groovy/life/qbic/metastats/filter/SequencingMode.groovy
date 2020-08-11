@@ -12,7 +12,8 @@ package life.qbic.metastats.filter
  */
 enum SequencingMode {
     PAIRED_END("paired-end"),
-    SINGLE_END("single-end")
+    SINGLE_END("single-end"),
+    NA("")
 
     private final String seqMode
     /**

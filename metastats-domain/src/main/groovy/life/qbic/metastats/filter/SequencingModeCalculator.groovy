@@ -18,26 +18,24 @@ class SequencingModeCalculator {
      * @param filename a string containing all filenames of a sample comma separated
      * @return String of determined sequencing mode
      */
-    static String calculateSequencingMode(String filenames) {
-        String sequencingMode = ""
-        String[] files = filenames.split(",")
+    static SequencingMode calculateSequencingMode(List<String> filenames) {
+        SequencingMode sequencingMode = SequencingMode.NA
 
         boolean R1 = false
         boolean R2 = false
-        files.each { file ->
+        boolean invalid = false
+        filenames.each { file ->
             //Filenames should look like this: SampleName_S1_L001_R1_001.fastq.gz
             //or: SampleName_S1_L001_R1.fastq.gz
-            if (!file.contains("fastq")) return sequencingMode
+            if (!file.contains("fastq")) invalid = true
             if (file.contains("_R1_001.fastq") || file.contains("_R1.fastq")) R1 = true
             if (file.contains("_R2_001.fastq") || file.contains("_R2.fastq")) R2 = true
         }
-        //has not R2 and not R1
-        if(!R1 && !R2) return sequencingMode
+        if(invalid) return sequencingMode
         //has only R1
-        if (!R2) sequencingMode = SequencingMode.SINGLE_END.seqMode
+        if (!R2) sequencingMode = SequencingMode.SINGLE_END
         //has R1 and R2
-        if (R1 && R2) sequencingMode = SequencingMode.PAIRED_END.seqMode
-
+        if (R1 && R2) sequencingMode = SequencingMode.PAIRED_END
 
         return sequencingMode
     }

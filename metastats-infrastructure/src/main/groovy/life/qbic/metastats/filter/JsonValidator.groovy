@@ -22,7 +22,6 @@ import org.apache.logging.log4j.Logger
  */
 class JsonValidator implements SchemaValidator {
 
-    //TODO use model schema from external resource like github
     final JsonSchema jsonSchema
 
     private static final MetaStatsLogger LOG = new MetaStatsLogger(JsonValidator.class)
@@ -52,11 +51,10 @@ class JsonValidator implements SchemaValidator {
 
         if (!report.isSuccess()) {
             LOG.warning "Validation failure! Check the log file to see a detailed validation error."
-            LOG.info report as String
+            LOG.debug report as String
         }
 
         return report.isSuccess()
-
     }
 
 }

@@ -3,6 +3,7 @@ package life.qbic.metastats.filter
 
 import life.qbic.metastats.datamodel.MetaStatsPackageEntry
 import life.qbic.metastats.datamodel.MetaStatsSample
+import life.qbic.metastats.exceptions.InvalidFileNameException
 import spock.lang.Specification
 
 
@@ -51,27 +52,27 @@ class FilterExperimentDataSpecification extends Specification {
         given:
         HashMap sampleProperties = ["QBiC.Code": "QXXX", "SequencingFacilityId": "IR1234", "otherProp": "value", "Filename": "QXXXIR1234_1.fastq, QXXX.fastq, IR1234_3.fastq"]
         when:
-        boolean res = filterExperimentData.validFilenames(sampleProperties)
+        filterExperimentData.validateFilenames(sampleProperties)
         then:
-        res
+        noExceptionThrown()
     }
 
     def "invalid filenames are detected"() {
         given:
         HashMap sampleProperties = ["QBiC.Code": "QXXX", "SequencingFacilityId": "IR1234", "otherProp": "value", "Filename": "234_1.fastq, Q2.fastq, _3.fastq"]
         when:
-        boolean res = filterExperimentData.validFilenames(sampleProperties)
+        filterExperimentData.validateFilenames(sampleProperties)
         then:
-        !res
+        thrown(InvalidFileNameException)
     }
 
     def "missing files are detected"() {
         given:
         HashMap sampleProperties = ["QBiC.Code": "QXXXX", "SequencingFacilityId": "IR1234", "otherProp": "value", "Filename": ""]
         when:
-        boolean res = filterExperimentData.validFilenames(sampleProperties)
+        println filterExperimentData.validateFilenames(sampleProperties)
         then:
-        !res
+        thrown(InvalidFileNameException)
     }
 
     def "Sort samples by QBiC.Code alphanumerically"() {
